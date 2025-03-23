@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %} Target Rules {% endblock %}
+
+{% block content %}
+
+<script>
+    let target_rules = {{ target_rules | tojson }}
+</script>
+
+<div class="centered-container">
+    <h5 align="center">Hunter Targeting Rules</h5>
+
+    <form method="POST">
+        <div class="table-container">
+            <script src="{{ url_for('static', filename='target_rules_table.js') }}" defer>
+            </script>
+        </div>
+
+        <br>
+
+        <button type="submit" class="btn btn-primary">
+            Save
+        </button>
+        <div id="success-popup" class="success-popup">Saved Settings</div>
+    </form>
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <script>
+        var update = {{update | tojson}}
+        if (update) {
+            confirmUpdate();
+        }
+    </script>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" name="viewport">
+    <title>{% block title %}Basepage{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" crossorigin="anonymous">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbar">
+        <div class="navbar-nav">
+          <a class="nav-item nav-link" id="simulation" href="/">Simulation</a>
+          <a class="nav-item nav-link" id="settings" href="/settings">Settings</a>
+          <a class="nav-item nav-link" id="roe" href="/rules-of-engagement">R.O.E.</a>
+          <a class="nav-item nav-link" id="assignment" href="/assignment">Assignment</a>
+          <a class="nav-item nav-link" id="targeting" href="/targeting">Targeting</a>
+          <a class="nav-item nav-link" id="oob" href="/order-of-battle">Order of Battle</a>
+        </div>
+      </div>
+    </nav>
+
+    <script>
+        function confirmUpdate() {
+            let popup = document.getElementById("success-popup");
+                popup.style.display = "block";
+                setTimeout(() => {
+                    popup.style.display = "none";
+                }, 2500);
+        }
+    </script>
+
+    {% block content %} No content here! {% endblock %}
+</body>
+</html>

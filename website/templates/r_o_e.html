@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %} Rules of Engagement {% endblock %}
+
+{% block content %}
+
+<script>
+    let current_roe = {{current_roe | tojson}}
+    let min_roe = {{min_roe_values | tojson}}
+</script>
+
+<div class="centered-container">
+    <form method="POST">
+        <h5 align="center">Rules of Engagement</h5>
+        1: <b>Anytime</b>: Any hunter found in the specified zone can be attacked at any time<br>
+        2: <b>Retaliatory</b>: Only attack hunters that have attacked a merchant<br>
+        3: <b>Unmanned</b>: Escorts can attack UAVs in the zone, but no other type of hunter<br>
+        4: <b>Forbidden</b>: Hunters in that zone may not be engaged<br>
+        <br>
+        Current Coalition Escalation Level: <b>{{ escalation_level }}</b>
+        <br>
+        <h6 align="center">Settings</h6>
+        <div class="table-container">
+
+        </div>
+        <script src="{{ url_for('static', filename='r_o_e_table.js') }}" defer>
+        </script>
+
+        <br>
+        <br>
+
+        <button type="submit" class="btn btn-primary">
+            Save
+        </button>
+        <div id="success-popup" class="success-popup">Saved Settings</div>
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <script>
+            var update = {{update | tojson}}
+            if (update) {
+                confirmUpdate();
+            }
+        </script>
+    </form>
+</div>
+
+{% endblock %}

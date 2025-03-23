@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %} Simulation {% endblock %}
+{% block content %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/7.0.0/pixi.min.js"></script>
+
+<script>
+    let landmasses = {{plot_polygons | tojson}};
+    let bases = {{ plot_bases | tojson }}
+    let min_lon = {{ min_lon }};
+    let max_lon = {{ max_lon }};
+    let min_lat = {{ min_lat }};
+    let max_lat = {{ max_lat }};
+    let agent_data = {{ agents | tojson }};
+</script>
+
+<div class="larger-centered-container">
+    <h4 align="center"> Simulation </h4>
+
+
+    <button type="submit" class="btn btn-primary" onclick="startSimulation()">
+        Continue Simulation
+    </button>
+    <br>
+    <br>
+
+
+    <div class="simulation-container">
+
+    </div>
+    <script src="{{ url_for('static', filename='simulation.js') }}" defer>
+    </script>
+</div>
+
+{% endblock %}
