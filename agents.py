@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from abc import abstractmethod
+
 import settings
 from bases import Base
 
@@ -26,15 +28,24 @@ class Agent:
         self.model = model
         self.service = None
         self.color = None
+        self.dwt = None
 
         # ---- Detection Parameters ----
-        self.surface_visibility = None
+        self.ship_visibility = None
         self.air_visibility = None
         self.sub_visibility = None
 
-        self.surface_detection = None
-        self.air_detection = None
-        self.sub_detection = None
+        self.ship_detection_skill = None
+        self.air_detection_skill = None
+        self.sub_detection_skill = None
+
+        self.anti_ship_skill = None
+        self.anti_air_skill = None
+        self.anti_sub_skill = None
+
+        self.anti_ship_ammo = None
+        self.anti_air_ammo = None
+        self.anti_sub_ammo = None
 
         # ---- Movement ----
         self.assigned_zone = None
@@ -60,7 +71,7 @@ class Agent:
         self.destroyed = False
         self.CTL = False
 
-        self.maintenance_time = None
+        self.maintenance_time = 3*24  # TODO: Update placeholder
         self.remaining_maintenance_time = 0
 
         # ---- Ammunition ----
@@ -79,6 +90,14 @@ class Agent:
         # ---- Display ----
         self.color = None
 
+        self.initiate_model()
+
+    def __eq__(self, other):
+        if self.agent_id == other.agent_id:
+            return True
+        else:
+            return False
+
     def to_dict(self) -> dict:
         return {"x": self.location.x,
                 "y": self.location.y,
@@ -86,8 +105,14 @@ class Agent:
                 "color": self.color,
                 "activated": self.activated}
 
+    @abstractmethod
+    def initiate_model(self) -> None:
+        pass
+
     def activate(self) -> None:
         self.activated = True
+        self.manager.inactive_agents.remove(self)
+        self.manager.active_agents.append(self)
 
     def generate_route(self, destination: Point = None) -> None:
         self.route = routes.create_route(start=self.location,
@@ -95,6 +120,8 @@ class Agent:
 
     def set_turn_movement(self) -> None:
         self.movement_left_in_turn = self.speed_current * settings.time_delta
+        if self.movement_left_in_turn is None:
+            raise ValueError(f"Movement set to None - {self.speed_current}, {settings.time_delta}")
 
     def move_through_route(self) -> str:
         iterations = 0
@@ -147,13 +174,13 @@ class Agent:
         self.mission = missions.Return(self, self.base.location)
 
     def enter_base(self) -> None:
-        print("Agent entering base...")
         self.manager.active_agents.remove(self)
         self.manager.inactive_agents.append(self)
         self.mission.complete()
         self.activated = False
         self.base.receive_agent(self)
         self.set_up_for_maintenance()
+        self.remove_from_missions()
 
     def set_up_for_maintenance(self) -> None:
         self.remaining_maintenance_time = self.maintenance_time
@@ -163,6 +190,10 @@ class Agent:
         self.air_ammo_current = self.air_ammo_max
         self.surf_ammo_current = self.sub_ammo_max
         self.sub_ammo_current = self.sub_ammo_max
+
+    def remove_from_missions(self):
+        for mission in self.involved_missions:
+            mission.remove_agent_from_mission(self)
 
     def check_if_target_in_legal_zone(self) -> None:
         pass
@@ -175,6 +206,7 @@ class Agent:
 
     def is_destroyed(self) -> None:
         self.mission.abort()
+        self.remove_from_missions()
         self.destroyed = True
         self.activated = False
         self.manager.agent_was_destroyed(self)
@@ -201,14 +233,66 @@ class Agent:
             if zone.check_if_agent_in_zone(self):
                 return zone
 
-    def surface_detection(self) -> object | None:
+    @abstractmethod
+    def surface_detection(self, agent: Agent) -> bool:
         pass
 
-    def air_detection(self) -> object | None:
+    @abstractmethod
+    def air_detection(self, agent: Agent) -> bool:
         pass
 
-    def sub_detection(self) -> object | None:
+    @abstractmethod
+    def sub_detection(self, agent: Agent) -> bool:
         pass
 
-    def observe(self) -> None:
+    @abstractmethod
+    def observe(self, agents: list[Agent]) -> None:
         pass
+
+    def go_to_patrol(self, zone: zones.Zone) -> None:
+        self.mission = missions.Travel(agent=self,
+                                       target=zone.sample_patrol_location(),
+                                       next_mission=missions.Observe,
+                                       next_settings={"agent": self,
+                                                      "target": None})
+        self.assigned_zone = zone
+
+    def make_patrol_move(self) -> None:
+        while self.movement_left_in_turn > 0:
+            outcome = self.move_through_route()
+
+            if outcome == "Reached End Of Route":
+                selected_location = self.select_next_patrol_location()
+                self.generate_route(destination=selected_location)
+
+    def select_next_patrol_location(self) -> Point:
+        locations = [self.assigned_zone.sample_patrol_location() for _ in range(5)]
+
+        options = {}
+        for location in locations:
+            receptor = cs.world.receptor_grid.get_receptor_at_location(location)
+
+            if self.team == 1:
+                value = receptor.coalition_pheromones
+            elif self.team == 2:
+                value = receptor.china_pheromones
+            else:
+                raise ValueError(f"Invalid Team {self.team}")
+
+            options[receptor] = value
+        return min(options, key=options.get)
+
+    def spread_pheromones(self, radius: float) -> None:
+        receptors = cs.world.receptor_grid.select_receptors_in_radius(self.location, radius)
+        receptors = [receptor for receptor in receptors if receptor.decay]
+
+        for receptor in receptors:
+            distance = self.location.distance_to_point(receptor.location)
+            assigned_pheromones = (distance/radius) * cs.PHEROMONE_SPREAD
+
+            if self.team == 1:
+                receptor.coalition_pheromones += assigned_pheromones
+            elif self.team == 2:
+                receptor.china_pheromones += assigned_pheromones
+            else:
+                raise ValueError(f"{self} - Invalid Team {self.team}")

@@ -36,6 +36,7 @@ class Base:
             self.current_served_agent = None
 
     def finish_maintenance_agent(self):
+        print(f"Finishing maintenance for agent {self.current_served_agent.agent_id}.")
         self.current_served_agent.complete_maintenance()
         self.start_serve_next_agent()
 

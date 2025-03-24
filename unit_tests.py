@@ -13,7 +13,6 @@ def routing_test() -> None:
     start = Point(0, 0)
     end = Point(10, 10)
     route = routes.create_route(start=start, end=end)
-    print(f"Created route: {repr(route)}")
 
 
 def run_tests() -> None:

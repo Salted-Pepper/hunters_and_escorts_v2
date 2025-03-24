@@ -77,7 +77,6 @@ function updatePlot(agents) {
         let [x, y] = lonLatToCanvas(agent.x, agent.y)
         agent.x = x
         agent.y = y
-        console.log("Plotting agent ", agent.agent_id, " at ", x, y, " actived: ", agent.activated)
         if (!sprites[agent.agent_id] & agent.activated == true) {
 //        TODO: MAKE THIS ACTUAL SPRITES INSTEAD OF GRAPHICS https://github.com/pixijs/pixijs/wiki/v4-Performance-Tips
 //              https://pixijs.com/8.x/examples/sprite/basic

@@ -17,7 +17,9 @@ class Mission:
 
     def set_mission(self) -> None:
         if self.agent.mission is not None:
-            raise ValueError(f"Agent {self.agent} mission is already set to {self.agent.mission}!")
+            raise ValueError(
+                f"Agent {self.agent.agent_id} mission is already set to {self.agent.mission}, can't set to "
+                f"{self}. Agent is at {self.agent.location}")
         else:
             self.agent.mission = self
 
@@ -30,8 +32,11 @@ class Mission:
         if hasattr(self.target, 'involved_missions'):
             self.target.involved_missions.remove(self)
 
+    def __repr__(self):
+        return "Mission Mission"
+
     @abstractmethod
-    def execute(self):
+    def execute(self, *args):
         pass
 
     @abstractmethod
@@ -63,26 +68,41 @@ class Travel(Mission):
 
         agent.generate_route(destination=self.location)
 
-    def execute(self):
+    def __repr__(self):
+        return "Mission Travel"
+
+    def execute(self) -> None:
         outcome = self.agent.move_through_route()
 
         if outcome == "Reached End Of Route":
+            print(f"Reached Destination - Setting agent from {self} to {self.next_mission}")
             self.agent.mission = self.next_mission(**self.next_settings)
+            self.agent.mission.execute()
         elif outcome == "Spent Turn Movement":
             pass
         else:
             raise ValueError(f"Unknown Outcome for Travelling - {outcome}")
 
-    def change(self, new_mission):
+    def change(self, new_mission) -> None:
         pass
 
-    def complete(self):
+    def complete(self) -> None:
 
         self.remove_mission_status()
 
-    def abort(self):
+    def abort(self) -> None:
 
         self.remove_mission_status()
+
+    @abstractmethod
+    def remove_agent_from_mission(self, agent: Agent) -> None:
+        """
+        Checks what happens once the agent is removed from the mission and ensures either the mission seizes correctly
+        or continues if possible.
+        :param agent:
+        :return:
+        """
+        pass
 
 
 class Attack(Mission):
@@ -92,19 +112,23 @@ class Attack(Mission):
     def __init__(self, agent: Agent, target: Agent):
         super().__init__(agent, target)
 
-    def execute(self):
+    def __repr__(self):
+        return "Mission Attack"
+
+    def execute(self) -> None:
         pass
 
-    def change(self, new_mission):
+    def change(self, new_mission) -> None:
         pass
 
-    def complete(self):
-
+    def complete(self) -> None:
         self.remove_mission_status()
 
-    def abort(self):
-
+    def abort(self) -> None:
         self.remove_mission_status()
+
+    def remove_agent_from_mission(self, agent: Agent) -> None:
+        pass
 
 
 class Track(Mission):
@@ -112,21 +136,26 @@ class Track(Mission):
     Agent actively following another agent, which calls in or awaits support.
     """
     def __init__(self, agent: Agent, target: Agent):
+        print(f"{agent.agent_id} started tracking {target.agent_id}")
         super().__init__(agent, target)
 
-    def execute(self):
+    def __repr__(self):
+        return "Mission Track"
+
+    def execute(self) -> None:
         pass
 
-    def change(self, new_mission):
+    def change(self, new_mission) -> None:
         pass
 
-    def complete(self):
-
+    def complete(self) -> None:
         self.remove_mission_status()
 
-    def abort(self):
-
+    def abort(self) -> None:
         self.remove_mission_status()
+
+    def remove_agent_from_mission(self, agent: Agent) -> None:
+        pass
 
 
 class Observe(Mission):
@@ -136,19 +165,23 @@ class Observe(Mission):
     def __init__(self, agent: Agent, target: Point):
         super().__init__(agent, target)
 
-    def execute(self):
+    def __repr__(self):
+        return "Mission Observe"
+
+    def execute(self, agents_to_observe: list[Agent]) -> None:
+        self.agent.observe(agents_to_observe)
+
+    def change(self, new_mission) -> None:
         pass
 
-    def change(self, new_mission):
+    def complete(self) -> None:
+        self.remove_mission_status()
+
+    def abort(self) -> None:
+        self.remove_mission_status()
+
+    def remove_agent_from_mission(self, agent: Agent) -> None:
         pass
-
-    def complete(self):
-
-        self.remove_mission_status()
-
-    def abort(self):
-
-        self.remove_mission_status()
 
 
 class Guard(Mission):
@@ -158,19 +191,23 @@ class Guard(Mission):
     def __init__(self, agent: Agent, target: Agent):
         super().__init__(agent, target)
 
-    def execute(self):
+    def __repr__(self):
+        return "Mission Guard"
+
+    def execute(self) -> None:
         pass
 
-    def change(self, new_mission):
+    def change(self, new_mission) -> None:
         pass
 
-    def complete(self):
-
+    def complete(self) -> None:
         self.remove_mission_status()
 
-    def abort(self):
-
+    def abort(self) -> None:
         self.remove_mission_status()
+
+    def remove_agent_from_mission(self, agent: Agent) -> None:
+        pass
 
 
 class Return(Mission):
@@ -179,11 +216,16 @@ class Return(Mission):
     OR
     Merchants going to their target dock to deliver goods.
     """
-    def __init__(self, agent: Agent, target: Point):
+    def __init__(self, agent: Agent, target: Point, base=None):
         super().__init__(agent, target)
-        agent.generate_route(agent.base.location)
+        if base is None:
+            base = agent.base.location
+        agent.generate_route(base)
 
-    def execute(self):
+    def __repr__(self):
+        return "Mission Return"
+
+    def execute(self) -> None:
         outcome = self.agent.move_through_route()
         if outcome == "Reached End Of Route":
             self.agent.enter_base()
@@ -192,15 +234,21 @@ class Return(Mission):
         else:
             raise ValueError(f"Unknown Outcome for Travelling - {outcome}")
 
-    def change(self, new_mission):
+    def change(self, new_mission) -> None:
         pass
 
-    def complete(self):
+    def complete(self) -> None:
         self.remove_mission_status()
 
-    def abort(self):
+    def abort(self) -> None:
 
         self.remove_mission_status()
+
+    def remove_agent_from_mission(self, agent: Agent) -> None:
+        if agent == self.agent:
+            self.abort()
+        else:
+            raise ValueError(f"Agent {agent.agent_id} is not a part of {self}")
 
 
 class Holding(Mission):
@@ -211,19 +259,23 @@ class Holding(Mission):
     def __init__(self, agent: Agent, target: Point):
         super().__init__(agent, target)
 
-    def execute(self):
+    def __repr__(self):
+        return "Mission Holding"
+
+    def execute(self) -> None:
         pass
 
-    def change(self, new_mission):
+    def change(self, new_mission) -> None:
         pass
 
-    def complete(self):
-
+    def complete(self) -> None:
         self.remove_mission_status()
 
-    def abort(self):
-
+    def abort(self) -> None:
         self.remove_mission_status()
+
+    def remove_agent_from_mission(self, agent: Agent) -> None:
+        pass
 
 
 class Depart(Mission):
@@ -234,7 +286,10 @@ class Depart(Mission):
         super().__init__(agent, target)
         agent.generate_route(target)
 
-    def execute(self):
+    def __repr__(self):
+        return "Mission Depart"
+
+    def execute(self) -> None:
         outcome = self.agent.move_through_route()
         if outcome == "Reached End Of Route":
             self.agent.leave_world()
@@ -243,13 +298,19 @@ class Depart(Mission):
         else:
             raise ValueError(f"Unknown Outcome for Travelling - {outcome}")
 
-    def change(self, new_mission):
+    def change(self, new_mission) -> None:
         pass
 
-    def complete(self):
+    def complete(self) -> None:
 
         self.remove_mission_status()
 
-    def abort(self):
+    def abort(self) -> None:
 
         self.remove_mission_status()
+
+    def remove_agent_from_mission(self, agent: Agent) -> None:
+        if agent == self.agent:
+            self.abort()
+        else:
+            raise ValueError(f"Agent {agent.agent_id} is not a part of {self}")

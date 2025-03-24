@@ -7,7 +7,7 @@ import zones
 import weather
 from polygons import Polygon
 from agents import Agent
-from managers import MerchantManager
+from managers import MerchantManager, ChinaNavyManager
 
 
 class World:
@@ -44,7 +44,8 @@ class World:
 
     def initiate_managers(self) -> None:
         # TODO: Make this managers and append agents for each manager
-        self.managers = [MerchantManager()]
+        self.managers = [MerchantManager(),
+                         ChinaNavyManager()]
 
         for manager in self.managers:
             self.all_agents.extend(manager.inactive_agents)
@@ -57,21 +58,16 @@ class World:
     def simulate_step(self) -> None:
         self.world_time += self.time_delta
 
-        # if self.world_time.is_integer():
         print(f"Time is {self.world_time}")
 
         self.update_weather_conditions()
 
         for manager in self.managers:
-            # print(f"Taking {manager} pre turn actions")
+            manager.complete_base_activities()
             manager.pre_turn_actions()
-            # print(f"Checking {manager} returns")
             manager.check_if_agents_have_to_return()
-            # print(f"Checking {manager} observing")
             manager.have_agents_observe()
-            # print(f"{manager} task assignment")
             manager.assign_agents_to_tasks()
-            # print(f"Completing {manager} agents other missions")
             manager.continue_other_missions()
 
         self.receptor_grid.depreciate_pheromones()

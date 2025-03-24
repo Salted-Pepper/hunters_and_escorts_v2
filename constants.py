@@ -57,6 +57,8 @@ EVADE = "evade"
 RESIST = "resist"
 
 # ---- Agent Detection Fixed Parameters ----
+PHEROMONE_SPREAD = 1
+
 PATROL_LOCATIONS = 10
 K_CONSTANT_ADV = 39_633
 K_CONSTANT_BASIC = 2_747
@@ -99,6 +101,56 @@ COALITION_TYPES = [COALITION_TW_MERCHANT, COALITION_US_MERCHANT, COALITION_JP_ME
                    COALITION_TW_ESCORT, COALITION_TW_AIRCRAFT, COALITION_TW_SUB,
                    COALITION_US_ESCORT, COALITION_US_AIRCRAFT, COALITION_US_SUB,
                    COALITION_JP_ESCORT, COALITION_JP_AIRCRAFT, COALITION_JP_SUB]
+
+# ---- Agent Data ----
+CHINA_NAVY_DATA = None
+CHINA_SUB_DATA = None
+CHINA_AIR_DATA = None
+
+# ---- Deterministic Detecting Behaviour ----
+CHINA_NAVY_DETECTING_SHIP = {DET_ADV: {LARGE: 56,
+                                       MEDIUM: 56,
+                                       SMALL: 37,
+                                       VSMALL: 20,
+                                       STEALTHY: 11},
+                             DET_BASIC: {LARGE: 37,
+                                         MEDIUM: 37,
+                                         SMALL: 28,
+                                         VSMALL: 17,
+                                         STEALTHY: 9}}
+
+CHINA_NAVY_DETECTING_AIR = {DET_ADV: {LARGE: 463,
+                                      MEDIUM: 320,
+                                      SMALL: 239,
+                                      VSMALL: 102,
+                                      STEALTHY: 70},
+                            DET_BASIC: {LARGE: 350,
+                                        MEDIUM: 244,
+                                        SMALL: 176,
+                                        VSMALL: 70,
+                                        STEALTHY: 20}}
+
+CHINA_NAVY_DETECTING_SUB_AWS = {DET_ADV: {LARGE: 185,
+                                          MEDIUM: 74,
+                                          SMALL: 37,
+                                          VSMALL: 18.5,
+                                          STEALTHY: 9.25},
+                                DET_BASIC: {LARGE: 64.82,
+                                            MEDIUM: 25.928,
+                                            SMALL: 12.964,
+                                            VSMALL: 6.482,
+                                            STEALTHY: 3.241}}
+
+CHINA_NAVY_DETECTING_SUB_NO_AWS = {DET_ADV: {LARGE: 0,
+                                             MEDIUM: 0,
+                                             SMALL: 0,
+                                             VSMALL: 0,
+                                             STEALTHY: 0},
+                                   DET_BASIC: {LARGE: 39.818,
+                                               MEDIUM: 15.9272,
+                                               SMALL: 7.9636,
+                                               VSMALL: 3.9818,
+                                               STEALTHY: 1.9909}}
 
 # ---- Weather Data ----
 WEATHER_UPDATE_TIME = 7
