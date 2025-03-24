@@ -92,6 +92,9 @@ class Agent:
 
         self.initiate_model()
 
+    def __str__(self):
+        return f"Agent {self.agent_id} of {type(self)} - on mission: {self.mission}"
+
     def __eq__(self, other):
         if self.agent_id == other.agent_id:
             return True
@@ -103,7 +106,8 @@ class Agent:
                 "y": self.location.y,
                 "agent_id": self.agent_id,
                 "color": self.color,
-                "activated": self.activated}
+                "activated": self.activated,
+                "mission": str(self.mission)}
 
     @abstractmethod
     def initiate_model(self) -> None:
@@ -113,6 +117,7 @@ class Agent:
         self.activated = True
         self.manager.inactive_agents.remove(self)
         self.manager.active_agents.append(self)
+        self.movement_left_in_turn = self.speed_current * settings.time_delta
 
     def generate_route(self, destination: Point = None) -> None:
         self.route = routes.create_route(start=self.location,
@@ -124,9 +129,15 @@ class Agent:
             raise ValueError(f"Movement set to None - {self.speed_current}, {settings.time_delta}")
 
     def move_through_route(self) -> str:
+        if self.movement_left_in_turn is None:
+            raise ValueError(f"{self} - "
+                             f"Movement not set - speed: {self.speed_current} - timedelta {settings.time_delta}")
         iterations = 0
         while self.movement_left_in_turn > 0:
             iterations += 1
+            if iterations > settings.ITERATION_LIMIT:
+                raise TimeoutError(f"Exceeded Iteration limit while moving through Route")
+
             next_point = self.route.next_point()
             if next_point is None:
                 return "Reached End Of Route"
@@ -258,7 +269,11 @@ class Agent:
         self.assigned_zone = zone
 
     def make_patrol_move(self) -> None:
+        iterations = 0
         while self.movement_left_in_turn > 0:
+            iterations += 1
+            if iterations > settings.ITERATION_LIMIT:
+                raise TimeoutError(f"Exceeded Iteration limit in Patrol Move")
             outcome = self.move_through_route()
 
             if outcome == "Reached End Of Route":
@@ -279,7 +294,7 @@ class Agent:
             else:
                 raise ValueError(f"Invalid Team {self.team}")
 
-            options[receptor] = value
+            options[location] = value
         return min(options, key=options.get)
 
     def spread_pheromones(self, radius: float) -> None:

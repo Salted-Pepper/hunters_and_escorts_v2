@@ -22,6 +22,7 @@ class World:
 
         # Geography
         self.landmasses = self.get_land_masses()
+        self.china_polygon = ccs.CHINA
         self.visibility_graph = routes.create_base_graph(self.landmasses)
         self.zones = zones.ZONES
 
@@ -37,7 +38,7 @@ class World:
 
     @staticmethod
     def get_land_masses() -> list[Polygon]:
-        return ccs.TAIWAN_AND_ISLANDS + ccs.JAPAN_AND_ISLANDS + ccs.OTHER_LAND
+        return ccs.LAND_MASSES
 
     def initiate_receptors(self) -> None:
         self.receptor_grid = receptors.ReceptorGrid(self.landmasses, self)

@@ -116,6 +116,7 @@ class ChineseShip(Ship):
 
         self.speed_max = model_data["SpeedMax"]
         self.speed_cruising = model_data["SpeedCruise"]
+        self.speed_current = self.speed_cruising
         self.dwt = model_data["Displacement"]
         self.endurance = model_data["Endurance"]
 
@@ -174,7 +175,7 @@ class ChineseShip(Ship):
 
     def observe(self, agents: list[Agent]) -> None:
         self.make_patrol_move()
-
+        print(f"Agent {self} is observing")
         for agent in agents:
             if issubclass(type(agent), Ship):
                 detected = self.surface_detection(agent)

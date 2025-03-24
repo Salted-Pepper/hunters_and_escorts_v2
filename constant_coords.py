@@ -218,7 +218,7 @@ C_TAIWAN_TERRITORIAL = [Point(121.564, 25.491),
                         Point(119.885, 23.764),
                         Point(120.715, 25.019)]
 
-D_JAPAN_CONT = [Point(150.000, 45.000),
+D_JAPAN_CONT = [Point(140.000, 45.000),
                 Point(143.904, 41.413),
                 Point(140.221, 31.421),
                 Point(137.458, 33.581),
@@ -269,9 +269,9 @@ K_TAIWAN_JAPAN = [Point(122.328, 25.218), Point(122.910, 25.200),
                   Point(122.611, 24.464), Point(122.405, 23.334),
                   Point(121.870, 23.334), Point(122.231, 24.503)]
 
-L_INSIDE_MEDIAN_LINE = [Point(110.000, 45.000), Point(120.647, 45.000),
-                        Point(122.000, 27.000), Point(118.000, 23.000),
-                        Point(110.000, 19.949)]
+L_INSIDE_MEDIAN_LINE = [Point(120.000, 45.000), Point(120.647, 45.000),
+                        Point(122.000, 27.000), Point(120.000, 23.000),
+                        Point(120.000, 19.949)]
 
 N_HOLDING_ZONE = [Point(130.0800, 22.8486),
                   Point(131.7491, 21.9493),
@@ -280,8 +280,14 @@ N_HOLDING_ZONE = [Point(130.0800, 22.8486),
                   Point(128.4109, 20.1507),
                   Point(128.4109, 21.9493)]
 
-# TODO: Define zone P
-P_PRIMARY_HUNTING_ZONE = []
+P_PRIMARY_HUNTING_ZONE = [
+    Point(122.263, 24.978),
+    Point(122.87, 25.26),
+    Point(122.43, 24.25),
+    Point(123.48, 22.27),
+    Point(120.437, 20.874),
+    Point(121.140, 21.897)
+]
 
 # Landmasses
 TAIWAN_COLOR = "0x015417"
@@ -318,3 +324,5 @@ PHILIPPINES = Polygon(name="philippines", points=PHILIPPINES_POINTS, color=OTHER
 OTHER_LAND = [KOREA, JEJUDO, PHILIPPINES]
 
 CHINA = Polygon(name="china", points=CHINA_POINTS, color=CHINA_COLOR)
+
+LAND_MASSES = TAIWAN_AND_ISLANDS + JAPAN_AND_ISLANDS + OTHER_LAND

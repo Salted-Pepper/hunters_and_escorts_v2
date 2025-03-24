@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from abc import abstractmethod
 from multiprocessing import cpu_count
 import concurrent.futures
@@ -105,7 +107,7 @@ class Manager:
                                                    for base in self.bases])[0]
 
     @abstractmethod
-    def select_zone_to_patrol(self) -> None:
+    def select_zone_to_patrol(self, agent) -> None:
         pass
 
 
@@ -137,7 +139,7 @@ class EscortManager(Manager):
     def activate_agent(self, agents: list) -> None:
         pass
 
-    def select_zone_to_patrol(self) -> None:
+    def select_zone_to_patrol(self, agent) -> None:
         pass
 
 
@@ -200,7 +202,7 @@ class MerchantManager(Manager):
     def activate_agent(self, agents: list) -> None:
         pass
 
-    def select_zone_to_patrol(self) -> Zone:
+    def select_zone_to_patrol(self, agent) -> Zone:
         pass
 
 
@@ -255,10 +257,20 @@ class ChinaNavyManager(Manager):
 
     def activate_agent(self, agents: list) -> None:
         agent = random.choice(agents)
-        agent.activated = True
+        zone = self.select_zone_to_patrol(agent)
 
-        zone = self.select_zone_to_patrol()
+        if zone is None:
+            return
+
+        agent.activate()
         agent.go_to_patrol(zone)
 
-    def select_zone_to_patrol(self) -> Zone:
-        pass
+    def select_zone_to_patrol(self, agent) -> Zone | None:
+        set_assignment = settings.zone_assignment_hunter[agent.service]
+        zones = list(set_assignment.keys())
+        share = list(set_assignment.values())
+        if sum(share) == 0:
+            return None
+        selected_zone = random.choices(zones, share)[0]
+        return selected_zone
+

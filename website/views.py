@@ -71,21 +71,31 @@ def settings_page():
 
 @views.route('/assignment', methods=['GET', 'POST'])
 def assignment():
+    """
+    Creates Assignment tables.
+    In Javascript we refer to the zones just by name, in Python we store it under the zone objects itself,
+    hence the transformations in the data passed through the HTML render.
+    :return:
+    """
     global last_zone_assignment_update
-    current_rules = {"china": settings.zone_assignment_hunter,
-                     "coalition": settings.zone_assignment_coalition}
+    hunter_dict = settings.zone_assignment_hunter
+    coalition_dict = settings.zone_assignment_coalition
+    current_rules = {"china": {agent: {zone.name: hunter_dict[agent][zone]
+                                       for zone in hunter_dict[agent].keys()}
+                               for agent in hunter_dict.keys()},
+                     "coalition": {agent: {zone.name: coalition_dict[agent][zone]
+                                           for zone in coalition_dict[agent].keys()}
+                                   for agent in coalition_dict.keys()}}
 
     if request.method == "POST":
         data = request.form
 
         print("Updating Zone Assignment...")
-        hunter_dict = settings.zone_assignment_hunter
-        coalition_dict = settings.zone_assignment_coalition
 
         for agent in hunter_dict:
             for zone in hunter_dict[agent]:
                 old_val = hunter_dict[agent][zone]
-                new_val = float(data.get(f"select-{agent}-{zone}"))
+                new_val = float(data.get(f"select-{agent}-{zone.name}"))
                 hunter_dict[agent][zone] = new_val
                 if old_val != new_val:
                     print(f"Setting {agent} - {zone} to {hunter_dict[agent][zone]}")
@@ -93,7 +103,7 @@ def assignment():
         for agent in coalition_dict:
             for zone in coalition_dict[agent]:
                 old_val = coalition_dict[agent][zone]
-                new_val = float(data.get(f"select-{agent}-{zone}"))
+                new_val = float(data.get(f"select-{agent}-{zone.name}"))
                 coalition_dict[agent][zone] = new_val
                 if old_val != new_val:
                     print(f"Setting {agent} - {zone} to {coalition_dict[agent][zone]}")

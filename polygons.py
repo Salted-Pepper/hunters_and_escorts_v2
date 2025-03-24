@@ -18,9 +18,12 @@ class Polygon:
         self.max_y = None
         self.calculate_bounds()
 
+    def __repr__(self) -> str:
+        return f"Polygon {self.name} at {str(self.points)}"
+
     def __str__(self) -> str:
         if self.name is None:
-            return f"Polygon at {str(self.points)}"
+            return f"Unnamed polygon at {self.points}"
         else:
             return self.name
 
@@ -60,6 +63,7 @@ class Polygon:
         self.max_y = max_y
 
     def get_sample_point(self) -> Point:
+        # TODO: Improve this selection by updating the polygons
         while True:
             p = Point(x=random.uniform(self.min_x, self.max_x), y=random.uniform(self.min_y, min(40, self.max_y)))
             if self.contains_point(p):

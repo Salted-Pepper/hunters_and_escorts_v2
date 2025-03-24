@@ -263,9 +263,9 @@ hunter_target_rules = {hunter_agent: {coalition_agent: False for coalition_agent
                        for hunter_agent in cs.HUNTER_TYPES}
 
 # ---- Zone Assignment Rules ----
-zone_assignment_hunter = {agent_type: {zone.name: 0 for zone in ZONES}
+zone_assignment_hunter = {agent_type: {zone: 1 / len(ZONES) for zone in ZONES}
                           for agent_type in cs.HUNTER_TYPES}
-zone_assignment_coalition = {agent_type: {zone.name: 0 for zone in ZONES}
+zone_assignment_coalition = {agent_type: {zone: 1 / len(ZONES) for zone in ZONES}
                              for agent_type in cs.COALITION_TYPES
                              if agent_type not in [cs.COALITION_TW_MERCHANT,
                                                    cs.COALITION_JP_MERCHANT,

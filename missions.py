@@ -61,7 +61,7 @@ class Travel(Mission):
         self.next_mission = next_mission
         self.next_settings = next_settings
 
-        if issubclass(type(target), Agent):
+        if hasattr(target, 'location'):
             self.location = target.location
         else:
             self.location = target
@@ -75,9 +75,8 @@ class Travel(Mission):
         outcome = self.agent.move_through_route()
 
         if outcome == "Reached End Of Route":
-            print(f"Reached Destination - Setting agent from {self} to {self.next_mission}")
+            self.agent.mission.complete()
             self.agent.mission = self.next_mission(**self.next_settings)
-            self.agent.mission.execute()
         elif outcome == "Spent Turn Movement":
             pass
         else:
