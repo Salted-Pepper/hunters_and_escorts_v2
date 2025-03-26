@@ -39,6 +39,7 @@ def handle_connect():
 
 @socket.on('start')
 def start_simulation():
+    send_log("Continuing Simulation...")
     cs.simulation_running = True
     cs.world.time_delta = settings.time_delta
     settings.simulation_end_time += settings.simulation_period
@@ -51,6 +52,12 @@ def take_time_step(world: World):
     world.simulate_step()
     agents = world.all_agents
     socket.emit('update_plot', [agent.to_dict() for agent in agents])
+
+
+def send_log(text: str):
+    # TODO: Push Logs Through this
+    global socket
+    socket.emit('update_logs', text)
 
 
 def start_app():

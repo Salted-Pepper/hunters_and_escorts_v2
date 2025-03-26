@@ -1,5 +1,9 @@
+from copy import copy
+
 from points import Point
 from polygons import Polygon
+import constants as cs
+from itertools import pairwise
 
 TAIWAN_POINTS = [Point(120.71, 21.93), Point(120.86, 21.90),
                  Point(120.89, 22.29), Point(121.17, 22.75),
@@ -289,6 +293,10 @@ P_PRIMARY_HUNTING_ZONE = [
     Point(121.140, 21.897)
 ]
 
+ALL_ZONES = [A_ALL_ZONES, B_TAIWAN_CONT, C_TAIWAN_TERRITORIAL, D_JAPAN_CONT, E_JAPAN_TERRITORIAL, F_FILIPINO_CONT,
+             G_FILIPINO_TERRITORIAL, H_OUTSIDE_10_DASH, I_INSIDE_10_DASH, J_TAIWAN_FILIPINO, K_TAIWAN_JAPAN,
+             L_INSIDE_MEDIAN_LINE, N_HOLDING_ZONE]
+
 # Landmasses
 TAIWAN_COLOR = "0x015417"
 JAPAN_COLOR = "0xffffff"
@@ -326,3 +334,33 @@ OTHER_LAND = [KOREA, JEJUDO, PHILIPPINES]
 CHINA = Polygon(name="china", points=CHINA_POINTS, color=CHINA_COLOR)
 
 LAND_MASSES = TAIWAN_AND_ISLANDS + JAPAN_AND_ISLANDS + OTHER_LAND
+ALL_MASSES = LAND_MASSES + [CHINA]
+
+
+def set_points_to_bounds(polygon) -> Polygon:
+    for point in polygon.points:
+        fix_point_to_edge(point)
+
+    new_points = copy(polygon.points)
+    for i, j in pairwise(polygon.points):
+        if i == j:
+            new_points.remove(i)
+    polygon.points = new_points
+    polygon.calculate_bounds()
+    return polygon
+
+
+def fix_point_to_edge(point: Point) -> None:
+    if point.x < cs.MIN_LAT:
+        point.x = cs.MIN_LAT
+    elif point.x > cs.MAX_LAT:
+        point.x = cs.MAX_LAT
+
+    if point.y < cs.MIN_LONG:
+        point.y = cs.MIN_LONG
+    elif point.y > cs.MAX_LONG:
+        point.y = cs.MAX_LONG
+
+
+for landmass in ALL_MASSES:
+    set_points_to_bounds(landmass)

@@ -81,7 +81,7 @@ function updatePlot(agents) {
 //        TODO: MAKE THIS ACTUAL SPRITES INSTEAD OF GRAPHICS https://github.com/pixijs/pixijs/wiki/v4-Performance-Tips
 //              https://pixijs.com/8.x/examples/sprite/basic
             let sprite = new PIXI.Graphics();
-            sprite.beginFill(0x00ff00).drawCircle(0, 0, 2).endFill();
+            sprite.beginFill(agent.color).drawCircle(0, 0, 2).endFill();
             sprite.x = agent.x;
             sprite.y = agent.y;
             app.stage.addChild(sprite);
@@ -99,6 +99,11 @@ function updatePlot(agents) {
     });
 }
 
+function updateLog(text) {
+    var txt = document.getElementById('sim-logs');
+    txt.value += text.concat("\n")
+}
+
 updatePlot(agent_data)
 
 convertCoordsToCanvas(landmasses, bases);
@@ -106,4 +111,5 @@ placeLandmasses(app, landmasses);
 placeBases(app, bases);
 
 socket.on("update_plot", (data) => updatePlot(data));
+socket.on("update_logs", (data) => updateLog(data));
 

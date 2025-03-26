@@ -1,6 +1,6 @@
 from __future__ import annotations
-
 from abc import abstractmethod
+import copy
 
 import settings
 from bases import Base
@@ -75,6 +75,8 @@ class Agent:
         self.remaining_maintenance_time = 0
 
         # ---- Ammunition ----
+        self.armed = False
+
         self.air_ammo_max = None
         self.surf_ammo_max = None
         self.sub_ammo_max = None
@@ -85,7 +87,7 @@ class Agent:
 
         # ---- Mission ----
         self.mission = None
-        self.involved_missions = None
+        self.involved_missions = []
 
         # ---- Display ----
         self.color = None
@@ -122,6 +124,8 @@ class Agent:
     def generate_route(self, destination: Point = None) -> None:
         self.route = routes.create_route(start=self.location,
                                          end=destination)
+        if self.route is None:
+            raise ValueError(f"Failed to generate Route")
 
     def set_turn_movement(self) -> None:
         self.movement_left_in_turn = self.speed_current * settings.time_delta
@@ -137,6 +141,9 @@ class Agent:
             iterations += 1
             if iterations > settings.ITERATION_LIMIT:
                 raise TimeoutError(f"Exceeded Iteration limit while moving through Route")
+
+            if self.route is None:
+                raise ValueError(f"No Route is set")
 
             next_point = self.route.next_point()
             if next_point is None:
@@ -155,6 +162,7 @@ class Agent:
                 new_y = self.location.y + part_travelled * (next_point.y - self.location.y)
                 self.location = Point(new_x, new_y)
                 self.movement_left_in_turn = 0
+
         return "Spent Turn Movement"
 
     def reach_and_return(self, location: Point) -> bool:
@@ -203,7 +211,8 @@ class Agent:
         self.sub_ammo_current = self.sub_ammo_max
 
     def remove_from_missions(self):
-        for mission in self.involved_missions:
+        involved_missions = copy.copy(self.involved_missions)
+        for mission in involved_missions:
             mission.remove_agent_from_mission(self)
 
     def check_if_target_in_legal_zone(self) -> None:
@@ -260,6 +269,10 @@ class Agent:
     def observe(self, agents: list[Agent]) -> None:
         pass
 
+    @abstractmethod
+    def track(self, target: Agent) -> None:
+        pass
+
     def go_to_patrol(self, zone: zones.Zone) -> None:
         self.mission = missions.Travel(agent=self,
                                        target=zone.sample_patrol_location(),
@@ -281,11 +294,15 @@ class Agent:
                 self.generate_route(destination=selected_location)
 
     def select_next_patrol_location(self) -> Point:
-        locations = [self.assigned_zone.sample_patrol_location() for _ in range(5)]
+        locations = [self.assigned_zone.sample_patrol_location() for _ in range(3)]
 
         options = {}
         for location in locations:
             receptor = cs.world.receptor_grid.get_receptor_at_location(location)
+
+            if receptor is None:
+                print(f"{self} - assigned zone: {self.assigned_zone}")
+                raise ValueError(f"Failed to fetch receptor at {location}")
 
             if self.team == 1:
                 value = receptor.coalition_pheromones

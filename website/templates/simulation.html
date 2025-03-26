@@ -14,22 +14,38 @@
     let agent_data = {{ agents | tojson }};
 </script>
 
-<div class="larger-centered-container">
+<script src="{{ url_for('static', filename='simulation.js') }}" defer>
+</script>
+
+
+<div class="wide-centered-container">
     <h4 align="center"> Simulation </h4>
+<!--  Left Div  -->
+    <div class="left-container">
 
-
-    <button type="submit" class="btn btn-primary" onclick="startSimulation()">
-        Continue Simulation
-    </button>
-    <br>
-    <br>
-
-
-    <div class="simulation-container">
+        <div class="simulation-container">
+        </div>
+        <br>
+        <br>
 
     </div>
-    <script src="{{ url_for('static', filename='simulation.js') }}" defer>
-    </script>
+<!--  Right Div  -->
+    <div class="right-container">
+
+        <br>
+        <button type="submit" class="btn btn-primary" onclick="startSimulation()">
+        Continue Simulation
+        </button>
+
+        <br>
+        <br>
+
+        <h6 align="left">Logs</h6>
+
+        <textarea id="sim-logs" autofocus readonly class="logs"></textarea>
+
+    </div>
 </div>
+
 
 {% endblock %}

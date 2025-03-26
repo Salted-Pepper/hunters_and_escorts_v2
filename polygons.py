@@ -1,7 +1,7 @@
 import shapely
-from points import Point
-
 import random
+
+from points import Point
 
 
 class Polygon:

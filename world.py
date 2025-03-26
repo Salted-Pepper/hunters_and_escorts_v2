@@ -23,7 +23,8 @@ class World:
         # Geography
         self.landmasses = self.get_land_masses()
         self.china_polygon = ccs.CHINA
-        self.visibility_graph = routes.create_base_graph(self.landmasses)
+        self.visibility_graph_air = routes.create_base_graph(self.landmasses)
+        self.visibility_graph_water = routes.create_base_graph(self.landmasses + [self.china_polygon])
         self.zones = zones.ZONES
 
         # Receptor Set Up
@@ -31,7 +32,6 @@ class World:
         self.initiate_receptors()
 
         # Managers
-        # TODO: Add Updated Managers
         self.managers = []
         self.all_agents = []
         self.initiate_managers()

@@ -32,6 +32,8 @@ class Manager:
 
         self.utilisation_rate = None
 
+        self.agents_to_detect = []
+
     def __str__(self):
         return self.name
 
@@ -74,31 +76,35 @@ class Manager:
     def check_if_agents_have_to_return(self) -> None:
         relevant_agents = [agent for agent in self.active_agents if not isinstance(agent.mission, Return)]
 
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            futures = [executor.submit(agent.can_continue) for agent in relevant_agents]
-            concurrent.futures.wait(futures)
+        # with concurrent.futures.ThreadPoolExecutor() as executor:
+        #     futures = [executor.submit(agent.can_continue) for agent in relevant_agents]
+        #     concurrent.futures.wait(futures)
+
+        [agent.can_continue() for agent in relevant_agents]
 
     def have_agents_observe(self) -> None:
         observing_agents = [agent for agent in self.active_agents if isinstance(agent.mission, Observe)]
 
         # TODO: Handle exception for boarded Merchants that might remain under merchant Manager
         #  (or put under separate manager?)
-        agents_to_detect = [agent
-                            for manager in cs.world.managers if manager.team != self.team
-                            for agent in manager.active_agents]
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            futures = [executor.submit(agent.mission.execute, agents_to_detect) for agent in observing_agents]
-            concurrent.futures.wait(futures)
+        self.agents_to_detect = [agent
+                                 for manager in cs.world.managers if manager.team != self.team
+                                 for agent in manager.active_agents]
+        # with concurrent.futures.ThreadPoolExecutor() as executor:
+        #     futures = [executor.submit(agent.mission.execute, self.agents_to_detect) for agent in observing_agents]
+        #     concurrent.futures.wait(futures)
+
+        [agent.mission.execute(self.agents_to_detect) for agent in observing_agents]
 
     def continue_other_missions(self) -> None:
         other_agents = [agent for agent in self.active_agents
                         if not isinstance(agent.mission, Observe)]
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=cpu_count() - 1) as executor:
-            futures = [executor.submit(agent.mission.execute) for agent in other_agents]
-            concurrent.futures.wait(futures)
+        # with concurrent.futures.ThreadPoolExecutor(max_workers=cpu_count() - 1) as executor:
+        #     futures = [executor.submit(agent.mission.execute) for agent in other_agents]
+        #     concurrent.futures.wait(futures)
 
-        # [agent.mission.execute() for agent in other_agents]
+        [agent.mission.execute() for agent in other_agents]
 
     def sample_random_base(self) -> Base:
         return random.choices(self.bases, weights=[base.agent_share
@@ -171,7 +177,8 @@ class MerchantManager(Manager):
 
     def generate_merchants(self, merchant_type: str, number: int):
         for _ in range(number):
-            new_merchant = Merchant(self, model=merchant_type, base=self.sample_random_base())
+            new_merchant = Merchant(self, model=merchant_type,
+                                    base=self.sample_random_base(), country=self.sample_country())
             self.active_agents.append(new_merchant)
             cs.world.all_agents.append(new_merchant)
 
@@ -205,6 +212,12 @@ class MerchantManager(Manager):
     def select_zone_to_patrol(self, agent) -> Zone:
         pass
 
+    @staticmethod
+    def sample_country() -> str:
+        values = list(settings.merchant_country_distribution.keys())
+        probabilities = list(settings.merchant_country_distribution.values())
+        return random.choices(values, probabilities)[0]
+
 
 class ChinaNavyManager(Manager):
     def __init__(self):
@@ -222,10 +235,10 @@ class ChinaNavyManager(Manager):
                 self.inactive_agents.append(new_ship)
 
     def initiate_bases(self) -> None:
-        self.bases = [Base(name="Shanghai", location=Point(122.747, 31.306), agent_share=0.25),
-                      Base(name="Taizhou", location=Point(122.037, 28.231), agent_share=0.25),
-                      Base(name="Quanzhou", location=Point(119.039, 24.684), agent_share=0.25),
-                      Base(name="Fuzhou", location=Point(119.994, 26.061), agent_share=0.25),
+        self.bases = [Base(name="Shanghai", location=Point(122.70, 31.306), agent_share=0.25),
+                      Base(name="Taizhou", location=Point(122.03, 28.231), agent_share=0.25),
+                      Base(name="Quanzhou", location=Point(119.04, 24.684), agent_share=0.25),
+                      Base(name="Fuzhou", location=Point(119.99, 26.061), agent_share=0.25),
                       ]
 
     def pre_turn_actions(self) -> None:
@@ -273,4 +286,3 @@ class ChinaNavyManager(Manager):
             return None
         selected_zone = random.choices(zones, share)[0]
         return selected_zone
-

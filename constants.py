@@ -44,12 +44,12 @@ rcs_dict = {STEALTHY: 0.25,
             LARGE: 1.5}
 
 # Detection Skill
-DET_BASIC = "Basic Detection"
-DET_ADV = "Advanced Detection"
+DET_BASIC = "Basic"
+DET_ADV = "Advanced"
 
 # Attack Skill
-ATT_BASIC = "Basic Attack"
-ATT_ADV = "Advanced Attack"
+ATT_BASIC = "Basic"
+ATT_ADV = "Advanced"
 
 # Merchant Reactions
 COMPLY = "compliant"

@@ -26,8 +26,10 @@ class Ship(Agent):
 
 
 class Merchant(Ship):
-    def __init__(self, manager, model: str, base: Base):
+    def __init__(self, manager, model: str, base: Base, country: str):
         super().__init__(manager, model, base)
+        self.color = "0x267326"
+        self.country = country
         self.boarded = False
 
         self.entry_point = None
@@ -36,8 +38,13 @@ class Merchant(Ship):
         self.start_delivering_goods()
         self.activated = True
 
-        self.visibility = None
         self.initiate_model()
+
+    def __repr__(self):
+        return f"Merchant {self.agent_id} at {self.location} - on {self.mission} - {self.activated}"
+
+    def __str__(self):
+        return f"Merchant {self.agent_id} at {self.location} - on {self.mission} - {self.activated}"
 
     def sample_entry_point(self) -> None:
         x = cs.MAX_LAT
@@ -52,7 +59,10 @@ class Merchant(Ship):
         attribute = settings.MERCHANT_INFO[self.model]
         self.dwt = attribute["DWT"]
         self.set_speed(attribute["Speed (km/h)"])
-        self.visibility = attribute["Visibility"]
+        self.ship_visibility = attribute["Visibility"]
+        self.air_visibility = attribute["Visibility"]
+        self.sub_visibility = attribute["Visibility"]
+        self.movement_left_in_turn = self.speed_current * settings.time_delta
 
     def set_speed(self, speed: float) -> None:
         self.speed_max = speed
@@ -73,13 +83,12 @@ class Merchant(Ship):
         pass
 
     def enter_base(self) -> None:
+        self.manager.active_agents.remove(self)
+        self.manager.inactive_agents.append(self)
+
         if not self.boarded:
-            self.manager.active_agents.remove(self)
-            self.manager.inactive_agents.append(self)
             self.base.receive_agent(self)
             self.set_up_for_maintenance()
-        else:
-            self.manager.active_agents.remove(self)
 
         self.mission.complete()
         self.activated = False
@@ -97,11 +106,36 @@ class Merchant(Ship):
     def observe(self, agents: list[Agent]) -> None:
         pass
 
+    def track(self, target: Agent) -> None:
+        pass
+
+    def is_boarded(self, boarder: Agent) -> None:
+        print(f"{self} was boarded by {boarder}.")
+        self.mission.abort()
+        self.remove_from_missions()
+
+        self.color = boarder.color
+        self.team = boarder.team
+
+        if self.team == 1:
+            self.boarded = False
+            location = self.base
+        elif self.team == 2:
+            self.boarded = True
+            location = boarder.base.location
+        else:
+            raise ValueError(f"Unknown team {self.team}")
+
+        missions.Return(self, target=location)
+
+    def get_resistance_level(self) -> str:
+        return settings.merchant_rules[settings.COALITION_SELECTED_LEVEL][self.country]
+
 
 class ChineseShip(Ship):
     def __init__(self, manager, model: str, base: Base):
         super().__init__(manager, model, base)
-
+        self.color = "0xb30000"
         self.aws_enabled = False
         self.helicopter = False
 
@@ -109,6 +143,7 @@ class ChineseShip(Ship):
         model_data = cs.CHINA_NAVY_DATA[self.model]
         self.team = model_data["team"]
         self.service = model_data["service"]
+        self.armed = True if model_data["Armed"] == "Y" else False
 
         self.ship_visibility = model_data["SurfaceVisibility"]
         self.air_visibility = model_data["AirVisibility"]
@@ -119,6 +154,7 @@ class ChineseShip(Ship):
         self.speed_current = self.speed_cruising
         self.dwt = model_data["Displacement"]
         self.endurance = model_data["Endurance"]
+        self.remaining_endurance = self.endurance
 
         self.ship_detection_skill = model_data["Ship Detection Skill"]
         self.air_detection_skill = model_data["Air Detection Skill"]
@@ -140,7 +176,6 @@ class ChineseShip(Ship):
         distance = self.location.distance_to_point(agent.location)
 
         self.spread_pheromones(detection_range)
-
         if distance < detection_range:
             return True
         else:
@@ -175,8 +210,10 @@ class ChineseShip(Ship):
 
     def observe(self, agents: list[Agent]) -> None:
         self.make_patrol_move()
-        print(f"Agent {self} is observing")
         for agent in agents:
+            if agent.team == self.team:
+                continue
+
             if issubclass(type(agent), Ship):
                 detected = self.surface_detection(agent)
             elif issubclass(type(agent), Aircraft):
@@ -190,3 +227,61 @@ class ChineseShip(Ship):
                 self.mission.complete()
                 missions.Track(self, agent)
                 return
+
+    def track(self, target: Agent) -> None:
+        self.generate_route(target.location)
+        self.move_through_route()
+
+        if settings.CHINA_SELECTED_LEVEL == 1 and isinstance(target, Merchant):
+            self.prepare_to_board(target)
+        else:
+            self.go_to_attack(target)
+
+    def request_support(self) -> None:
+        pass
+
+    def prepare_to_board(self, target: Merchant) -> None:
+        if self.location.distance_to_point(target.location) > 12:
+            return
+        else:
+            successful = self.attempt_boarding(target)
+
+        if successful:
+            self.mission.complete()
+            target.is_boarded(self)
+            missions.Guard(self, target)
+        else:
+            # TODO: Set up rules for attacking merchants here
+            pass
+
+    def attempt_boarding(self, target) -> bool:
+        resistance_level = target.get_resistance_level()
+        receptor = cs.world.receptor_grid.get_receptor_at_location(target.location)
+        base_success_rate = 0.22
+
+        if receptor.sea_state > 4:
+            return False
+        elif receptor.sea_state == 3:
+            base_success_rate *= 0.8
+
+        if self.service == cs.HUNTER_CCG or self.service == cs.HUNTER_MSA:
+            base_success_rate *= 1.2
+
+        if self.helicopter:
+            base_success_rate *= 1.2
+
+        if resistance_level == cs.COMPLY:
+            base_success_rate *= 1.6
+        elif resistance_level == cs.RESIST:
+            base_success_rate *= 0.7
+
+        if random.uniform(0, 1) < base_success_rate:
+            return True
+        else:
+            return False
+
+    def go_to_attack(self, target: Agent) -> None:
+        if not self.armed:
+            self.request_support()
+
+        # TODO: Create attack interaction here
