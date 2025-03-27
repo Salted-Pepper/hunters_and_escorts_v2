@@ -94,7 +94,7 @@ class Agent:
 
         self.initiate_model()
 
-    def __str__(self):
+    def __repr__(self):
         return f"Agent {self.agent_id} of {type(self)} - on mission: {self.mission}"
 
     def __eq__(self, other):
@@ -109,7 +109,8 @@ class Agent:
                 "agent_id": self.agent_id,
                 "color": self.color,
                 "activated": self.activated,
-                "mission": str(self.mission)}
+                "mission": str(self.mission),
+                "type": str(self.manager)}  # TODO: Make sprite reliant on other property than manager
 
     @abstractmethod
     def initiate_model(self) -> None:
@@ -314,17 +315,21 @@ class Agent:
             options[location] = value
         return min(options, key=options.get)
 
-    def spread_pheromones(self, radius: float) -> None:
-        receptors = cs.world.receptor_grid.select_receptors_in_radius(self.location, radius)
-        receptors = [receptor for receptor in receptors if receptor.decay]
+    def spread_pheromones(self, location) -> None:
+        # TODO: Consider set up for pheromone spread (based on radius or just closest - and if so what radius)
+        # radius: float
+        # receptors = cs.world.receptor_grid.select_receptors_in_radius(self.location, radius)
+        # receptors = [receptor for receptor in receptors if receptor.decay]
+        #
+        # for receptor in receptors:
+        #     assigned_pheromones = (distance/radius) * cs.PHEROMONE_SPREAD
 
-        for receptor in receptors:
-            distance = self.location.distance_to_point(receptor.location)
-            assigned_pheromones = (distance/radius) * cs.PHEROMONE_SPREAD
+        receptor = cs.world.receptor_grid.get_receptor_at_location(location)
+        assigned_pheromones = cs.PHEROMONE_SPREAD
 
-            if self.team == 1:
-                receptor.coalition_pheromones += assigned_pheromones
-            elif self.team == 2:
-                receptor.china_pheromones += assigned_pheromones
-            else:
-                raise ValueError(f"{self} - Invalid Team {self.team}")
+        if self.team == 1:
+            receptor.coalition_pheromones += assigned_pheromones
+        elif self.team == 2:
+            receptor.china_pheromones += assigned_pheromones
+        else:
+            raise ValueError(f"{self} - Invalid Team {self.team}")

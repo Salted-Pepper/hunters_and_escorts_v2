@@ -85,8 +85,6 @@ class Manager:
     def have_agents_observe(self) -> None:
         observing_agents = [agent for agent in self.active_agents if isinstance(agent.mission, Observe)]
 
-        # TODO: Handle exception for boarded Merchants that might remain under merchant Manager
-        #  (or put under separate manager?)
         self.agents_to_detect = [agent
                                  for manager in cs.world.managers if manager.team != self.team
                                  for agent in manager.active_agents]
@@ -121,6 +119,9 @@ class EscortManager(Manager):
     def __init__(self):
         super().__init__()
         self.team = 1
+
+    def __str__(self):
+        return "Escort Manager"
 
     def pre_turn_actions(self) -> None:
         for agent in self.active_agents:

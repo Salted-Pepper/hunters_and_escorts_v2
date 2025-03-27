@@ -3,6 +3,9 @@ from __future__ import annotations
 from abc import abstractmethod
 from typing import Type, TYPE_CHECKING
 
+import time
+import tracker
+
 if TYPE_CHECKING:
     from agents import Agent
     from points import Point
@@ -31,7 +34,6 @@ class Mission:
             self.target.involved_missions.append(self)
 
     def remove_mission_status(self) -> None:
-        print(f"Removing mission status from {self}")
         self.agent.mission = None
 
         if hasattr(self.target, 'involved_missions'):
@@ -76,7 +78,10 @@ class Travel(Mission):
     def __repr__(self):
         return f"Mission Travel {self.mission_id}"
 
-    def execute(self) -> None:
+    def execute(self, *args) -> None:
+        t_0 = time.time()
+        if len(args) > 0:
+            raise ValueError(f"{self} received detection {args} for Travel")
         outcome = self.agent.move_through_route()
 
         if outcome == "Reached End Of Route":
@@ -86,6 +91,8 @@ class Travel(Mission):
             pass
         else:
             raise ValueError(f"Unknown Outcome for Travelling - {outcome}")
+
+        tracker.USED_TIME["Travel"] += time.time() - t_0
 
     def change(self, new_mission) -> None:
         pass
@@ -118,7 +125,9 @@ class Attack(Mission):
         return f"Mission Attack {self.mission_id}"
 
     def execute(self) -> None:
-        pass
+        t_0 = time.time()
+
+        tracker.USED_TIME["Attack"] += time.time() - t_0
 
     def change(self, new_mission) -> None:
         pass
@@ -138,14 +147,18 @@ class Track(Mission):
     Agent actively following another agent, which calls in or awaits support.
     """
     def __init__(self, agent: Agent, target: Agent):
-        print(f"{agent.agent_id} started tracking {target.agent_id}")
         super().__init__(agent, target)
+        self.agent.generate_route(target.location)
 
     def __repr__(self):
         return f"Mission Track {self.mission_id}"
 
     def execute(self) -> None:
+        t_0 = time.time()
+
         self.agent.track(self.target)
+
+        tracker.USED_TIME["Track"] += time.time() - t_0
 
     def change(self, new_mission) -> None:
         pass
@@ -158,7 +171,6 @@ class Track(Mission):
         self.agent.mission = Observe(self.agent, self.agent.assigned_zone.sample_patrol_location())
 
     def remove_agent_from_mission(self, agent: Agent) -> None:
-        print(f"Attempting to remove {agent} from {self}")
         if agent == self.target:
             self.abort()
 
@@ -174,9 +186,13 @@ class Observe(Mission):
         return f"Mission Observe {self.mission_id}"
 
     def execute(self, agents_to_observe: list[Agent] = None) -> None:
+        t_0 = time.time()
+
         if agents_to_observe is None:
             agents_to_observe = self.agent.manager.agents_to_detect
         self.agent.observe(agents_to_observe)
+
+        tracker.USED_TIME["Observe"] += time.time() - t_0
 
     def change(self, new_mission) -> None:
         pass
@@ -202,7 +218,9 @@ class Guard(Mission):
         return f"Mission Guard {self.mission_id}"
 
     def execute(self) -> None:
-        pass
+        t_0 = time.time()
+
+        tracker.USED_TIME["Guard"] += time.time() - t_0
 
     def change(self, new_mission) -> None:
         pass
@@ -238,6 +256,7 @@ class Return(Mission):
         return f"Mission Return {self.mission_id}"
 
     def execute(self) -> None:
+        t_0 = time.time()
         outcome = self.agent.move_through_route()
         if outcome == "Reached End Of Route":
             self.agent.enter_base()
@@ -246,6 +265,7 @@ class Return(Mission):
             pass
         else:
             raise ValueError(f"Unknown Outcome for Travelling - {outcome}")
+        tracker.USED_TIME["Return"] += time.time() - t_0
 
     def change(self, new_mission) -> None:
         pass
@@ -275,7 +295,9 @@ class Holding(Mission):
         return f"Mission Holding {self.mission_id}"
 
     def execute(self) -> None:
-        pass
+        t_0 = time.time()
+
+        tracker.USED_TIME["Holding"] += time.time() - t_0
 
     def change(self, new_mission) -> None:
         pass
@@ -302,6 +324,8 @@ class Depart(Mission):
         return f"Mission Depart {self.mission_id}"
 
     def execute(self) -> None:
+        t_0 = time.time()
+
         outcome = self.agent.move_through_route()
         if outcome == "Reached End Of Route":
             self.agent.leave_world()
@@ -309,6 +333,7 @@ class Depart(Mission):
             pass
         else:
             raise ValueError(f"Unknown Outcome for Travelling - {outcome}")
+        tracker.USED_TIME["Depart"] += time.time() - t_0
 
     def change(self, new_mission) -> None:
         pass

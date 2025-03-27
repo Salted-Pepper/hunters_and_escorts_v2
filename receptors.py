@@ -1,6 +1,6 @@
-import datetime
-import logging
-import os
+# import datetime
+# import logging
+# import os
 import math
 import numpy as np
 
@@ -9,12 +9,12 @@ import general_maths as gm
 from points import Point
 from polygons import Polygon
 
-date = datetime.date.today()
-logging.basicConfig(level=logging.DEBUG, filename=os.path.join(os.getcwd(),
-                    'logs/receptor_log_' + str(date) + '.log'),
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt="%H:%M:%S")
-logger = logging.getLogger("RECEPTORS")
-logger.setLevel(logging.DEBUG)
+# date = datetime.date.today()
+# logging.basicConfig(level=logging.DEBUG, filename=os.path.join(os.getcwd(),
+#                     'logs/receptor_log_' + str(date) + '.log'),
+#                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt="%H:%M:%S")
+# logger = logging.getLogger("RECEPTORS")
+# logger.setLevel(logging.DEBUG)
 
 
 class Receptor:

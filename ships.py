@@ -110,7 +110,6 @@ class Merchant(Ship):
         pass
 
     def is_boarded(self, boarder: Agent) -> None:
-        print(f"{self} was boarded by {boarder}.")
         self.mission.abort()
         self.remove_from_missions()
 
@@ -175,7 +174,6 @@ class ChineseShip(Ship):
         detection_range = cs.CHINA_NAVY_DETECTING_SHIP[self.ship_detection_skill][agent_size]
         distance = self.location.distance_to_point(agent.location)
 
-        self.spread_pheromones(detection_range)
         if distance < detection_range:
             return True
         else:
@@ -185,8 +183,6 @@ class ChineseShip(Ship):
         agent_size = agent.ship_visibility
         detection_range = cs.CHINA_NAVY_DETECTING_AIR[self.air_detection_skill][agent_size]
         distance = self.location.distance_to_point(agent.location)
-
-        self.spread_pheromones(detection_range)
 
         if distance < detection_range:
             return True
@@ -201,8 +197,6 @@ class ChineseShip(Ship):
             detection_range = cs.CHINA_NAVY_DETECTING_SUB_NO_AWS[self.sub_detection_skill][agent_size]
         distance = self.location.distance_to_point(agent.location)
 
-        self.spread_pheromones(detection_range)
-
         if distance < detection_range:
             return True
         else:
@@ -212,6 +206,7 @@ class ChineseShip(Ship):
         self.make_patrol_move()
         for agent in agents:
             if agent.team == self.team:
+                # To handle exception for boarded merchants
                 continue
 
             if issubclass(type(agent), Ship):
@@ -228,9 +223,17 @@ class ChineseShip(Ship):
                 missions.Track(self, agent)
                 return
 
+        self.spread_pheromones(self.location)
+
     def track(self, target: Agent) -> None:
-        self.generate_route(target.location)
-        self.move_through_route()
+        if cs.world.world_time - self.route.creation_time > 1 or self.route.next_point() is None:
+            self.generate_route(target.location)
+
+        if self.location.distance_to_point(target.location) > 12:
+            self.move_through_route()
+
+        if self.location.distance_to_point(target.location) > 12:
+            return
 
         if settings.CHINA_SELECTED_LEVEL == 1 and isinstance(target, Merchant):
             self.prepare_to_board(target)

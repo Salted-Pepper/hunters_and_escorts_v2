@@ -17,6 +17,7 @@ class Route:
         self.points = points[1:]
         self.length = 0
         self.calculate_length()
+        self.creation_time = cs.world.world_time
 
     def __repr__(self) -> str:
         return str(self.points)
@@ -48,8 +49,9 @@ def is_visible(p1: Point, p2: Point, obstacles: list[Polygon]) -> bool:
     """
     line = shapely.LineString([p1.shapely, p2.shapely])
     for obs in obstacles:
-        if (line.crosses(obs.shapely)
-                or obs.shapely.contains(line)):
+        # if (line.crosses(obs.shapely)
+        #         or obs.shapely.contains(line)):
+        if obs.shrunk.intersects(line):
             return False
     return True
 
@@ -104,20 +106,6 @@ def create_route(start: Point, end: Point, air=False) -> Route:
     graph = add_point_to_graph(start, obstacles, graph)
     graph = add_point_to_graph(end, obstacles, graph)
 
-    try:
-        shortest_path = nx.shortest_path(graph, source=start, target=end, weight='weight')
-    except nx.exception.NodeNotFound as e:
-        for obstacle in obstacles:
-            if obstacle.contains_point(start):
-                print(f"{obstacle} contains start: {start} - end is {end}")
-                for zone in cs.world.zones:
-                    if end in zone.patrol_locations:
-                        print(f"{zone} contains {end}")
-            elif obstacle.contains_point(end):
-                print(f"{obstacle} contains end: {end} - start is {start}")
-                for zone in cs.world.ZONES:
-                    if start in zone.patrol_locations:
-                        print(f"{zone} contains {start}")
-        raise ArithmeticError(e)
+    shortest_path = nx.shortest_path(graph, source=start, target=end, weight='weight')
 
     return make_route_from_path(shortest_path)

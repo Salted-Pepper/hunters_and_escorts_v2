@@ -1,3 +1,5 @@
+import time
+
 import constants as cs
 import receptors
 import routes
@@ -6,8 +8,9 @@ import constant_coords as ccs
 import zones
 import weather
 from polygons import Polygon
-from agents import Agent
 from managers import MerchantManager, ChinaNavyManager
+
+import tracker
 
 
 class World:
@@ -52,16 +55,20 @@ class World:
             self.all_agents.extend(manager.inactive_agents)
 
     def update_weather_conditions(self) -> None:
+        t_0 = time.time()
+
         if self.world_time - self.last_weather_update > cs.WEATHER_UPDATE_TIME:
             self.last_weather_update = self.world_time
             weather.update_sea_states(self.receptor_grid)
 
-    def simulate_step(self) -> None:
-        self.world_time += self.time_delta
+        tracker.USED_TIME["Weather"] += time.time() - t_0
 
-        print(f"Time is {self.world_time}")
+    def simulate_step(self) -> None:
 
         self.update_weather_conditions()
+        if self.world_time % 24 == 0:
+            print(f"\nTime is {self.world_time}")
+            tracker.display_times()
 
         for manager in self.managers:
             manager.complete_base_activities()
@@ -72,3 +79,4 @@ class World:
             manager.continue_other_missions()
 
         self.receptor_grid.depreciate_pheromones()
+        self.world_time += self.time_delta

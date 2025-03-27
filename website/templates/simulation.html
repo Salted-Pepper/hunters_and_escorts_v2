@@ -22,7 +22,7 @@
     <h4 align="center"> Simulation </h4>
 <!--  Left Div  -->
     <div class="left-container">
-
+        World time is <span id="world-time">0</span>
         <div class="simulation-container">
         </div>
         <br>
@@ -31,8 +31,6 @@
     </div>
 <!--  Right Div  -->
     <div class="right-container">
-
-        <br>
         <button type="submit" class="btn btn-primary" onclick="startSimulation()">
         Continue Simulation
         </button>
@@ -43,6 +41,29 @@
         <h6 align="left">Logs</h6>
 
         <textarea id="sim-logs" autofocus readonly class="logs"></textarea>
+
+        <br>
+
+        <div id="number-logs">
+            <h6></h6>
+
+            <b>Merchants</b> <br>
+            <span id="merchant-log-seized" class="display-number">0</span> Merchants Seized<br>
+            <span id="merchant-log-sunk" class="display-number">0</span> Merchants Sunk<br>
+            <span id="merchant-log-damaged" class="display-number">0</span> Merchants Damaged<br>
+            <span id="merchant-log-arrived" class="display-number">0</span> Merchants Arrived<br>
+            <br>
+
+            <b>Escorts</b> <br>
+            <span id="escorts-log-sunk" class="display-number">0</span> Escorts Sunk<br>
+            <span id="escorts-log-damaged" class="display-number">0</span> Escorts Damaged<br>
+            <span id="escorts-log-deterred" class="display-number">0</span> Hunters Deterred<br>
+            <br>
+
+            <b>Hunters</b> <br>
+            <span id="hunters-log-sunk" class="display-number">0</span> Hunters Destroyed<br>
+            <span id="hunters-log-damaged" class="display-number">0</span> Hunters Damaged<br>
+        </div>
 
     </div>
 </div>

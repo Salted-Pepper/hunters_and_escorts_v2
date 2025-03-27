@@ -1,7 +1,8 @@
 
-const WIDTH = 800, HEIGHT = 800;
+const WIDTH = 1000, HEIGHT = 800;
 const app = new PIXI.Application({ width: WIDTH, height: HEIGHT, backgroundColor: 0x1099bb, resolution:
                                    window.devicePixelRatio || 1, antialias: true});
+
 
 let container = document.querySelector(".simulation-container");
 container.appendChild(app.view);
@@ -64,9 +65,29 @@ function placeBases(app, bases) {
     })
 }
 
+simulation_started = false;
+
 function startSimulation(){
-    console.log("Starting Simulation...")
-    socket.emit("start")
+    if(simulation_started){
+        updateLog("Continuing Simulation");
+    }
+    else{
+        simulation_started = true;
+        updateLog("Starting Simulation");
+    }
+    socket.emit("start");
+}
+
+sprite_dict = {"Merchant Manager": "static/assets/merchant_12x8.png",
+               "China Navy Manager": "static/assets/hunter_12x8.png",
+               };
+
+function createSprite(type_of_agent){
+    let sprite = PIXI.Sprite.from(sprite_dict[type_of_agent]);
+    sprite.width = 12;
+    sprite.height = 8;
+    sprite.anchor.set(0.5);
+    return sprite;
 }
 
 function updatePlot(agents) {
@@ -78,10 +99,7 @@ function updatePlot(agents) {
         agent.x = x
         agent.y = y
         if (!sprites[agent.agent_id] & agent.activated == true) {
-//        TODO: MAKE THIS ACTUAL SPRITES INSTEAD OF GRAPHICS https://github.com/pixijs/pixijs/wiki/v4-Performance-Tips
-//              https://pixijs.com/8.x/examples/sprite/basic
-            let sprite = new PIXI.Graphics();
-            sprite.beginFill(agent.color).drawCircle(0, 0, 2).endFill();
+            let sprite = createSprite(agent.type)
             sprite.x = agent.x;
             sprite.y = agent.y;
             app.stage.addChild(sprite);
@@ -101,10 +119,15 @@ function updatePlot(agents) {
 
 function updateLog(text) {
     var txt = document.getElementById('sim-logs');
-    txt.value += text.concat("\n")
+    txt.value += text.concat("\n");
 }
 
-updatePlot(agent_data)
+function updateTime(time_stamp) {
+    var txt = document.getElementById('world-time');
+    txt.textContent = time_stamp;
+}
+
+updatePlot(agent_data);
 
 convertCoordsToCanvas(landmasses, bases);
 placeLandmasses(app, landmasses);
@@ -112,4 +135,5 @@ placeBases(app, bases);
 
 socket.on("update_plot", (data) => updatePlot(data));
 socket.on("update_logs", (data) => updateLog(data));
+socket.on("update_time", (data) => updateTime(data));
 
