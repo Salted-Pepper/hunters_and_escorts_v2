@@ -10,6 +10,7 @@ from bases import Base
 from points import Point
 
 import missions
+import tracker
 
 from aircrafts import Aircraft
 from submarines import Submarine
@@ -89,6 +90,11 @@ class Merchant(Ship):
         if not self.boarded:
             self.base.receive_agent(self)
             self.set_up_for_maintenance()
+            tracker.Event(text=f"Merchant {self.agent_id} made it to {self.base.name}",
+                          event_type="Merchant Arrived")
+        else:
+            tracker.Event(text=f"Merchant {self.agent_id} has been seized.",
+                          event_type="Merchant Seized")
 
         self.mission.complete()
         self.activated = False

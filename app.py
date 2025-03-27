@@ -47,15 +47,15 @@ def start_simulation():
 
 def take_time_step(world: World):
     global socket
-    if world.world_time >= settings.simulation_end_time:
-        cs.simulation_running = False
     world.simulate_step()
     agents = world.all_agents
     socket.emit('update_plot', [agent.to_dict() for agent in agents])
     socket.emit('update_time', world.world_time)
+    if world.world_time >= settings.simulation_end_time:
+        cs.simulation_running = False
 
 
-def send_log(event: object):
+def send_log(event: dict):
     # TODO: Push Logs Through this
     global socket
     socket.emit('update_logs', event)

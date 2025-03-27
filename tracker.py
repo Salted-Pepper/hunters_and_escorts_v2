@@ -25,4 +25,5 @@ class Event:
         self.emit_event()
 
     def emit_event(self) -> None:
-        app.send_log(self)
+        app.send_log({'text': self.text,
+                      'event_type': self.event_type})

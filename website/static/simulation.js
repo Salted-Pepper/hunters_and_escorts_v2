@@ -69,11 +69,13 @@ simulation_started = false;
 
 function startSimulation(){
     if(simulation_started){
-        updateLog("Continuing Simulation");
+        var txt = document.getElementById('sim-logs');
+        txt.value = "Continuing Simulation...\n" + txt.value
     }
     else{
         simulation_started = true;
-        updateLog("Starting Simulation");
+        var txt = document.getElementById('sim-logs');
+        txt.value += "Starting Simulation...\n" + txt.value
     }
     socket.emit("start");
 }
@@ -117,9 +119,29 @@ function updatePlot(agents) {
     });
 }
 
-function updateLog(text) {
+function updateLogs(event) {
+    text = event.text
     var txt = document.getElementById('sim-logs');
-    txt.value += text.concat("\n");
+    txt.value = text.concat("\n") + txt.value;
+
+    event_type = event.event_type;
+    switch(event_type){
+        case "Merchant Seized":
+            var txt = document.getElementById('merchant-log-seized');
+            console.log(txt.innerHTML);
+            txt.innerHTML = 1 + parseInt(txt.innerHTML);
+            break;
+        case "Merchant Arrived":
+            var txt = document.getElementById('merchant-log-arrived');
+            console.log(txt.innerHTML);
+            txt.innerHTML = 1 + parseInt(txt.innerHTML);
+        case "Merchant Sunk":
+//            # TODO: work this out
+            break;
+        default:
+            console.log("No log for event type ", event_type)
+            break;
+    }
 }
 
 function updateTime(time_stamp) {
@@ -134,6 +156,6 @@ placeLandmasses(app, landmasses);
 placeBases(app, bases);
 
 socket.on("update_plot", (data) => updatePlot(data));
-socket.on("update_logs", (data) => updateLog(data));
+socket.on("update_logs", (data) => updateLogs(data));
 socket.on("update_time", (data) => updateTime(data));
 
