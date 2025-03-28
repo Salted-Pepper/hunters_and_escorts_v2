@@ -102,7 +102,7 @@ def create_route(start: Point, end: Point, air=False) -> Route:
         world_graph = cs.world.visibility_graph_water
         obstacles += [cs.world.china_polygon]
 
-    graph = copy.copy(world_graph)
+    graph = copy.deepcopy(world_graph)
     graph = add_point_to_graph(start, obstacles, graph)
     graph = add_point_to_graph(end, obstacles, graph)
 

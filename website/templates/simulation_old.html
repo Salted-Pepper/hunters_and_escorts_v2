@@ -6,14 +6,12 @@
 
 <script>
     let landmasses = {{plot_polygons | tojson}};
-    let bases = {{ plot_bases | tojson }};
+    let bases = {{ plot_bases | tojson }}
     let min_lon = {{ min_lon }};
     let max_lon = {{ max_lon }};
     let min_lat = {{ min_lat }};
     let max_lat = {{ max_lat }};
     let agent_data = {{ agents | tojson }};
-    let time_delta  = {{ time_delta }};
-    let end_time = {{ max_time }};
 </script>
 
 <script src="{{ url_for('static', filename='simulation.js') }}" defer>
@@ -24,22 +22,7 @@
     <h4 align="center"> Simulation </h4>
 <!--  Left Div  -->
     <div class="left-container">
-        World time is <span id="world-time">0</span> <br>
-        World time Selector:
-        <input
-            type="number"
-            id="world_time_select"
-            name="world_time_select"
-            placeholder="0"
-            value="0"
-            min="0"
-            max="{{ end_time | safe }}"
-            step="{{ time_delta | safe }}"
-            onchange="requestTimestampUpdate()"
-        >
-
-        <br>
-        <br>
+        World time is <span id="world-time">0</span>
         <div class="simulation-container">
         </div>
         <br>

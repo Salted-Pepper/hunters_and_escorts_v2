@@ -19,7 +19,7 @@ function lonLatToCanvas(lat, lon) {
 function flatListOfCoordsToCanvasCoords(coords){
     var convertedArray = [];
 
-    for (let i=0; i < coords.length; i+= 2){
+    for (i=0; i < coords.length; i+= 2){
         let lat = coords[i];
         let lon = coords[i + 1];
         let [x, y] = lonLatToCanvas(lat, lon);
@@ -119,74 +119,35 @@ function updatePlot(agents) {
     });
 }
 
-function updateLogs(events) {
-    events = JSON.parse(events)
-    console.log("events is ", typeof(events), events);
-    var new_logger_text = "";
+function updateLogs(event) {
+    text = event.text
+    var txt = document.getElementById('sim-logs');
+    txt.value = text.concat("\n") + txt.value;
 
-    var selected_time = parseFloat(document.getElementById('world_time_select').value);
-
-    var event_counts = {"Merchant Seized": 0,
-                    "Merchant Sunk": 0,
-                    "Merchant Damaged": 0,
-                    "Merchant Arrived": 0,
-                    "Escorts Sunk": 0,
-                    "Escorts Damaged": 0,
-                    "Hunters Deterred": 0,
-                    "Hunters Destroyed": 0,
-                    "Hunters Damaged": 0,
-    };
-
-    for (let i=0; i<events.length; i++){
-        console.log(events[i]);
-        let event = events[i];
-
-        if (event.time > selected_time){
+    event_type = event.event_type;
+    switch(event_type){
+        case "Merchant Seized":
+            var txt = document.getElementById('merchant-log-seized');
+            console.log(txt.innerHTML);
+            txt.innerHTML = 1 + parseInt(txt.innerHTML);
             break;
-        }
-        console.log(event);
-        new_logger_text = event.time + " " + event.text + "\n" + new_logger_text;
-        event_counts[event.event_type] += 1;
-
+        case "Merchant Arrived":
+            var txt = document.getElementById('merchant-log-arrived');
+            console.log(txt.innerHTML);
+            txt.innerHTML = 1 + parseInt(txt.innerHTML);
+        case "Merchant Sunk":
+//            # TODO: work this out
+            break;
+        default:
+            console.log("No log for event type ", event_type)
+            break;
     }
-    console.log(event_counts);
-
-    document.getElementById('merchant-log-seized').innerHTML = event_counts["Merchant Seized"];
-    document.getElementById('merchant-log-sunk').innerHTML = event_counts["Merchant Sunk"];
-    document.getElementById('merchant-log-damaged').innerHTML = event_counts["Merchant Damaged"];
-    document.getElementById('merchant-log-arrived').innerHTML = event_counts["Merchant Arrived"];
-    document.getElementById('escorts-log-sunk').innerHTML = event_counts["Escorts Sunk"];
-    document.getElementById('escorts-log-damaged').innerHTML = event_counts["Escorts Damaged"];
-    document.getElementById('escorts-log-deterred').innerHTML = event_counts["Hunters Deterred"];
-    document.getElementById('hunters-log-sunk').innerHTML = event_counts["Hunters Destroyed"];
-    document.getElementById('hunters-log-damaged').innerHTML = event_counts["Hunters Damaged"];
-
-    document.getElementById('sim-logs').value = new_logger_text;
 }
 
 function updateTime(time_stamp) {
     var txt = document.getElementById('world-time');
     txt.textContent = time_stamp;
 }
-
-function requestTimestampUpdate() {
-    var world_time = parseFloat(document.getElementById('world_time_select').value);
-    var max_time = parseFloat(document.getElementById('world_time_select').max);
-    if (world_time > max_time){
-        world_time = max_time;
-        document.getElementById('world_time_select').value = max_time;
-    }
-
-    if (world_time > 0){
-        socket.emit('request_timestamp_data', world_time);
-    }
-}
-
-function updateScrollFrame(new_time) {
-    var max_time = document.getElementById('world_time_select');
-    max_time.max = new_time;
-}
-
 
 updatePlot(agent_data);
 
@@ -197,5 +158,4 @@ placeBases(app, bases);
 socket.on("update_plot", (data) => updatePlot(data));
 socket.on("update_logs", (data) => updateLogs(data));
 socket.on("update_time", (data) => updateTime(data));
-socket.on("completed_simulation", (data) => updateScrollFrame(data));
 

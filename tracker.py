@@ -1,4 +1,5 @@
 import app
+import constants as cs
 
 USED_TIME = {"Weather": 0,
              "Travel": 0,
@@ -22,8 +23,10 @@ class Event:
     def __init__(self, text: str, event_type: str):
         self.text = text
         self.event_type = event_type
-        self.emit_event()
+        self.time = cs.world.world_time
+        self.record_event()
 
-    def emit_event(self) -> None:
+    def record_event(self) -> None:
         app.send_log({'text': self.text,
-                      'event_type': self.event_type})
+                      'event_type': self.event_type,
+                      'time': self.time})

@@ -1,5 +1,4 @@
 import time
-import json
 
 import settings
 from website import create_app
@@ -11,9 +10,6 @@ from world import World
 
 app = create_app()
 socket = SocketIO(app)
-
-agent_data = {}
-events = []
 
 
 def check_if_simulating() -> None:
@@ -52,41 +48,17 @@ def start_simulation():
 def take_time_step(world: World):
     global socket
     world.simulate_step()
-    save_time_step(world)
+    agents = world.all_agents
+    socket.emit('update_plot', [agent.to_dict() for agent in agents])
+    socket.emit('update_time', world.world_time)
     if world.world_time >= settings.simulation_end_time:
         cs.simulation_running = False
-        send_ready_signal()
-
-
-def save_time_step(world) -> None:
-    global agent_data
-    agent_data[world.world_time] = {"agents": [agent.to_dict() for agent in world.all_agents]}
-
-
-def send_ready_signal():
-    global socket
-    print("Finished computing simulation period.")
-    socket.emit('completed_simulation', settings.simulation_end_time)
-
-
-@socket.on('request_timestamp_data')
-def get_time_info(timestamp) -> None:
-    global agent_data
-    global events
-    print(f"Requested data for {timestamp}")
-    time_data = agent_data[timestamp]
-    agents = time_data['agents']
-    socket.emit('update_plot', agents)
-    socket.emit('update_time', timestamp)
-    socket.emit('update_logs', json.dumps(events))
 
 
 def send_log(event: dict):
     # TODO: Push Logs Through this
     global socket
-    global events
-    events.append(event)
-    # socket.emit('update_logs', event)
+    socket.emit('update_logs', event)
 
 
 def start_app():
@@ -94,3 +66,6 @@ def start_app():
     set_up_simulation()
     webbrowser.open("http://127.0.0.1:5000/settings")
     socket.run(app, debug=True, use_reloader=False, allow_unsafe_werkzeug=True)
+
+
+

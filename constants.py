@@ -4,6 +4,7 @@ interface = None
 display = None
 
 simulation_running = False
+# ["Waiting to start", "Loading", "Ready"]
 
 # ---- Geographical Constants ----
 LATITUDE_CONVERSION_FACTOR = 110.574
@@ -62,6 +63,8 @@ PHEROMONE_SPREAD = 1
 PATROL_LOCATIONS = 10
 K_CONSTANT_ADV = 39_633
 K_CONSTANT_BASIC = 2_747
+
+CHINESE_NAVY_MAX_DETECTION_RANGE = 463
 
 # ---- Agent Types ----
 

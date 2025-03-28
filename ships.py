@@ -214,6 +214,8 @@ class ChineseShip(Ship):
             if agent.team == self.team:
                 # To handle exception for boarded merchants
                 continue
+            if self.location.distance_to_point(agent.location) > cs.CHINESE_NAVY_MAX_DETECTION_RANGE:
+                continue
 
             if issubclass(type(agent), Ship):
                 detected = self.surface_detection(agent)

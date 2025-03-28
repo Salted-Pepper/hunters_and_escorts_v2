@@ -29,6 +29,8 @@ def simulation():
             "min_lat": cs.MIN_LAT,
             "max_lat": cs.MAX_LAT,
             "agents": [agent.to_dict() for agent in cs.world.all_agents],
+            "time_delta": settings.time_delta,
+            "max_time": settings.simulation_end_time
             }
     return render_template("simulation.html", **data)
 
@@ -62,6 +64,7 @@ def settings_page():
                         "coa_esc": settings.COALITION_SELECTED_LEVEL,
                         "show_sim": settings.PLOTTING_MODE,
                         "receptor_type": settings.RECEPTOR_PLOT_PARAMETER,
+                        "time_delta_set": True if settings.simulation_end_time > 0 else False
                         }
 
     check_if_updated(current_settings, last_settings_update)

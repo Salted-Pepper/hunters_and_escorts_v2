@@ -3,6 +3,10 @@
 
 {% block content %}
 
+<script>
+    let time_delta_set = {{ time_delta_set }};
+</script>
+
 <div class="centered-container">
     <h4 align="center"> Settings </h4>
     <div class="smaller-centered-container">
@@ -33,6 +37,7 @@
                     value="{{ time_delta }}"
                     min="0"
                     step="0.01"
+                    {% if time_delta_set %} readonly {% endif %}
                 >
             </div>
 
