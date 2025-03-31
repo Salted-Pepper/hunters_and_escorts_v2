@@ -20,6 +20,7 @@ class Ship(Agent):
 
     def __init__(self, manager, model: str, base: Base, ):
         super().__init__(manager, model, base)
+        self.helicopter = False
 
     @abstractmethod
     def initiate_model(self) -> None:
@@ -29,6 +30,7 @@ class Ship(Agent):
         self.team = model_data["team"]
         self.service = model_data["service"]
         self.armed = True if model_data["Armed"] == "Y" else False
+        self.agent_type = model_data.get("type", None)
 
         self.ship_visibility = model_data["SurfaceVisibility"]
         self.air_visibility = model_data["AirVisibility"]
@@ -55,11 +57,14 @@ class Ship(Agent):
 
         self.helicopter = True if model_data["helicopter"] == "Y" else False
 
+
 class Merchant(Ship):
     def __init__(self, manager, model: str, base: Base, country: str):
         super().__init__(manager, model, base)
-        self.color = "0x267326"
         self.country = country
+        self.set_service()
+
+        self.color = "0x267326"
         self.boarded = False
 
         self.entry_point = None
@@ -94,6 +99,18 @@ class Merchant(Ship):
         self.sub_visibility = attribute["Visibility"]
         self.movement_left_in_turn = self.speed_current * settings.time_delta
 
+    def set_service(self) -> None:
+        if self.country == settings.TAIWAN:
+            self.service = cs.COALITION_TW_MERCHANT
+        elif self.country == settings.JAPAN:
+            self.service = cs.COALITION_JP_MERCHANT
+        elif self.country == settings.USA:
+            self.service = cs.COALITION_US_MERCHANT
+        elif self.country == settings.MARKET:
+            self.service = cs.COALITION_MK_MERCHANT
+        else:
+            raise ValueError(f"Invalid Country {self.country}")
+
     def set_speed(self, speed: float) -> None:
         self.speed_max = speed
         self.speed_cruising = speed
@@ -119,7 +136,7 @@ class Merchant(Ship):
         if not self.boarded:
             self.base.receive_agent(self)
             self.set_up_for_maintenance()
-            tracker.Event(text=f"Merchant {self.agent_id} made it to {self.base.name}",
+            tracker.Event(text=f"Merchant {self.agent_id} reached {self.base.name}",
                           event_type="Merchant Arrived")
         else:
             tracker.Event(text=f"Merchant {self.agent_id} has been seized.",
@@ -218,6 +235,9 @@ class ChineseShip(Ship):
                 continue
             if self.location.distance_to_point(agent.location) > cs.CHINESE_NAVY_MAX_DETECTION_RANGE:
                 continue
+
+            if not self.check_if_valid_target(agent):
+                return
 
             if issubclass(type(agent), Ship):
                 detected = self.surface_detection(agent)
@@ -322,4 +342,3 @@ class Escort(Ship):
 
     def track(self, target: Agent) -> None:
         pass
-

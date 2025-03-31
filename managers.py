@@ -7,7 +7,7 @@ import numpy as np
 import random
 
 import settings
-from missions import Travel, Attack, Track, Observe, Guard, Return, Holding, Depart
+import missions
 from bases import Base
 from zones import Zone
 from points import Point
@@ -74,7 +74,7 @@ class Manager:
             base.serve_agents()
 
     def check_if_agents_have_to_return(self) -> None:
-        relevant_agents = [agent for agent in self.active_agents if not isinstance(agent.mission, Return)]
+        relevant_agents = [agent for agent in self.active_agents if not isinstance(agent.mission, missions.Return)]
 
         if settings.MULTITHREAD:
             with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -84,7 +84,7 @@ class Manager:
             [agent.can_continue() for agent in relevant_agents]
 
     def have_agents_observe(self) -> None:
-        observing_agents = [agent for agent in self.active_agents if isinstance(agent.mission, Observe)]
+        observing_agents = [agent for agent in self.active_agents if isinstance(agent.mission, missions.Observe)]
 
         self.agents_to_detect = [agent
                                  for manager in cs.world.managers if manager.team != self.team
@@ -99,7 +99,7 @@ class Manager:
 
     def continue_other_missions(self) -> None:
         other_agents = [agent for agent in self.active_agents
-                        if not isinstance(agent.mission, Observe)]
+                        if not isinstance(agent.mission, missions.Observe)]
 
         if settings.MULTITHREAD:
             with concurrent.futures.ThreadPoolExecutor(max_workers=cpu_count() - 1) as executor:

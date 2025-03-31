@@ -39,19 +39,14 @@ class Zone:
 
     def sample_patrol_location(self):
         return random.choice(self.patrol_locations)
-        # attempts = 0
-        # valid_point = False
-        #
-        # while not valid_point:
-        #     attempts += 1
-        #     if attempts >= settings.ITERATION_LIMIT:
-        #         raise TimeoutError(f"Unable to sample patrol location in {self.name} - "
-        #                            f"{[obs.name for obs in self.obstacles]}")
-        #     sample_point = self.polygon.get_sample_point()
-        #     # TODO: Update this check by only checking the zones IN the obstacles
-        #     #  (create obstacles reference in Zone object?)
-        #     if not any([obstacle.contains_point(sample_point) for obstacle in self.obstacles]):
-        #         return sample_point
+
+    def clear_patrol_in_zone(self, zone) -> None:
+        points_to_remove = []
+        for location in self.patrol_locations:
+            if zone.polygon.contains_point(location):
+                points_to_remove.append(location)
+
+        self.patrol_locations = [p for p in self.patrol_locations if p not in points_to_remove]
 
 
 # Zones
@@ -67,6 +62,15 @@ ZONE_I = Zone(name="I", polygon=Polygon(ccs.I_INSIDE_10_DASH, name="I"))
 ZONE_L = Zone(name="L", polygon=Polygon(ccs.L_INSIDE_MEDIAN_LINE, name="L"))
 ZONE_N = Zone(name="N", polygon=Polygon(ccs.N_HOLDING_ZONE, name="N"))
 ZONE_P = Zone(name="P", polygon=Polygon(ccs.P_PRIMARY_HUNTING_ZONE, name="P"))
+
+# Clear patrol locations in sub-zones for these to prevent Chinese agents from crossing into these zones
+ZONE_B.clear_patrol_in_zone(ZONE_C)
+ZONE_D.clear_patrol_in_zone(ZONE_E)
+ZONE_H.clear_patrol_in_zone(ZONE_C)
+ZONE_H.clear_patrol_in_zone(ZONE_E)
+ZONE_A.clear_patrol_in_zone(ZONE_C)
+ZONE_A.clear_patrol_in_zone(ZONE_E)
+ZONE_I.clear_patrol_in_zone(ZONE_C)
 
 # Sort zones from top zones to lower zones and establish overarching zones
 ZONES = [ZONE_P, ZONE_C, ZONE_B, ZONE_E, ZONE_D, ZONE_G, ZONE_F, ZONE_I, ZONE_L, ZONE_N, ZONE_H, ZONE_A]

@@ -27,6 +27,7 @@ class Agent:
         self.country = None
         self.model = model
         self.service = None
+        self.agent_type = None
         self.color = None
         self.dwt = None
 
@@ -69,6 +70,7 @@ class Agent:
         # ----- Agent States -----
         self.activated = False
         self.destroyed = False
+        self.in_combat = False
         self.CTL = False
 
         self.maintenance_time = 3*24  # TODO: Update placeholder
@@ -95,7 +97,7 @@ class Agent:
         self.initiate_model()
 
     def __repr__(self):
-        return f"Agent {self.agent_id} of {type(self)} - on mission: {self.mission}"
+        return f"Agent {self.agent_id} of {type(self)} - on mission: {self.mission} - zone: {self.assigned_zone}"
 
     def __eq__(self, other):
         if self.agent_id == other.agent_id:
@@ -123,8 +125,13 @@ class Agent:
         self.movement_left_in_turn = self.speed_current * settings.time_delta
 
     def generate_route(self, destination: Point = None) -> None:
-        self.route = routes.create_route(start=self.location,
-                                         end=destination, team=self.team)
+        try:
+            self.route = routes.create_route(start=self.location,
+                                             end=destination, team=self.team)
+        except ValueError as e:
+            print(f"Failed to create route for {self} to {destination}. "
+                  f"Agent was assigned to {self.assigned_zone}. Team {self.team}")
+            raise ValueError(e)
         if self.route is None:
             raise ValueError(f"Failed to generate Route")
 
@@ -198,6 +205,7 @@ class Agent:
         self.manager.inactive_agents.append(self)
         self.mission.complete()
         self.activated = False
+        self.in_combat = False
         self.base.receive_agent(self)
         self.set_up_for_maintenance()
         self.remove_from_missions()
@@ -216,8 +224,42 @@ class Agent:
         for mission in involved_missions:
             mission.remove_agent_from_mission(self)
 
-    def check_if_target_in_legal_zone(self) -> None:
-        pass
+    def check_if_valid_target(self, target) -> bool:
+        target_zone = target.get_current_zone()
+
+        if self.team == 1:
+            # if coalition, it depends on the r_o_e
+            rules = settings.coalition_r_o_e_rules
+            rule_value = rules[self.service][target_zone.name]
+            if rule_value == 1:
+                return True
+            elif rule_value == 2:
+                if target.in_combat:
+                    return True
+                else:
+                    return False
+            elif rule_value == 3:
+                if target.agent_type == "UAV":
+                    return True
+                else:
+                    return False
+            else:
+                return False
+
+        elif self.team == 2:
+            # if china, it depends on assigned and legal zones and targeting
+            zone_rules = settings.zone_assignment_hunter
+            target_rules = settings.hunter_target_rules
+
+            valid_zone = True if zone_rules[self.service].get(target_zone, 0) > 0 else False
+            valid_target = target_rules[self.service][target.service]
+
+            if valid_zone and valid_target:
+                return True
+            else:
+                return False
+        else:
+            raise ValueError(f"Undefined team {self.team}")
 
     def update_legal_zones(self) -> None:
         pass
@@ -243,7 +285,7 @@ class Agent:
         else:
             return False
 
-    def determine_current_zone(self) -> zones.Zone:
+    def get_current_zone(self) -> zones.Zone:
         """
         Checks if agent is in a zone going from the highest zone to the lowest zone.
         Only returning the highest zone.

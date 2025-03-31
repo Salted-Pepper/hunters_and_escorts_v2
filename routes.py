@@ -101,10 +101,10 @@ def create_route(start: Point, end: Point, team: int, air=False) -> Route:
         obstacles = copy.copy(cs.world.coalition_obstacles)
     elif team == 2:
         if air:
-            world_graph = cs.world.visibility_graph_air
+            world_graph = cs.world.visibility_graph_air_china
             obstacles = copy.copy(cs.world.china_air_obstacles)
         else:
-            world_graph = cs.world.visibility_graph_water
+            world_graph = cs.world.visibility_graph_water_china
             obstacles = copy.copy(cs.world.china_water_obstacles)
     else:
         raise ValueError(f"Invalid Team {team}")

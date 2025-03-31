@@ -82,6 +82,10 @@ class Travel(Mission):
         t_0 = time.time()
         if len(args) > 0:
             raise ValueError(f"{self} received detection {args} for Travel")
+
+        if self.agent.route is None:
+            raise ValueError(f"No route to move through for {self.agent}")
+
         outcome = self.agent.move_through_route()
 
         if outcome == "Reached End Of Route":
@@ -114,34 +118,6 @@ class Travel(Mission):
         pass
 
 
-class Attack(Mission):
-    """
-    Agents actively looking to attack another agent
-    """
-    def __init__(self, agent: Agent, target: Agent):
-        super().__init__(agent, target)
-
-    def __repr__(self):
-        return f"Mission Attack {self.mission_id}"
-
-    def execute(self) -> None:
-        t_0 = time.time()
-
-        tracker.USED_TIME["Attack"] += time.time() - t_0
-
-    def change(self, new_mission) -> None:
-        pass
-
-    def complete(self) -> None:
-        self.remove_mission_status()
-
-    def abort(self) -> None:
-        self.remove_mission_status()
-
-    def remove_agent_from_mission(self, agent: Agent) -> None:
-        pass
-
-
 class Track(Mission):
     """
     Agent actively following another agent, which calls in or awaits support.
@@ -155,6 +131,9 @@ class Track(Mission):
 
     def execute(self) -> None:
         t_0 = time.time()
+
+        if not self.agent.check_if_valid_target(self.target):
+            self.abort()
 
         self.agent.track(self.target)
 
@@ -246,11 +225,11 @@ class Return(Mission):
     OR
     Merchants going to their target dock to deliver goods.
     """
-    def __init__(self, agent: Agent, target: Point, base=None):
+    def __init__(self, agent: Agent, target: Point = None):
         super().__init__(agent, target)
-        if base is None:
-            base = agent.base.location
-        agent.generate_route(base)
+        if target is None:
+            target = agent.base.location
+        agent.generate_route(target)
 
     def __repr__(self):
         return f"Mission Return {self.mission_id}"

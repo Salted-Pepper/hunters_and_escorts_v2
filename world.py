@@ -53,7 +53,7 @@ class World:
         self.visibility_graph_coalition = routes.create_base_graph(self.coalition_obstacles)
 
         china_avoid_zones = [landmass for landmass in self.landmasses
-                             if landmass.name != "taiwan" and landmass.name != "japan"]
+                             if landmass != ccs.TAIWAN_LAND and landmass not in ccs.JAPAN_AND_ISLANDS]
         china_avoid_zones.append(zones.ZONE_C.polygon)
         china_avoid_zones.append(zones.ZONE_E.polygon)
         self.china_air_obstacles = china_avoid_zones
