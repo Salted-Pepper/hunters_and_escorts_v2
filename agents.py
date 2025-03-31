@@ -124,7 +124,7 @@ class Agent:
 
     def generate_route(self, destination: Point = None) -> None:
         self.route = routes.create_route(start=self.location,
-                                         end=destination)
+                                         end=destination, team=self.team)
         if self.route is None:
             raise ValueError(f"Failed to generate Route")
 
@@ -182,7 +182,7 @@ class Agent:
         if required_endurance_max < self.remaining_endurance:
             return True
 
-        base_route = routes.create_route(self.location, self.base.location)
+        base_route = routes.create_route(self.location, self.base.location, team=self.team)
         if self.remaining_endurance * (1 + cs.SAFETY_ENDURANCE) <= base_route.length:
             self.return_to_base()
             return False

@@ -26,9 +26,14 @@ class World:
         # Geography
         self.landmasses = self.get_land_masses()
         self.china_polygon = ccs.CHINA
-        self.visibility_graph_air = routes.create_base_graph(self.landmasses)
-        self.visibility_graph_water = routes.create_base_graph(self.landmasses + [self.china_polygon])
+        self.coalition_obstacles = None
+        self.visibility_graph_coalition = None
+        self.china_air_obstacles = None
+        self.visibility_graph_air_china = None
+        self.china_water_obstacles = None
+        self.visibility_graph_water_china = None
         self.zones = zones.ZONES
+        self.initiate_visibility_graphs()
 
         # Receptor Set Up
         self.receptor_grid = None
@@ -42,6 +47,19 @@ class World:
     @staticmethod
     def get_land_masses() -> list[Polygon]:
         return ccs.LAND_MASSES
+
+    def initiate_visibility_graphs(self) -> None:
+        self.coalition_obstacles = self.landmasses + [self.china_polygon]
+        self.visibility_graph_coalition = routes.create_base_graph(self.coalition_obstacles)
+
+        china_avoid_zones = [landmass for landmass in self.landmasses
+                             if landmass.name != "taiwan" and landmass.name != "japan"]
+        china_avoid_zones.append(zones.ZONE_C.polygon)
+        china_avoid_zones.append(zones.ZONE_E.polygon)
+        self.china_air_obstacles = china_avoid_zones
+        self.visibility_graph_air_china = routes.create_base_graph(self.china_air_obstacles)
+        self.china_water_obstacles = china_avoid_zones + [self.china_polygon]
+        self.visibility_graph_water_china = routes.create_base_graph(self.china_water_obstacles)
 
     def initiate_receptors(self) -> None:
         self.receptor_grid = receptors.ReceptorGrid(self.landmasses, self)

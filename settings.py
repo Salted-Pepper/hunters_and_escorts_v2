@@ -9,6 +9,7 @@ CHINA_SELECTED_LEVEL = 1
 COALITION_SELECTED_LEVEL = 2
 
 # ---- Simulation Settings ----
+MULTITHREAD = False
 ITERATION_LIMIT = 500
 WEATHER_RESAMPLING_TIME_SPLIT = 1
 
@@ -264,7 +265,7 @@ hunter_target_rules = {hunter_agent: {coalition_agent: False for coalition_agent
 
 # ---- Zone Assignment Rules ----
 zone_assignment_hunter = {agent_type: {zone: 1 / len(ZONES) for zone in ZONES
-                                       if zone.name not in ['B', 'C']}
+                                       if zone.name not in ['C', 'E']}
                           for agent_type in cs.HUNTER_TYPES}
 zone_assignment_coalition = {agent_type: {zone: 1 / len(ZONES) for zone in ZONES}
                              for agent_type in cs.COALITION_TYPES

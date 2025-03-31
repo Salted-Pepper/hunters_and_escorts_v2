@@ -14,7 +14,7 @@ from points import Point
 import constants as cs
 import data_functions
 
-from ships import Merchant, ChineseShip
+from ships import Merchant, ChineseShip, Escort
 
 
 class Manager:
@@ -76,11 +76,12 @@ class Manager:
     def check_if_agents_have_to_return(self) -> None:
         relevant_agents = [agent for agent in self.active_agents if not isinstance(agent.mission, Return)]
 
-        # with concurrent.futures.ThreadPoolExecutor() as executor:
-        #     futures = [executor.submit(agent.can_continue) for agent in relevant_agents]
-        #     concurrent.futures.wait(futures)
-
-        [agent.can_continue() for agent in relevant_agents]
+        if settings.MULTITHREAD:
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                futures = [executor.submit(agent.can_continue) for agent in relevant_agents]
+                concurrent.futures.wait(futures)
+        else:
+            [agent.can_continue() for agent in relevant_agents]
 
     def have_agents_observe(self) -> None:
         observing_agents = [agent for agent in self.active_agents if isinstance(agent.mission, Observe)]
@@ -88,21 +89,24 @@ class Manager:
         self.agents_to_detect = [agent
                                  for manager in cs.world.managers if manager.team != self.team
                                  for agent in manager.active_agents]
-        # with concurrent.futures.ThreadPoolExecutor() as executor:
-        #     futures = [executor.submit(agent.mission.execute, self.agents_to_detect) for agent in observing_agents]
-        #     concurrent.futures.wait(futures)
 
-        [agent.mission.execute(self.agents_to_detect) for agent in observing_agents]
+        if settings.MULTITHREAD:
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                futures = [executor.submit(agent.mission.execute, self.agents_to_detect) for agent in observing_agents]
+                concurrent.futures.wait(futures)
+        else:
+            [agent.mission.execute(self.agents_to_detect) for agent in observing_agents]
 
     def continue_other_missions(self) -> None:
         other_agents = [agent for agent in self.active_agents
                         if not isinstance(agent.mission, Observe)]
 
-        # with concurrent.futures.ThreadPoolExecutor(max_workers=cpu_count() - 1) as executor:
-        #     futures = [executor.submit(agent.mission.execute) for agent in other_agents]
-        #     concurrent.futures.wait(futures)
-
-        [agent.mission.execute() for agent in other_agents]
+        if settings.MULTITHREAD:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=cpu_count() - 1) as executor:
+                futures = [executor.submit(agent.mission.execute) for agent in other_agents]
+                concurrent.futures.wait(futures)
+        else:
+            [agent.mission.execute() for agent in other_agents]
 
     def sample_random_base(self) -> Base:
         return random.choices(self.bases, weights=[base.agent_share
@@ -119,6 +123,8 @@ class EscortManager(Manager):
     def __init__(self):
         super().__init__()
         self.team = 1
+        self.country = None
+        self.initiate_agents()
 
     def __str__(self):
         return "Escort Manager"
@@ -128,14 +134,19 @@ class EscortManager(Manager):
             agent.set_turn_movement()
 
     def initiate_agents(self) -> None:
-        pass
+        coalition_data = data_functions.get_coalition_data()
+        for model in coalition_data:
+            if coalition_data[model]["base"] != self.country:
+                continue
 
+            quantity = int(coalition_data[model]["numberofagents"])
+            for _ in range(quantity):
+                new_ship = Escort(manager=self, model=model, base=self.sample_random_base())
+                self.inactive_agents.append(new_ship)
+
+    @abstractmethod
     def initiate_bases(self) -> None:
-        self.bases = [Base(name="Kaohsiung", location=Point(120.30, 22.50), agent_share=0.25),
-                      Base(name="Tiachung", location=Point(120.35, 24.30), agent_share=0.25),
-                      Base(name="Keelung", location=Point(121.73, 25.19), agent_share=0.25),
-                      Base(name="Hualien", location=Point(121.65, 24.00), agent_share=0.25),
-                      ]
+        pass
 
     def calc_utilization_rate(self) -> float:
         pass
@@ -148,6 +159,40 @@ class EscortManager(Manager):
 
     def select_zone_to_patrol(self, agent) -> None:
         pass
+
+
+class EscortManagerTW(EscortManager):
+    def __init__(self):
+        super().__init__()
+        self.country = settings.TAIWAN
+
+    def initiate_bases(self) -> None:
+        self.bases = [Base(name="Kaohsiung", location=Point(120.30, 22.50), agent_share=0.25),
+                      Base(name="Tiachung", location=Point(120.35, 24.30), agent_share=0.25),
+                      Base(name="Keelung", location=Point(121.73, 25.19), agent_share=0.25),
+                      Base(name="Hualien", location=Point(121.65, 24.00), agent_share=0.25),
+                      ]
+
+
+class EscortManagerJP(EscortManager):
+    def __init__(self):
+        super().__init__()
+        self.country = settings.JAPAN
+
+    def __str__(self):
+        return "Japan Escort Manager"
+
+    def initiate_bases(self) -> None:
+        self.bases = [Base(name="Okinawa", location=Point(127.737, 26.588), agent_share=1)]
+
+
+class EscortManagerUS(EscortManager):
+    def __init__(self):
+        super().__init__()
+        self.country = settings.USA
+
+    def initiate_bases(self) -> None:
+        self.bases = [Base(name="Yokosuka", location=Point(137.307, 34.2), agent_share=1)]
 
 
 class MerchantManager(Manager):

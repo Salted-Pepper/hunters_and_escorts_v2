@@ -68,6 +68,9 @@ CHINESE_NAVY_MAX_DETECTION_RANGE = 463
 
 # ---- Agent Types ----
 
+CHINA_NAVY_DATA = None
+COALITION_NAVY_DATA = None
+
 # Hunter Types
 HUNTER_CCG = "Ship CCG"
 HUNTER_MSA = "Ship MSA"

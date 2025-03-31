@@ -25,6 +25,35 @@ class Ship(Agent):
     def initiate_model(self) -> None:
         pass
 
+    def set_agent_attributes(self, model_data: dict) -> None:
+        self.team = model_data["team"]
+        self.service = model_data["service"]
+        self.armed = True if model_data["Armed"] == "Y" else False
+
+        self.ship_visibility = model_data["SurfaceVisibility"]
+        self.air_visibility = model_data["AirVisibility"]
+        self.sub_visibility = model_data["UnderseaVisibility"]
+
+        self.speed_max = model_data["SpeedMax"]
+        self.speed_cruising = model_data["SpeedCruise"]
+        self.speed_current = self.speed_cruising
+        self.dwt = model_data["Displacement"]
+        self.endurance = model_data["Endurance"]
+        self.remaining_endurance = self.endurance
+
+        self.ship_detection_skill = model_data["Ship Detection Skill"]
+        self.air_detection_skill = model_data["Air Detection Skill"]
+        self.sub_detection_skill = model_data["Submarine Detection Skill"]
+
+        self.anti_ship_skill = model_data["Anti-ship Skill"]
+        self.anti_air_skill = model_data["Anti-air Skill"]
+        self.anti_sub_skill = model_data["Anti-submarine Skill"]
+
+        self.anti_ship_ammo = model_data["Anti-Ship Ammunition"]
+        self.anti_air_ammo = model_data["Anti-air Ammunition"]
+        self.anti_sub_ammo = model_data["Anti-submarine Ammunition"]
+
+        self.helicopter = True if model_data["helicopter"] == "Y" else False
 
 class Merchant(Ship):
     def __init__(self, manager, model: str, base: Base, country: str):
@@ -146,34 +175,7 @@ class ChineseShip(Ship):
 
     def initiate_model(self) -> None:
         model_data = cs.CHINA_NAVY_DATA[self.model]
-        self.team = model_data["team"]
-        self.service = model_data["service"]
-        self.armed = True if model_data["Armed"] == "Y" else False
-
-        self.ship_visibility = model_data["SurfaceVisibility"]
-        self.air_visibility = model_data["AirVisibility"]
-        self.sub_visibility = model_data["UnderseaVisibility"]
-
-        self.speed_max = model_data["SpeedMax"]
-        self.speed_cruising = model_data["SpeedCruise"]
-        self.speed_current = self.speed_cruising
-        self.dwt = model_data["Displacement"]
-        self.endurance = model_data["Endurance"]
-        self.remaining_endurance = self.endurance
-
-        self.ship_detection_skill = model_data["Ship Detection Skill"]
-        self.air_detection_skill = model_data["Air Detection Skill"]
-        self.sub_detection_skill = model_data["Submarine Detection Skill"]
-
-        self.anti_ship_skill = model_data["Anti-ship Skill"]
-        self.anti_air_skill = model_data["Anti-air Skill"]
-        self.anti_sub_skill = model_data["Anti-submarine Skill"]
-
-        self.anti_ship_ammo = model_data["Anti-Ship Ammunition"]
-        self.anti_air_ammo = model_data["Anti-air Ammunition"]
-        self.anti_sub_ammo = model_data["Anti-submarine Ammunition"]
-
-        self.helicopter = True if model_data["helicopter"] == "Y" else False
+        self.set_agent_attributes(model_data)
 
     def surface_detection(self, agent: Agent) -> bool:
         agent_size = agent.ship_visibility
@@ -296,3 +298,28 @@ class ChineseShip(Ship):
             self.request_support()
 
         # TODO: Create attack interaction here
+
+
+class Escort(Ship):
+    def __init__(self, manager, model: str, base: Base):
+        super().__init__(manager, model, base)
+
+    def initiate_model(self) -> None:
+        model_data = cs.COALITION_NAVY_DATA
+        self.set_agent_attributes(model_data)
+
+    def surface_detection(self, agent: Agent) -> bool:
+        pass
+
+    def air_detection(self, agent: Agent) -> bool:
+        pass
+
+    def sub_detection(self, agent: Agent) -> bool:
+        pass
+
+    def observe(self, agents: list[Agent]) -> None:
+        pass
+
+    def track(self, target: Agent) -> None:
+        pass
+

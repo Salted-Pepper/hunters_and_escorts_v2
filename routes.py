@@ -87,20 +87,27 @@ def make_route_from_path(path: list[Point]) -> Route:
     return Route(path)
 
 
-def create_route(start: Point, end: Point, air=False) -> Route:
+def create_route(start: Point, end: Point, team: int, air=False) -> Route:
     """
     Creates a route between start and end point
     :param start:
     :param end:
+    :param team: Team to select visibility graph
     :param air: Whether the agent travels by air or through water
     :return:
     """
-    obstacles = copy.copy(cs.world.landmasses)
-    if air:
-        world_graph = cs.world.visibility_graph_air
+    if team == 1:
+        world_graph = cs.world.visibility_graph_coalition
+        obstacles = copy.copy(cs.world.coalition_obstacles)
+    elif team == 2:
+        if air:
+            world_graph = cs.world.visibility_graph_air
+            obstacles = copy.copy(cs.world.china_air_obstacles)
+        else:
+            world_graph = cs.world.visibility_graph_water
+            obstacles = copy.copy(cs.world.china_water_obstacles)
     else:
-        world_graph = cs.world.visibility_graph_water
-        obstacles += [cs.world.china_polygon]
+        raise ValueError(f"Invalid Team {team}")
 
     graph = copy.deepcopy(world_graph)
     graph = add_point_to_graph(start, obstacles, graph)

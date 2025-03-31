@@ -12,7 +12,7 @@ def routing_test() -> None:
     cs.world.current_graph = routes.create_base_graph(obstacles)
     start = Point(0, 0)
     end = Point(10, 10)
-    route = routes.create_route(start=start, end=end)
+    route = routes.create_route(start=start, end=end, team=1)
 
 
 def run_tests() -> None:
