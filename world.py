@@ -8,7 +8,7 @@ import constant_coords as ccs
 import zones
 import weather
 from polygons import Polygon
-from managers import MerchantManager, ChinaNavyManager
+from managers import MerchantManager, ChinaNavyManager, ChinaAirManager
 
 import tracker
 
@@ -67,7 +67,8 @@ class World:
     def initiate_managers(self) -> None:
         # TODO: Make this managers and append agents for each manager
         self.managers = [MerchantManager(),
-                         ChinaNavyManager()]
+                         ChinaNavyManager(),
+                         ChinaAirManager(),]
 
         for manager in self.managers:
             self.all_agents.extend(manager.inactive_agents)

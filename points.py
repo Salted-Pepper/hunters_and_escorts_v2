@@ -19,7 +19,7 @@ class Point:
         return self.x, self.y
 
     def __str__(self):
-        return f"{self.point_id}-({self.x:0.3f}, {self.y:0.3f})"
+        return f"({self.x:0.2f}, {self.y:0.2f})"
 
     def __repr__(self):
         return f"Point at ({self.x}, {self.y})"

@@ -4,11 +4,12 @@ import settings
 
 
 class Base:
-    def __init__(self, name: str, location: Point, agent_share: float, color: str = "000000"):
+    def __init__(self, name: str, location: Point, agent_share: float, color: str = "000000", icon: str = "Harbour"):
         self.name = name
         self.location = location
         self.color = color
         self.agent_share = agent_share
+        self.icon = icon
 
         self.current_served_agent = None
         self.stationed_agents = []
@@ -22,7 +23,9 @@ class Base:
         return {"name": self.name,
                 "x": self.location.x,
                 "y": self.location.y,
-                "color": self.color}
+                "color": self.color,
+                "icon": self.icon,
+                "stalled": len(self.stationed_agents)}
 
     def receive_agent(self, agent) -> None:
         if not agent.CTL:

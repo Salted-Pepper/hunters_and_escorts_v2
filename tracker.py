@@ -27,6 +27,6 @@ class Event:
         self.record_event()
 
     def record_event(self) -> None:
-        app.send_log({'text': self.text,
+        app.save_event({'text': self.text,
                       'event_type': self.event_type,
                       'time': self.time})

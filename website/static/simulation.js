@@ -53,21 +53,15 @@ function placeLandmasses(app, landmasses) {
     })
 }
 
-function placeBases(app, bases) {
-    bases.forEach(base => {
-        let graphics = new PIXI.Graphics();
-        graphics.beginFill(base.color);
-        graphics.drawRoundedRect(base.x, base.y, 5, 5, 0.5);
-        graphics.endFill();
-        graphics.interactive = true
-        graphics.mouseover = function() { console.log("Moused over ", base.name); }
-        app.stage.addChild(graphics)
-    })
-}
 
 simulation_started = false;
 
 function startSimulation(){
+    let start_button = document.getElementById("start-button");
+    start_button.innerHTML = "Running Simulation...";
+    start_button.style.backgroundColor = "red";
+    start_button.disabled = true;
+
     if(simulation_started){
         var txt = document.getElementById('sim-logs');
         txt.value = "Continuing Simulation...\n" + txt.value
@@ -82,13 +76,27 @@ function startSimulation(){
 
 sprite_dict = {"Merchant Manager": "static/assets/merchant_12x8.png",
                "China Navy Manager": "static/assets/hunter_12x8.png",
-               };
+               "Harbour": "static/assets/anchor_grey_16x16.png",
+               "AirportRed": "static/assets/airport_red_16x16.png"};
+
+function placeBases(app, bases) {
+    bases.forEach(base => {
+        let sprite = PIXI.Sprite.from(sprite_dict[base.icon]);
+        sprite.width = 16;
+        sprite.height = 16;
+        sprite.anchor.set(0.5);
+        sprite.x = base.x;
+        sprite.y = base.y;
+        app.stage.addChild(sprite);
+    })
+}
 
 function createSprite(type_of_agent){
     let sprite = PIXI.Sprite.from(sprite_dict[type_of_agent]);
     sprite.width = 12;
     sprite.height = 8;
     sprite.anchor.set(0.5);
+    sprite.interactive = true;
     return sprite;
 }
 
@@ -101,9 +109,34 @@ function updatePlot(agents) {
         agent.x = x
         agent.y = y
         if (!sprites[agent.agent_id] & agent.activated == true) {
-            let sprite = createSprite(agent.type)
+            let sprite = createSprite(agent.type);
             sprite.x = agent.x;
             sprite.y = agent.y;
+
+            sprite.on('mouseover', function(event){
+                var text = agent.service + ' - ' + agent.agent_id + '\non ' + agent.mission + '\n';
+                var message = new PIXI.Text(text, {fontSize: 16, fill: 0xff1010});
+                message.x = event.data.global.x + 10;
+                message.y = event.data.global.y;
+
+                sprite.message = message;
+                app.stage.addChild(message);
+            });
+
+            sprite.on('mousemove',function (event) {
+                if (!sprite.message) {
+                    return;
+                }
+
+                sprite.message.x = event.data.global.x + 10;
+                sprite.message.y = event.data.global.y;
+            });
+
+            sprite.on('mouseout', function(event){
+                app.stage.removeChild(sprite.message);
+                delete sprite.message;
+            });
+
             app.stage.addChild(sprite);
             sprites[agent.agent_id] = sprite;
         } else {
@@ -121,7 +154,6 @@ function updatePlot(agents) {
 
 function updateLogs(events) {
     events = JSON.parse(events)
-    console.log("events is ", typeof(events), events);
     var new_logger_text = "";
 
     var selected_time = parseFloat(document.getElementById('world_time_select').value);
@@ -138,18 +170,15 @@ function updateLogs(events) {
     };
 
     for (let i=0; i<events.length; i++){
-        console.log(events[i]);
         let event = events[i];
 
         if (event.time > selected_time){
             break;
         }
-        console.log(event);
-        new_logger_text = event.time + " " + event.text + "\n" + new_logger_text;
+        new_logger_text = event.time + " - " + event.text + "\n" + new_logger_text;
         event_counts[event.event_type] += 1;
 
     }
-    console.log(event_counts);
 
     document.getElementById('merchant-log-seized').innerHTML = event_counts["Merchant Seized"];
     document.getElementById('merchant-log-sunk').innerHTML = event_counts["Merchant Sunk"];
@@ -165,8 +194,11 @@ function updateLogs(events) {
 }
 
 function updateTime(time_stamp) {
-    var txt = document.getElementById('world-time');
-    txt.textContent = time_stamp;
+    var world_time = document.getElementById('world-time');
+    world_time.textContent = time_stamp;
+
+    var world_time_select = document.getElementById('world_time_select')
+    world_time_select.value = time_stamp;
 }
 
 function requestTimestampUpdate() {
@@ -182,9 +214,15 @@ function requestTimestampUpdate() {
     }
 }
 
-function updateScrollFrame(new_time) {
+function completedSimulation(new_time) {
+//  Update Top Scroll time
     var max_time = document.getElementById('world_time_select');
     max_time.max = new_time;
+//  Re-enable button
+    let start_button = document.getElementById("start-button");
+    start_button.innerHTML = "Continue Simulation";
+    start_button.style.backgroundColor = "green";
+    start_button.disabled = false;
 }
 
 
@@ -197,5 +235,5 @@ placeBases(app, bases);
 socket.on("update_plot", (data) => updatePlot(data));
 socket.on("update_logs", (data) => updateLogs(data));
 socket.on("update_time", (data) => updateTime(data));
-socket.on("completed_simulation", (data) => updateScrollFrame(data));
+socket.on("completed_simulation", (data) => completedSimulation(data));
 

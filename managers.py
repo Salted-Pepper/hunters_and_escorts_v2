@@ -86,6 +86,9 @@ class Manager:
     def have_agents_observe(self) -> None:
         observing_agents = [agent for agent in self.active_agents if isinstance(agent.mission, missions.Observe)]
 
+        if len(observing_agents) == 0:
+            return
+
         self.agents_to_detect = [agent
                                  for manager in cs.world.managers if manager.team != self.team
                                  for agent in manager.active_agents]
@@ -101,9 +104,18 @@ class Manager:
         other_agents = [agent for agent in self.active_agents
                         if not isinstance(agent.mission, missions.Observe)]
 
+        def execute_mission(agent):
+            if agent.mission is None:
+                raise ValueError(f"{agent} has no mission - was {agent.previous_mission}")
+            try:
+                agent.mission.execute()
+            except AttributeError as e:
+                print(f"{agent} with previous mission {agent.previous_mission}.")
+                raise AttributeError(e)
+
         if settings.MULTITHREAD:
             with concurrent.futures.ThreadPoolExecutor(max_workers=cpu_count() - 1) as executor:
-                futures = [executor.submit(agent.mission.execute) for agent in other_agents]
+                futures = [executor.submit(execute_mission, agent) for agent in other_agents]
                 concurrent.futures.wait(futures)
         else:
             [agent.mission.execute() for agent in other_agents]
@@ -332,3 +344,31 @@ class ChinaNavyManager(Manager):
             return None
         selected_zone = random.choices(zones, share)[0]
         return selected_zone
+
+
+class ChinaAirManager(Manager):
+    def __init__(self):
+        super().__init__()
+
+    def pre_turn_actions(self) -> None:
+        pass
+
+    def initiate_agents(self) -> None:
+        pass
+
+    def initiate_bases(self) -> None:
+        self.bases = [Base(name="Ningbo", location=Point(121.57, 29.92), icon="AirportRed", agent_share=0.33),
+                      Base(name="Fuzhou", location=Point(119.31, 26.00), icon="AirportRed", agent_share=0.34),
+                      Base(name="Liangcheng", location=Point(116.75, 25.68), icon="AirportRed", agent_share=0.33)]
+
+    def calc_utilization_rate(self) -> float:
+        pass
+
+    def assign_agents_to_tasks(self) -> None:
+        pass
+
+    def activate_agent(self, agents: list) -> None:
+        pass
+
+    def select_zone_to_patrol(self, agent) -> None:
+        pass

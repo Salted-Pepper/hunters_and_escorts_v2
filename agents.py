@@ -88,6 +88,7 @@ class Agent:
         self.sub_ammo_current = None
 
         # ---- Mission ----
+        self.previous_mission = None
         self.mission = None
         self.involved_missions = []
 
@@ -97,7 +98,7 @@ class Agent:
         self.initiate_model()
 
     def __repr__(self):
-        return f"Agent {self.agent_id} of {type(self)} - on mission: {self.mission} - zone: {self.assigned_zone}"
+        return f"{self.service}-{self.agent_id} - {self.mission} - zone: {self.assigned_zone}"
 
     def __eq__(self, other):
         if self.agent_id == other.agent_id:
@@ -112,7 +113,8 @@ class Agent:
                 "color": self.color,
                 "activated": self.activated,
                 "mission": str(self.mission),
-                "type": str(self.manager)}  # TODO: Make sprite reliant on other property than manager
+                "type": str(self.manager),
+                "service": self.service}  # TODO: Make sprite reliant on other property than manager
 
     @abstractmethod
     def initiate_model(self) -> None:

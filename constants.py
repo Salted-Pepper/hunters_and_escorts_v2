@@ -3,6 +3,7 @@ world = None
 interface = None
 display = None
 
+client_connected = False
 simulation_running = False
 # ["Waiting to start", "Loading", "Ready"]
 

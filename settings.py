@@ -260,7 +260,7 @@ min_r_o_e = {
 }
 
 coalition_r_o_e_rules = min_r_o_e[COALITION_SELECTED_LEVEL]
-hunter_target_rules = {hunter_agent: {coalition_agent: False for coalition_agent in cs.COALITION_TYPES}
+hunter_target_rules = {hunter_agent: {coalition_agent: True for coalition_agent in cs.COALITION_TYPES}
                        for hunter_agent in cs.HUNTER_TYPES}
 
 # ---- Zone Assignment Rules ----

@@ -162,6 +162,7 @@ class Merchant(Ship):
         pass
 
     def is_boarded(self, boarder: Agent) -> None:
+        print(f"{self} got boarded.")
         self.mission.abort()
         self.remove_from_missions()
 
@@ -189,6 +190,12 @@ class ChineseShip(Ship):
         self.color = "0xb30000"
         self.aws_enabled = False
         self.helicopter = False
+
+    def __repr__(self):
+        return f"Agent {self.agent_id} of {type(self)} - on mission: {self.mission} - zone: {self.assigned_zone}"
+
+    def __str__(self):
+        return f"Agent {self.agent_id} of {type(self)} - on mission: {self.mission} - zone: {self.assigned_zone}"
 
     def initiate_model(self) -> None:
         model_data = cs.CHINA_NAVY_DATA[self.model]

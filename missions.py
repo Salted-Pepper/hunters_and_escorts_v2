@@ -20,6 +20,7 @@ class Mission:
         mission_id += 1
         self.agent = agent
         self.target = target
+        print(f"Setting {agent} to {self}")
 
         self.set_mission()
 
@@ -34,6 +35,8 @@ class Mission:
             self.target.involved_missions.append(self)
 
     def remove_mission_status(self) -> None:
+        print(f"Closing mission {self}")
+        self.agent.previous_mission = str(self.agent.mission)
         self.agent.mission = None
 
         if hasattr(self.target, 'involved_missions'):
@@ -67,6 +70,7 @@ class Travel(Mission):
         super().__init__(agent, target)
         self.next_mission = next_mission
         self.next_settings = next_settings
+        self.location = None
 
         if hasattr(target, 'location'):
             self.location = target.location
@@ -76,7 +80,7 @@ class Travel(Mission):
         agent.generate_route(destination=self.location)
 
     def __repr__(self):
-        return f"Mission Travel {self.mission_id}"
+        return f"{self.mission_id} - Travel to {self.target}"
 
     def execute(self, *args) -> None:
         t_0 = time.time()
@@ -127,15 +131,22 @@ class Track(Mission):
         self.agent.generate_route(target.location)
 
     def __repr__(self):
-        return f"Mission Track {self.mission_id}"
+        return f"{self.mission_id} - Tracking {self.target}"
 
-    def execute(self) -> None:
+    def execute(self, *args) -> None:
         t_0 = time.time()
+
+        if len(args) > 0:
+            raise ValueError(f"{self.agent} received detection {args} for Travel")
 
         if not self.agent.check_if_valid_target(self.target):
             self.abort()
+            return
 
-        self.agent.track(self.target)
+        try:
+            self.agent.track(self.target)
+        except ValueError:
+            raise ValueError(f"{self.agent} failed to track {self.target}")
 
         tracker.USED_TIME["Track"] += time.time() - t_0
 
@@ -162,7 +173,7 @@ class Observe(Mission):
         super().__init__(agent, target)
 
     def __repr__(self):
-        return f"Mission Observe {self.mission_id}"
+        return f"{self.mission_id} Observing {self.agent.assigned_zone}"
 
     def execute(self, agents_to_observe: list[Agent] = None) -> None:
         t_0 = time.time()
@@ -194,11 +205,13 @@ class Guard(Mission):
         super().__init__(agent, target)
 
     def __repr__(self):
-        return f"Mission Guard {self.mission_id}"
+        return f"{self.mission_id} Guarding {self.target}"
 
     def execute(self) -> None:
         t_0 = time.time()
 
+        self.agent.generate_route(self.target.location)
+        self.agent.move_through_route()
         tracker.USED_TIME["Guard"] += time.time() - t_0
 
     def change(self, new_mission) -> None:
@@ -232,7 +245,7 @@ class Return(Mission):
         agent.generate_route(target)
 
     def __repr__(self):
-        return f"Mission Return {self.mission_id}"
+        return f"{self.mission_id} - Returning to {self.target}"
 
     def execute(self) -> None:
         t_0 = time.time()
@@ -271,7 +284,7 @@ class Holding(Mission):
         super().__init__(agent, target)
 
     def __repr__(self):
-        return f"Mission Holding {self.mission_id}"
+        return f"{self.mission_id} - Holding "
 
     def execute(self) -> None:
         t_0 = time.time()
@@ -300,7 +313,7 @@ class Depart(Mission):
         agent.generate_route(target)
 
     def __repr__(self):
-        return f"Mission Depart {self.mission_id}"
+        return f"{self.mission_id} - Departing to {self.target}"
 
     def execute(self) -> None:
         t_0 = time.time()

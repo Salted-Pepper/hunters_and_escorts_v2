@@ -38,8 +38,9 @@ def set_up_simulation():
 def handle_connect():
     global socket
     print('Client connected')
-    if not cs.simulation_running:
+    if not cs.client_connected:
         socket.start_background_task(check_if_simulating)
+        cs.client_connected = True
 
 
 @socket.on('start')
@@ -53,6 +54,7 @@ def take_time_step(world: World):
     global socket
     world.simulate_step()
     save_time_step(world)
+    get_time_info(world.world_time)
     if world.world_time >= settings.simulation_end_time:
         cs.simulation_running = False
         send_ready_signal()
@@ -81,12 +83,9 @@ def get_time_info(timestamp) -> None:
     socket.emit('update_logs', json.dumps(events))
 
 
-def send_log(event: dict):
-    # TODO: Push Logs Through this
-    global socket
+def save_event(event: dict):
     global events
     events.append(event)
-    # socket.emit('update_logs', event)
 
 
 def start_app():
