@@ -131,7 +131,7 @@ class Track(Mission):
         self.agent.generate_route(target.location)
 
     def __repr__(self):
-        return f"{self.mission_id} - Tracking {self.target}"
+        return f"{self.mission_id} - Tracking {self.target.service}-{self.target.agent_id}"
 
     def execute(self, *args) -> None:
         t_0 = time.time()

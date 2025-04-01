@@ -28,7 +28,6 @@ class Agent:
         self.model = model
         self.service = None
         self.agent_type = None
-        self.color = None
         self.dwt = None
 
         # ---- Detection Parameters ----
@@ -93,9 +92,7 @@ class Agent:
         self.involved_missions = []
 
         # ---- Display ----
-        self.color = None
-
-        self.initiate_model()
+        self.icon = None
 
     def __repr__(self):
         return f"{self.service}-{self.agent_id} - {self.mission} - zone: {self.assigned_zone}"
@@ -110,7 +107,6 @@ class Agent:
         return {"x": self.location.x,
                 "y": self.location.y,
                 "agent_id": self.agent_id,
-                "color": self.color,
                 "activated": self.activated,
                 "mission": str(self.mission),
                 "type": str(self.manager),

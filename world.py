@@ -8,7 +8,8 @@ import constant_coords as ccs
 import zones
 import weather
 from polygons import Polygon
-from managers import MerchantManager, ChinaNavyManager, ChinaAirManager
+from managers import (MerchantManager, ChinaNavyManager, ChinaAirManager,
+                      EscortManagerTW, EscortManagerJP, EscortManagerUS)
 
 import tracker
 
@@ -65,10 +66,13 @@ class World:
         self.receptor_grid = receptors.ReceptorGrid(self.landmasses, self)
 
     def initiate_managers(self) -> None:
-        # TODO: Make this managers and append agents for each manager
         self.managers = [MerchantManager(),
                          ChinaNavyManager(),
-                         ChinaAirManager(),]
+                         ChinaAirManager(),
+                         EscortManagerTW(),
+                         EscortManagerJP(),
+                         EscortManagerUS(),
+                         ]
 
         for manager in self.managers:
             self.all_agents.extend(manager.inactive_agents)

@@ -105,6 +105,7 @@ class Manager:
                         if not isinstance(agent.mission, missions.Observe)]
 
         def execute_mission(agent):
+            # TODO: Remove this debugging feature - just use agent.mission.execute() instead.
             if agent.mission is None:
                 raise ValueError(f"{agent} has no mission - was {agent.previous_mission}")
             try:
@@ -136,7 +137,6 @@ class EscortManager(Manager):
         super().__init__()
         self.team = 1
         self.country = None
-        self.initiate_agents()
 
     def __str__(self):
         return "Escort Manager"
@@ -144,6 +144,22 @@ class EscortManager(Manager):
     def pre_turn_actions(self) -> None:
         for agent in self.active_agents:
             agent.set_turn_movement()
+
+        utilisation = self.get_current_utilisation()
+        eligible_agents = [agent for agent in self.inactive_agents if agent.remaining_maintenance_time == 0]
+
+        while utilisation < self.calc_utilization_rate() and len(eligible_agents) > 0:
+            self.activate_agent(eligible_agents)
+
+            utilisation = self.get_current_utilisation()
+            eligible_agents = [agent for agent in self.inactive_agents if agent.remaining_maintenance_time == 0]
+
+    def get_current_utilisation(self) -> float:
+        if len(self.active_agents) > 0:
+            utilisation = len(self.active_agents) / (len(self.active_agents) + len(self.inactive_agents))
+        else:
+            utilisation = 0
+        return utilisation
 
     def initiate_agents(self) -> None:
         coalition_data = data_functions.get_coalition_data()
@@ -153,7 +169,7 @@ class EscortManager(Manager):
 
             quantity = int(coalition_data[model]["numberofagents"])
             for _ in range(quantity):
-                new_ship = Escort(manager=self, model=model, base=self.sample_random_base())
+                new_ship = Escort(manager=self, model=model, base=self.sample_random_base(), country=self.country)
                 self.inactive_agents.append(new_ship)
 
     @abstractmethod
@@ -161,22 +177,40 @@ class EscortManager(Manager):
         pass
 
     def calc_utilization_rate(self) -> float:
-        pass
+        # TODO: Calculate Utilisation rate properly
+        return 0.4
 
     def assign_agents_to_tasks(self) -> None:
         pass
 
     def activate_agent(self, agents: list) -> None:
-        pass
+        agent = random.choice(agents)
+        zone = self.select_zone_to_patrol(agent)
+
+        if zone is None:
+            return
+
+        agent.activate()
+        agent.go_to_patrol(zone)
 
     def select_zone_to_patrol(self, agent) -> None:
-        pass
+        set_assignment = settings.zone_assignment_coalition[agent.service]
+        zones = list(set_assignment.keys())
+        share = list(set_assignment.values())
+        if sum(share) == 0:
+            return None
+        selected_zone = random.choices(zones, share)[0]
+        return selected_zone
 
 
 class EscortManagerTW(EscortManager):
     def __init__(self):
         super().__init__()
         self.country = settings.TAIWAN
+        self.initiate_agents()
+
+    def __str__(self):
+        return "TW Escort Manager"
 
     def initiate_bases(self) -> None:
         self.bases = [Base(name="Kaohsiung", location=Point(120.30, 22.50), agent_share=0.25),
@@ -190,9 +224,10 @@ class EscortManagerJP(EscortManager):
     def __init__(self):
         super().__init__()
         self.country = settings.JAPAN
+        self.initiate_agents()
 
     def __str__(self):
-        return "Japan Escort Manager"
+        return "JP Escort Manager"
 
     def initiate_bases(self) -> None:
         self.bases = [Base(name="Okinawa", location=Point(127.737, 26.588), agent_share=1)]
@@ -202,6 +237,10 @@ class EscortManagerUS(EscortManager):
     def __init__(self):
         super().__init__()
         self.country = settings.USA
+        self.initiate_agents()
+
+    def __str__(self):
+        return "US Escort Manager"
 
     def initiate_bases(self) -> None:
         self.bases = [Base(name="Yokosuka", location=Point(137.307, 34.2), agent_share=1)]

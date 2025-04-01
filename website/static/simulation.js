@@ -1,7 +1,7 @@
 
-const WIDTH = 1000, HEIGHT = 800;
+const WIDTH = 1000, HEIGHT = 700;
 const app = new PIXI.Application({ width: WIDTH, height: HEIGHT, backgroundColor: 0x1099bb, resolution:
-                                   window.devicePixelRatio || 1, antialias: true});
+                                    1, antialias: true});
 
 
 let container = document.querySelector(".simulation-container");
@@ -74,8 +74,11 @@ function startSimulation(){
     socket.emit("start");
 }
 
-sprite_dict = {"Merchant Manager": "static/assets/merchant_12x8.png",
-               "China Navy Manager": "static/assets/hunter_12x8.png",
+sprite_dict = {"Merchant Manager": "static/assets/merchant_24x16.png",
+               "China Navy Manager": "static/assets/hunter_24x16.png",
+               "TW Escort Manager": "static/assets/escort_tw_24x16.png",
+               "JP Escort Manager": "static/assets/escort_jp_24x16.png",
+               "US Escort Manager": "static/assets/escort_us_24x16.png",
                "Harbour": "static/assets/anchor_grey_16x16.png",
                "AirportRed": "static/assets/airport_red_16x16.png"};
 
@@ -93,8 +96,9 @@ function placeBases(app, bases) {
 
 function createSprite(type_of_agent){
     let sprite = PIXI.Sprite.from(sprite_dict[type_of_agent]);
-    sprite.width = 12;
-    sprite.height = 8;
+    sprite.width = 24;
+    sprite.height = 16;
+    sprite.alpha = 0.8;
     sprite.anchor.set(0.5);
     sprite.interactive = true;
     return sprite;

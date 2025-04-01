@@ -29,31 +29,31 @@ class Ship(Agent):
     def set_agent_attributes(self, model_data: dict) -> None:
         self.team = model_data["team"]
         self.service = model_data["service"]
-        self.armed = True if model_data["Armed"] == "Y" else False
+        self.armed = True if model_data.get("Armed", "Y") == "Y" else False
         self.agent_type = model_data.get("type", None)
 
-        self.ship_visibility = model_data["SurfaceVisibility"]
-        self.air_visibility = model_data["AirVisibility"]
-        self.sub_visibility = model_data["UnderseaVisibility"]
+        self.ship_visibility = model_data.get("SurfaceVisibility", cs.SMALL)
+        self.air_visibility = model_data.get("AirVisibility", cs.SMALL)
+        self.sub_visibility = model_data.get("UnderseaVisibility", cs.SMALL)
 
-        self.speed_max = model_data["SpeedMax"]
-        self.speed_cruising = model_data["SpeedCruise"]
+        self.speed_max = model_data.get("SpeedMax", 40)
+        self.speed_cruising = model_data.get("SpeedCruise", 30)
         self.speed_current = self.speed_cruising
-        self.dwt = model_data["Displacement"]
-        self.endurance = model_data["Endurance"]
+        self.dwt = model_data.get("Displacement", 1500)
+        self.endurance = model_data.get("Endurance", 8100)
         self.remaining_endurance = self.endurance
 
-        self.ship_detection_skill = model_data["Ship Detection Skill"]
-        self.air_detection_skill = model_data["Air Detection Skill"]
-        self.sub_detection_skill = model_data["Submarine Detection Skill"]
+        self.ship_detection_skill = model_data.get("Ship Detection Skill", cs.DET_BASIC)
+        self.air_detection_skill = model_data.get("Air Detection Skill", cs.DET_BASIC)
+        self.sub_detection_skill = model_data.get("Submarine Detection Skill", cs.DET_BASIC)
 
-        self.anti_ship_skill = model_data["Anti-ship Skill"]
-        self.anti_air_skill = model_data["Anti-air Skill"]
-        self.anti_sub_skill = model_data["Anti-submarine Skill"]
+        self.anti_ship_skill = model_data.get("Anti-ship Skill", cs.ATT_BASIC)
+        self.anti_air_skill = model_data.get("Anti-air Skill", cs.ATT_BASIC)
+        self.anti_sub_skill = model_data.get("Anti-submarine Skill", cs.ATT_BASIC)
 
-        self.anti_ship_ammo = model_data["Anti-Ship Ammunition"]
-        self.anti_air_ammo = model_data["Anti-air Ammunition"]
-        self.anti_sub_ammo = model_data["Anti-submarine Ammunition"]
+        self.anti_ship_ammo = model_data.get("Anti-Ship Ammunition", 6)
+        self.anti_air_ammo = model_data.get("Anti-air Ammunition", 6)
+        self.anti_sub_ammo = model_data.get("Anti-submarine Ammunition", 6)
 
         self.helicopter = True if model_data["helicopter"] == "Y" else False
 
@@ -64,7 +64,6 @@ class Merchant(Ship):
         self.country = country
         self.set_service()
 
-        self.color = "0x267326"
         self.boarded = False
 
         self.entry_point = None
@@ -166,7 +165,6 @@ class Merchant(Ship):
         self.mission.abort()
         self.remove_from_missions()
 
-        self.color = boarder.color
         self.team = boarder.team
 
         if self.team == 1:
@@ -187,15 +185,16 @@ class Merchant(Ship):
 class ChineseShip(Ship):
     def __init__(self, manager, model: str, base: Base):
         super().__init__(manager, model, base)
-        self.color = "0xb30000"
         self.aws_enabled = False
         self.helicopter = False
 
+        self.initiate_model()
+
     def __repr__(self):
-        return f"Agent {self.agent_id} of {type(self)} - on mission: {self.mission} - zone: {self.assigned_zone}"
+        return f"{self.service}-{self.agent_id} - on mission: {self.mission} - zone: {self.assigned_zone}"
 
     def __str__(self):
-        return f"Agent {self.agent_id} of {type(self)} - on mission: {self.mission} - zone: {self.assigned_zone}"
+        return f"{self.service}-{self.agent_id} - on mission: {self.mission} - zone: {self.assigned_zone}"
 
     def initiate_model(self) -> None:
         model_data = cs.CHINA_NAVY_DATA[self.model]
@@ -328,12 +327,22 @@ class ChineseShip(Ship):
 
 
 class Escort(Ship):
-    def __init__(self, manager, model: str, base: Base):
+    def __init__(self, manager, model: str, base: Base, country: str):
         super().__init__(manager, model, base)
+        self.country = country
+
+        self.initiate_model()
 
     def initiate_model(self) -> None:
-        model_data = cs.COALITION_NAVY_DATA
+        model_data = cs.COALITION_NAVY_DATA[self.model]
         self.set_agent_attributes(model_data)
+
+        if self.country == settings.TAIWAN:
+            self.service = cs.COALITION_TW_ESCORT
+        elif self.country == settings.JAPAN:
+            self.service = cs.COALITION_JP_ESCORT
+        elif self.country == settings.USA:
+            self.service = cs.COALITION_US_ESCORT
 
     def surface_detection(self, agent: Agent) -> bool:
         pass
