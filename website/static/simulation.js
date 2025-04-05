@@ -198,9 +198,6 @@ function updateLogs(events) {
 }
 
 function updateTime(time_stamp) {
-    var world_time = document.getElementById('world-time');
-    world_time.textContent = time_stamp;
-
     var world_time_select = document.getElementById('world_time_select')
     world_time_select.value = time_stamp;
 }

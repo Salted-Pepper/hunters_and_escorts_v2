@@ -75,7 +75,7 @@ def send_ready_signal():
 def get_time_info(timestamp) -> None:
     global agent_data
     global events
-    print(f"Requested data for {timestamp}")
+    # print(f"Requested data for {timestamp}")
     time_data = agent_data[timestamp]
     agents = time_data['agents']
     socket.emit('update_plot', agents)

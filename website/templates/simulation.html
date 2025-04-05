@@ -24,11 +24,11 @@
     <h4 align="center"> Simulation </h4>
 <!--  Left Div  -->
     <div class="left-container">
-        World time is <span id="world-time">0</span> <br>
-        World time Selector:
+        World Time:
         <input
             type="number"
             id="world_time_select"
+            class="select-number"
             name="world_time_select"
             placeholder="0"
             value="0"
@@ -37,7 +37,6 @@
             step="{{ time_delta | safe }}"
             onchange="requestTimestampUpdate()"
         >
-
         <br>
         <br>
         <div class="simulation-container">

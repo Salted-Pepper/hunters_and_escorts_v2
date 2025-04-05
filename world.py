@@ -42,6 +42,7 @@ class World:
 
         # Managers
         self.managers = []
+        self.merchant_manager = None
         self.all_agents = []
         self.initiate_managers()
 
@@ -55,8 +56,9 @@ class World:
 
         china_avoid_zones = [landmass for landmass in self.landmasses
                              if landmass != ccs.TAIWAN_LAND and landmass not in ccs.JAPAN_AND_ISLANDS]
-        china_avoid_zones.append(zones.ZONE_C.polygon)
-        china_avoid_zones.append(zones.ZONE_E.polygon)
+        for zone in zones.HUNTER_ILLEGAL_ZONES:
+            china_avoid_zones.append(zone.polygon)
+
         self.china_air_obstacles = china_avoid_zones
         self.visibility_graph_air_china = routes.create_base_graph(self.china_air_obstacles)
         self.china_water_obstacles = china_avoid_zones + [self.china_polygon]
@@ -66,7 +68,8 @@ class World:
         self.receptor_grid = receptors.ReceptorGrid(self.landmasses, self)
 
     def initiate_managers(self) -> None:
-        self.managers = [MerchantManager(),
+        self.merchant_manager = MerchantManager()
+        self.managers = [self.merchant_manager,
                          ChinaNavyManager(),
                          ChinaAirManager(),
                          EscortManagerTW(),

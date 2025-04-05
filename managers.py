@@ -88,10 +88,12 @@ class Manager:
 
         if len(observing_agents) == 0:
             return
-
         self.agents_to_detect = [agent
-                                 for manager in cs.world.managers if manager.team != self.team
+                                 for manager in cs.world.managers if (manager.team != self.team and manager.team != 3)
                                  for agent in manager.active_agents]
+
+        self.agents_to_detect.extend(agent for agent in cs.world.merchant_manager.active_agents
+                                     if agent.team != self.team)
 
         if settings.MULTITHREAD:
             with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -101,25 +103,14 @@ class Manager:
             [agent.mission.execute(self.agents_to_detect) for agent in observing_agents]
 
     def continue_other_missions(self) -> None:
+        """
+        Other missions can't be multithreaded as mission outcome can affect other agent behaviour
+        :return:
+        """
         other_agents = [agent for agent in self.active_agents
                         if not isinstance(agent.mission, missions.Observe)]
 
-        def execute_mission(agent):
-            # TODO: Remove this debugging feature - just use agent.mission.execute() instead.
-            if agent.mission is None:
-                raise ValueError(f"{agent} has no mission - was {agent.previous_mission}")
-            try:
-                agent.mission.execute()
-            except AttributeError as e:
-                print(f"{agent} with previous mission {agent.previous_mission}.")
-                raise AttributeError(e)
-
-        if settings.MULTITHREAD:
-            with concurrent.futures.ThreadPoolExecutor(max_workers=cpu_count() - 1) as executor:
-                futures = [executor.submit(execute_mission, agent) for agent in other_agents]
-                concurrent.futures.wait(futures)
-        else:
-            [agent.mission.execute() for agent in other_agents]
+        [agent.mission.execute() for agent in other_agents]
 
     def sample_random_base(self) -> Base:
         return random.choices(self.bases, weights=[base.agent_share
@@ -193,7 +184,7 @@ class EscortManager(Manager):
         agent.activate()
         agent.go_to_patrol(zone)
 
-    def select_zone_to_patrol(self, agent) -> None:
+    def select_zone_to_patrol(self, agent) -> Zone | None:
         set_assignment = settings.zone_assignment_coalition[agent.service]
         zones = list(set_assignment.keys())
         share = list(set_assignment.values())
@@ -250,7 +241,7 @@ class MerchantManager(Manager):
     def __init__(self):
         super().__init__()
         self.name = "Merchant Manager"
-        self.team = 1
+        self.team = 3
 
     def __str__(self):
         return self.name

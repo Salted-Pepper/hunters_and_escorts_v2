@@ -68,14 +68,16 @@ ZONE_B.clear_patrol_in_zone(ZONE_C)
 ZONE_D.clear_patrol_in_zone(ZONE_E)
 ZONE_H.clear_patrol_in_zone(ZONE_C)
 ZONE_H.clear_patrol_in_zone(ZONE_E)
+ZONE_I.clear_patrol_in_zone(ZONE_C)
+ZONE_F.clear_patrol_in_zone(ZONE_G)
 ZONE_A.clear_patrol_in_zone(ZONE_C)
 ZONE_A.clear_patrol_in_zone(ZONE_E)
-ZONE_I.clear_patrol_in_zone(ZONE_C)
+ZONE_A.clear_patrol_in_zone(ZONE_G)
 
 # Sort zones from top zones to lower zones and establish overarching zones
 ZONES = [ZONE_P, ZONE_C, ZONE_B, ZONE_E, ZONE_D, ZONE_G, ZONE_F, ZONE_I, ZONE_L, ZONE_N, ZONE_H, ZONE_A]
 ZONES_DISPLAY_ORDER = [ZONE_A, ZONE_B, ZONE_C, ZONE_D, ZONE_E, ZONE_F, ZONE_G, ZONE_H, ZONE_I, ZONE_L, ZONE_N, ZONE_P]
-HUNTER_ILLEGAL_ZONES = ccs.JAPAN_AND_ISLANDS + [ZONE_B.polygon, ZONE_C.polygon]
+HUNTER_ILLEGAL_ZONES = [ZONE_C, ZONE_E, ZONE_G]
 COALITION_ILLEGAL_ZONES = [ccs.CHINA]
 
 NAVY_ILLEGAL_ZONES = ccs.JAPAN_AND_ISLANDS + [ccs.CHINA] + ccs.OTHER_LAND

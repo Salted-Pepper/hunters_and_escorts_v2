@@ -6,6 +6,49 @@
 <script>
     let china_info = {{china | tojson}}
     let coalition_info = {{coalition | tojson}}
+    let row_info = {}
+
+    function checkAssignmentConditions(){
+        console.log(row_info)
+        var all_rows_correct = true;
+        var save_button = document.getElementById('save-assignment');
+        Object.keys(row_info).forEach(key => {
+            var row_correct = true;
+            var row = row_info[key];
+            var row_sum = 0;
+
+            for (var i = 1; i < row.cells.length; i++){
+                var cell = row.cells[i].children.item(0);
+                row_sum += parseFloat(cell.value);
+            }
+
+
+            if (row_sum != 1 & row_sum != 0) {
+                row_correct = false;
+                all_rows_correct = false;
+                console.log("Row is", row, " - Sum is ", row_sum, " - length: ", row.cells.length);
+            }
+
+            if (!row_correct){
+                save_button.disabled = true;
+                for (var i = 1; i < row.cells.length; i++){
+                    var cell = row.cells[i];
+                    cell.style.backgroundColor = "red";
+                }
+                return;
+            }
+            else {
+                for (var i = 1; i < row.cells.length; i++){
+                    var cell = row.cells[i];
+                    cell.style.backgroundColor = "";
+                }
+            }
+        });
+
+        if (all_rows_correct){
+            save_button.disabled = false;
+        }
+    }
 </script>
 
 <div class="centered-container">
@@ -30,7 +73,7 @@
         <br>
         <br>
 
-        <button type="submit" class="btn btn-primary">
+        <button type="submit" class="btn btn-primary" id="save-assignment">
             Save
         </button>
         <div id="success-popup" class="success-popup">Saved Settings</div>

@@ -21,20 +21,22 @@ class Ship(Agent):
     def __init__(self, manager, model: str, base: Base, ):
         super().__init__(manager, model, base)
         self.helicopter = False
+        self.aws_enabled = False
 
     @abstractmethod
     def initiate_model(self) -> None:
         pass
 
     def set_agent_attributes(self, model_data: dict) -> None:
+
         self.team = model_data["team"]
         self.service = model_data["service"]
         self.armed = True if model_data.get("Armed", "Y") == "Y" else False
         self.agent_type = model_data.get("type", None)
 
-        self.ship_visibility = model_data.get("SurfaceVisibility", cs.SMALL)
-        self.air_visibility = model_data.get("AirVisibility", cs.SMALL)
-        self.sub_visibility = model_data.get("UnderseaVisibility", cs.SMALL)
+        self.ship_visibility = self.parse_string_input(model_data, "SurfaceVisibility", cs.SMALL)
+        self.air_visibility = self.parse_string_input(model_data, "AirVisibility", cs.SMALL)
+        self.sub_visibility = self.parse_string_input(model_data, "UnderseaVisibility", cs.SMALL)
 
         self.speed_max = model_data.get("SpeedMax", 40)
         self.speed_cruising = model_data.get("SpeedCruise", 30)
@@ -43,13 +45,13 @@ class Ship(Agent):
         self.endurance = model_data.get("Endurance", 8100)
         self.remaining_endurance = self.endurance
 
-        self.ship_detection_skill = model_data.get("Ship Detection Skill", cs.DET_BASIC)
-        self.air_detection_skill = model_data.get("Air Detection Skill", cs.DET_BASIC)
-        self.sub_detection_skill = model_data.get("Submarine Detection Skill", cs.DET_BASIC)
+        self.ship_detection_skill = self.parse_string_input(model_data, "Ship Detection Skill", cs.DET_BASIC)
+        self.air_detection_skill = self.parse_string_input(model_data, "Air Detection Skill", cs.DET_BASIC)
+        self.sub_detection_skill = self.parse_string_input(model_data, "Submarine Detection Skill", cs.DET_BASIC)
 
-        self.anti_ship_skill = model_data.get("Anti-ship Skill", cs.ATT_BASIC)
-        self.anti_air_skill = model_data.get("Anti-air Skill", cs.ATT_BASIC)
-        self.anti_sub_skill = model_data.get("Anti-submarine Skill", cs.ATT_BASIC)
+        self.anti_ship_skill = self.parse_string_input(model_data, "Anti-ship Skill", cs.ATT_BASIC)
+        self.anti_air_skill = self.parse_string_input(model_data, "Anti-air Skill", cs.ATT_BASIC)
+        self.anti_sub_skill = self.parse_string_input(model_data, "Anti-submarine Skill", cs.ATT_BASIC)
 
         self.anti_ship_ammo = model_data.get("Anti-Ship Ammunition", 6)
         self.anti_air_ammo = model_data.get("Anti-air Ammunition", 6)
@@ -57,13 +59,21 @@ class Ship(Agent):
 
         self.helicopter = True if model_data["helicopter"] == "Y" else False
 
+    @staticmethod
+    def parse_string_input(model_data, key, default) -> str | None:
+        value = model_data.get(key, default)
+        if value is None:
+            return value
+        else:
+            return value.lower()
+
 
 class Merchant(Ship):
     def __init__(self, manager, model: str, base: Base, country: str):
         super().__init__(manager, model, base)
         self.country = country
         self.set_service()
-
+        self.team = 1
         self.boarded = False
 
         self.entry_point = None
@@ -236,14 +246,11 @@ class ChineseShip(Ship):
     def observe(self, agents: list[Agent]) -> None:
         self.make_patrol_move()
         for agent in agents:
-            if agent.team == self.team:
-                # To handle exception for boarded merchants
-                continue
             if self.location.distance_to_point(agent.location) > cs.CHINESE_NAVY_MAX_DETECTION_RANGE:
                 continue
 
             if not self.check_if_valid_target(agent):
-                return
+                continue
 
             if issubclass(type(agent), Ship):
                 detected = self.surface_detection(agent)
@@ -280,6 +287,7 @@ class ChineseShip(Ship):
         pass
 
     def prepare_to_board(self, target: Merchant) -> None:
+        print(f"{self} is attempting to board {target}")
         if self.location.distance_to_point(target.location) > 12:
             return
         else:
@@ -345,16 +353,96 @@ class Escort(Ship):
             self.service = cs.COALITION_US_ESCORT
 
     def surface_detection(self, agent: Agent) -> bool:
-        pass
+        agent_size = agent.ship_visibility
+        detection_range = cs.COALITION_NAVY_DETECTING_SHIP[self.ship_detection_skill][agent_size]
+        distance = self.location.distance_to_point(agent.location)
+
+        if distance < detection_range:
+            return True
+        else:
+            return False
 
     def air_detection(self, agent: Agent) -> bool:
-        pass
+        agent_size = agent.ship_visibility
+        detection_range = cs.COALITION_NAVY_DETECTING_AIR[self.air_detection_skill][agent_size]
+        distance = self.location.distance_to_point(agent.location)
+
+        if distance < detection_range:
+            return True
+        else:
+            return False
 
     def sub_detection(self, agent: Agent) -> bool:
-        pass
+        agent_size = agent.ship_visibility
+        if self.aws_enabled:
+            detection_range = cs.COALITION_NAVY_DETECTING_SUB_AWS[self.sub_detection_skill][agent_size]
+        else:
+            detection_range = cs.COALITION_NAVY_DETECTING_SUB_NO_AWS[self.sub_detection_skill][agent_size]
+        distance = self.location.distance_to_point(agent.location)
+
+        if distance < detection_range:
+            return True
+        else:
+            return False
 
     def observe(self, agents: list[Agent]) -> None:
-        pass
+        self.make_patrol_move()
+        for agent in agents:
+            if self.location.distance_to_point(agent.location) > cs.COALITION_NAVY_MAX_DETECTION_RANGE:
+                continue
+
+            if not self.check_if_valid_target(agent):
+                return
+
+            if issubclass(type(agent), Ship):
+                if self.anti_ship_skill is None:
+                    continue
+                detected = self.surface_detection(agent)
+            elif issubclass(type(agent), Aircraft):
+                if self.anti_air_skill is None:
+                    continue
+                detected = self.air_detection(agent)
+            elif issubclass(type(agent), Submarine):
+                if self.anti_sub_skill is None:
+                    continue
+                detected = self.sub_detection(agent)
+            else:
+                raise ValueError(f"Unknown Class {type(agent)} - unable to observe.")
+
+            if detected:
+                self.mission.complete()
+                missions.Track(self, agent)
+                return
+
+        self.spread_pheromones(self.location)
 
     def track(self, target: Agent) -> None:
-        pass
+        if cs.world.world_time - self.route.creation_time > 1 or self.route.next_point() is None:
+            self.generate_route(target.location)
+
+        if self.location.distance_to_point(target.location) > 12:
+            self.move_through_route()
+
+        if self.location.distance_to_point(target.location) > 12:
+            return
+
+        # TODO: Add Check if able to attack or liberate here
+        if isinstance(target, Merchant):
+            pass
+
+    def prepare_to_board(self, target: Merchant) -> None:
+        print(f"{self} is attempting to board {target}")
+        if self.location.distance_to_point(target.location) > 12:
+            return
+        else:
+            successful = self.attempt_boarding(target)
+
+        if successful and not cs.world.zones.ZONE_L.contains_point(target.location):
+            self.mission.complete()
+            target.is_boarded(self)
+            missions.Guard(self, target)
+
+    def attempt_boarding(self, target) -> bool:
+        # TODO: Get boarding parameters for escort here - for now just guaranteed success
+        return True
+
