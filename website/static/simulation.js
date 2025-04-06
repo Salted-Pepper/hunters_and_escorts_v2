@@ -105,27 +105,40 @@ function createSprite(type_of_agent){
 }
 
 function updatePlot(agents) {
+    let agent_ids = agents.map(agent => agent.agent_id);
+    Object.keys(sprites).forEach(key => {
+        sprite = sprites[key];
+
+        if (!(key in agents)){
+            app.stage.removeChild(sprite);
+            delete sprites[key];
+        }
+    })
+
     agents.forEach(agent => {
         if (!agent_data[agent.agent_id]){
-            agent_data[agent.agent_id] = agent
+            agent_data[agent.agent_id] = agent;
         }
-        let [x, y] = lonLatToCanvas(agent.x, agent.y)
-        agent.x = x
-        agent.y = y
+        let [x, y] = lonLatToCanvas(agent.x, agent.y);
+        agent.x = x;
+        agent.y = y;
         if (!sprites[agent.agent_id] & agent.activated == true) {
             let sprite = createSprite(agent.type);
             sprite.x = agent.x;
             sprite.y = agent.y;
 
-            sprite.on('mouseover', function(event){
-                var text = agent.service + ' - ' + agent.agent_id + '\non ' + agent.mission + '\n';
-                var message = new PIXI.Text(text, {fontSize: 16, fill: 0xff1010});
-                message.x = event.data.global.x + 10;
-                message.y = event.data.global.y;
+            app.stage.addChild(sprite);
+            sprites[agent.agent_id] = sprite;
 
-                sprite.message = message;
-                app.stage.addChild(message);
-            });
+            var text = agent.service + ' - ' + agent.agent_id + '\non ' + agent.mission + '\nEndurance ' + agent.rem_endurance.toFixed(0);
+            var message = new PIXI.Text(text, {fontSize: 16, fill: 0xff1010});
+            sprite.message = message
+
+            sprite.on('mouseover', function(event){
+                    sprite.message.x = event.data.global.x + 10;
+                    sprite.message.y = event.data.global.y;
+                    app.stage.addChild(sprite.message)
+                });
 
             sprite.on('mousemove',function (event) {
                 if (!sprite.message) {
@@ -138,26 +151,36 @@ function updatePlot(agents) {
 
             sprite.on('mouseout', function(event){
                 app.stage.removeChild(sprite.message);
-                delete sprite.message;
             });
 
-            app.stage.addChild(sprite);
-            sprites[agent.agent_id] = sprite;
         } else {
-            if (agent.activated == false){
+            if (agent.activated == false & Object.hasOwn(sprites, agent.agent_id)){
                 sprite = sprites[agent.agent_id];
+                if (Object.hasOwn(sprite, 'message')){
+                    app.stage.removeChild(sprite.message);
+                }
                 app.stage.removeChild(sprite);
                 delete sprites[agent.agent_id];
-            } else{
-                sprites[agent.agent_id].x = agent.x;
-                sprites[agent.agent_id].y = agent.y;
+
+            } else if(agent.activated == true) {
+                sprite = sprites[agent.agent_id];
+                sprite.x = agent.x;
+                sprite.y = agent.y;
+                sprite.message.x = sprite.x + 10;
+                sprite.message.y = sprite.y;
+
+                app.stage.removeChild(sprite.message);
+                var text = agent.service + ' - ' + agent.agent_id + '\non ' + agent.mission + '\nEndurance ' + agent.rem_endurance.toFixed(0);
+                var message = new PIXI.Text(text, {fontSize: 16, fill: 0xff1010});
+                sprite.message = message
+
             }
         }
     });
 }
 
 function updateLogs(events) {
-    events = JSON.parse(events)
+    events = JSON.parse(events);
     var new_logger_text = "";
 
     var selected_time = parseFloat(document.getElementById('world_time_select').value);

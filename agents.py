@@ -110,7 +110,8 @@ class Agent:
                 "activated": self.activated,
                 "mission": str(self.mission),
                 "type": str(self.manager),
-                "service": self.service}  # TODO: Make sprite reliant on other property than manager
+                "service": self.service,
+                "rem_endurance": self.remaining_endurance}  # TODO: Make sprite reliant on other property than manager
 
     @abstractmethod
     def initiate_model(self) -> None:
@@ -139,9 +140,6 @@ class Agent:
             raise ValueError(f"Movement set to None - {self.speed_current}, {settings.time_delta}")
 
     def move_through_route(self) -> str:
-        if self.movement_left_in_turn is None:
-            raise ValueError(f"{self} - "
-                             f"Movement not set - speed: {self.speed_current} - timedelta {settings.time_delta}")
         iterations = 0
         while self.movement_left_in_turn > 0:
             iterations += 1
@@ -160,6 +158,8 @@ class Agent:
 
             if dist_travelled == dist_to_next_point:
                 self.movement_left_in_turn -= dist_travelled
+                self.remaining_endurance -= dist_travelled
+
                 self.location = next_point
                 self.route.reached_point()
             else:
@@ -167,8 +167,8 @@ class Agent:
                 new_x = self.location.x + part_travelled * (next_point.x - self.location.x)
                 new_y = self.location.y + part_travelled * (next_point.y - self.location.y)
                 self.location = Point(new_x, new_y)
+                self.remaining_endurance -= dist_travelled
                 self.movement_left_in_turn = 0
-
         return "Spent Turn Movement"
 
     def reach_and_return(self, location: Point) -> bool:
@@ -309,6 +309,21 @@ class Agent:
     @abstractmethod
     def observe(self, agents: list[Agent]) -> None:
         pass
+
+    def remove_invalid_targets(self, agents: list) -> list:
+        agents_to_remove = []
+
+        if self.ship_detection_skill is None:
+            agents_to_remove.extend([a for a in agents if a.agent_class == "ship"])
+        elif self.air_detection_skill is None:
+            agents_to_remove.extend([a for a in agents if a.agent_class == "aircraft"])
+        elif self.sub_detection_skill is None:
+            agents_to_remove.extend([a for a in agents if a.agent_class == "sub"])
+
+        if len(agents_to_remove) > 0:
+            return [a for a in agents if a not in agents_to_remove]
+        else:
+            return agents
 
     @abstractmethod
     def track(self, target: Agent) -> None:

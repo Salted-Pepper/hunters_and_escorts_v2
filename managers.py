@@ -169,7 +169,7 @@ class EscortManager(Manager):
 
     def calc_utilization_rate(self) -> float:
         # TODO: Calculate Utilisation rate properly
-        return 0.4
+        return 0.02
 
     def assign_agents_to_tasks(self) -> None:
         pass
@@ -351,7 +351,7 @@ class ChinaNavyManager(Manager):
 
     def calc_utilization_rate(self) -> float:
         # TODO: Calculate Utilisation rate properly
-        return 0.4
+        return 0.02
 
     def assign_agents_to_tasks(self) -> None:
         pass

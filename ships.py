@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 import random
 from abc import abstractmethod
 
@@ -22,13 +23,13 @@ class Ship(Agent):
         super().__init__(manager, model, base)
         self.helicopter = False
         self.aws_enabled = False
+        self.agent_class = "ship"
 
     @abstractmethod
     def initiate_model(self) -> None:
         pass
 
     def set_agent_attributes(self, model_data: dict) -> None:
-
         self.team = model_data["team"]
         self.service = model_data["service"]
         self.armed = True if model_data.get("Armed", "Y") == "Y" else False
@@ -92,7 +93,7 @@ class Merchant(Ship):
 
     def sample_entry_point(self) -> None:
         x = cs.MAX_LAT
-        y = random.uniform(cs.MIN_LONG, 30)
+        y = random.uniform(cs.MIN_LONG, 34)
         self.entry_point = Point(x, y)
 
     def start_delivering_goods(self) -> None:
@@ -107,6 +108,7 @@ class Merchant(Ship):
         self.air_visibility = attribute["Visibility"]
         self.sub_visibility = attribute["Visibility"]
         self.movement_left_in_turn = self.speed_current * settings.time_delta
+        self.remaining_endurance = 0
 
     def set_service(self) -> None:
         if self.country == settings.TAIWAN:
@@ -245,6 +247,8 @@ class ChineseShip(Ship):
 
     def observe(self, agents: list[Agent]) -> None:
         self.make_patrol_move()
+        agents = self.remove_invalid_targets(agents)
+
         for agent in agents:
             if self.location.distance_to_point(agent.location) > cs.CHINESE_NAVY_MAX_DETECTION_RANGE:
                 continue
@@ -387,6 +391,8 @@ class Escort(Ship):
 
     def observe(self, agents: list[Agent]) -> None:
         self.make_patrol_move()
+        agents = self.remove_invalid_targets(agents)
+
         for agent in agents:
             if self.location.distance_to_point(agent.location) > cs.COALITION_NAVY_MAX_DETECTION_RANGE:
                 continue
@@ -395,16 +401,10 @@ class Escort(Ship):
                 return
 
             if issubclass(type(agent), Ship):
-                if self.anti_ship_skill is None:
-                    continue
                 detected = self.surface_detection(agent)
             elif issubclass(type(agent), Aircraft):
-                if self.anti_air_skill is None:
-                    continue
                 detected = self.air_detection(agent)
             elif issubclass(type(agent), Submarine):
-                if self.anti_sub_skill is None:
-                    continue
                 detected = self.sub_detection(agent)
             else:
                 raise ValueError(f"Unknown Class {type(agent)} - unable to observe.")

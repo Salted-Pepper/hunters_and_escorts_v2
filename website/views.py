@@ -83,12 +83,6 @@ def assignment():
     global last_zone_assignment_update
     hunter_dict = settings.zone_assignment_hunter
     coalition_dict = settings.zone_assignment_coalition
-    current_rules = {"china": {agent: {zone.name: hunter_dict[agent][zone]
-                                       for zone in hunter_dict[agent].keys()}
-                               for agent in hunter_dict.keys()},
-                     "coalition": {agent: {zone.name: coalition_dict[agent][zone]
-                                           for zone in coalition_dict[agent].keys()}
-                                   for agent in coalition_dict.keys()}}
 
     if request.method == "POST":
         data = request.form
@@ -112,6 +106,12 @@ def assignment():
                     print(f"Setting {agent} - {zone} to {coalition_dict[agent][zone]}")
 
         last_zone_assignment_update = time.time()
+    current_rules = {"china": {agent: {zone.name: hunter_dict[agent][zone]
+                                       for zone in hunter_dict[agent].keys()}
+                               for agent in hunter_dict.keys()},
+                     "coalition": {agent: {zone.name: coalition_dict[agent][zone]
+                                           for zone in coalition_dict[agent].keys()}
+                                   for agent in coalition_dict.keys()}}
 
     check_if_updated(current_rules, last_zone_assignment_update)
 

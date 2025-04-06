@@ -5,6 +5,7 @@ from typing import Type, TYPE_CHECKING
 
 import time
 import tracker
+import constants as cs
 
 if TYPE_CHECKING:
     from agents import Agent
@@ -20,7 +21,7 @@ class Mission:
         mission_id += 1
         self.agent = agent
         self.target = target
-        print(f"Setting {agent} to {self}")
+        print(f"{cs.world.world_time} - Setting {agent} to {self}")
 
         self.set_mission()
 
@@ -129,6 +130,7 @@ class Track(Mission):
     def __init__(self, agent: Agent, target: Agent):
         super().__init__(agent, target)
         self.agent.generate_route(target.location)
+        self.agent.speed_current = self.agent.speed_max
 
     def __repr__(self):
         return f"{self.mission_id} - Tracking {self.target.service}-{self.target.agent_id}"
@@ -155,9 +157,11 @@ class Track(Mission):
 
     def complete(self) -> None:
         self.remove_mission_status()
+        self.agent.speed_current = self.agent.speed_cruising
 
     def abort(self) -> None:
         self.remove_mission_status()
+        self.agent.speed_current = self.agent.speed_cruising
         self.agent.mission = Observe(self.agent, self.agent.assigned_zone.sample_patrol_location())
 
     def remove_agent_from_mission(self, agent: Agent) -> None:
@@ -245,7 +249,7 @@ class Return(Mission):
         agent.generate_route(target)
 
     def __repr__(self):
-        return f"{self.mission_id} - Returning to {self.target}"
+        return f"{self.mission_id} - Returning"
 
     def execute(self) -> None:
         t_0 = time.time()
