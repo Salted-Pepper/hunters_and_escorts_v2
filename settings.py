@@ -18,6 +18,7 @@ time_delta = 0.25
 simulation_end_time = 0
 
 SAFETY_ENDURANCE = 0.1
+COMMUNICATION_DELAY = 0.25
 
 # ---- Teams ----
 TEAM_COALITION = 1

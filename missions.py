@@ -19,6 +19,8 @@ class Mission:
         global mission_id
         self.mission_id = mission_id
         mission_id += 1
+
+        self.mission_type = None
         self.agent = agent
         self.target = target
         print(f"{cs.world.world_time} - Setting {agent} to {self}")
@@ -69,6 +71,7 @@ class Travel(Mission):
     """
     def __init__(self, agent: Agent, target: Agent | Point, next_mission: Type[Mission], next_settings: dict):
         super().__init__(agent, target)
+        self.mission_type = "travel"
         self.next_mission = next_mission
         self.next_settings = next_settings
         self.location = None
@@ -129,8 +132,11 @@ class Track(Mission):
     """
     def __init__(self, agent: Agent, target: Agent):
         super().__init__(agent, target)
+        self.mission_type = "track"
         self.agent.generate_route(target.location)
         self.agent.speed_current = self.agent.speed_max
+
+        self.support_requested = False
 
     def __repr__(self):
         return f"{self.mission_id} - Tracking {self.target.service}-{self.target.agent_id}"
@@ -175,6 +181,7 @@ class Observe(Mission):
     """
     def __init__(self, agent: Agent, target: Point):
         super().__init__(agent, target)
+        self.mission_type = "observe"
 
     def __repr__(self):
         return f"{self.mission_id} Observing {self.agent.assigned_zone}"
@@ -207,6 +214,7 @@ class Guard(Mission):
     """
     def __init__(self, agent: Agent, target: Agent):
         super().__init__(agent, target)
+        self.mission_type = "guard"
 
     def __repr__(self):
         return f"{self.mission_id} Guarding {self.target}"
@@ -244,6 +252,8 @@ class Return(Mission):
     """
     def __init__(self, agent: Agent, target: Point = None):
         super().__init__(agent, target)
+        self.mission_type = "return"
+
         if target is None:
             target = agent.base.location
         agent.generate_route(target)
@@ -286,6 +296,7 @@ class Holding(Mission):
     """
     def __init__(self, agent: Agent, target: Point):
         super().__init__(agent, target)
+        self.mission_type = "hold"
 
     def __repr__(self):
         return f"{self.mission_id} - Holding "
@@ -314,6 +325,7 @@ class Depart(Mission):
     """
     def __init__(self, agent: "Merchant", target: Point):
         super().__init__(agent, target)
+        self.mission_type = "depart"
         agent.generate_route(target)
 
     def __repr__(self):

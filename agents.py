@@ -131,8 +131,6 @@ class Agent:
             print(f"Failed to create route for {self} to {destination}. "
                   f"Agent was assigned to {self.assigned_zone}. Team {self.team}")
             raise ValueError(e)
-        if self.route is None:
-            raise ValueError(f"Failed to generate Route")
 
     def set_turn_movement(self) -> None:
         self.movement_left_in_turn = self.speed_current * settings.time_delta
@@ -294,6 +292,12 @@ class Agent:
             if zone.check_if_agent_in_zone(self):
                 return zone
 
+    def allowed_to_enter_zone(self, zone: zones.Zone) -> bool:
+        if self.team == 1:
+            return settings.zone_assignment_coalition[self.service][zone]
+        elif self.team == 2:
+            return settings.zone_assignment_hunter[self.service][zone]
+
     @abstractmethod
     def surface_detection(self, agent: Agent) -> bool:
         pass
@@ -329,12 +333,47 @@ class Agent:
     def track(self, target: Agent) -> None:
         pass
 
+    def request_support(self, target) -> None:
+        if self.mission.support_requested:
+            return
+
+        world = cs.world
+        if self.team == 1:
+            managers = [world.tw_manager_escorts,
+                        world.jp_manager_escorts,
+                        world.us_manager_escorts]
+        elif self.team == 2:
+            managers = [world.china_manager_navy,
+                        world.china_manager_air,]
+        else:
+            raise ValueError(f"Invalid team {self.team}")
+
+        # First check holding zones
+        for manager in managers:
+            task_taken = manager.check_if_can_take_task(target, self.mission, holding_only=True)
+            if task_taken:
+                self.mission.support_requested = True
+                return
+        # Otherwise any available agent
+        for manager in managers:
+            task_taken = manager.check_if_can_take_task(target, self.mission, holding_only=False)
+            if task_taken:
+                self.mission.support_requested = True
+                return
+
     def go_to_patrol(self, zone: zones.Zone) -> None:
-        self.mission = missions.Travel(agent=self,
-                                       target=zone.sample_patrol_location(),
-                                       next_mission=missions.Observe,
-                                       next_settings={"agent": self,
-                                                      "target": None})
+        if zone.name == "N":
+            self.mission = missions.Travel(agent=self,
+                                           target=zone.sample_patrol_location(),
+                                           next_mission=missions.Holding,
+                                           next_settings={"agent": self,
+                                                          "target": None})
+        else:
+            self.mission = missions.Travel(agent=self,
+                                           target=zone.sample_patrol_location(),
+                                           next_mission=missions.Observe,
+                                           next_settings={"agent": self,
+                                                          "target": None})
         self.assigned_zone = zone
 
     def make_patrol_move(self) -> None:

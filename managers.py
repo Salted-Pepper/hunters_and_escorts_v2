@@ -9,12 +9,19 @@ import random
 import settings
 import missions
 from bases import Base
-from zones import Zone
+import zones
 from points import Point
 import constants as cs
 import data_functions
 
 from ships import Merchant, ChineseShip, Escort
+
+
+class Request:
+    def __init__(self, target, mission, action_time: float):
+        self.target = target
+        self.mission = mission
+        self.action_time = action_time
 
 
 class Manager:
@@ -61,9 +68,69 @@ class Manager:
         self.active_agents.remove(agent)
         self.destroyed_agents.append(agent)
 
-    @abstractmethod
-    def assign_agents_to_tasks(self) -> None:
-        pass
+    def check_if_can_take_task(self, target, mission, holding_only=False) -> bool:
+        zone = target.get_current_zone()
+
+        if holding_only:
+            agents_in_holding = [a for a in self.active_agents
+                                 if a.mission.mission_type == "hold"
+                                 and a.allowed_to_enter_zone(zone)]
+            if len(agents_in_holding) > 0:
+                self.add_task(target, mission)
+                return True
+            else:
+                return False
+
+        for agent in self.active_agents + self.inactive_agents:
+            if (agent.mission.mission_type != "return"
+                    and agent.remaining_maintenance_time == 0
+                    and agent.allowed_to_enter_zone(zone)):
+                self.add_task(target, mission)
+                return True
+        return False
+
+    def add_task(self, target, mission) -> None:
+        self.requests.append(Request(target=target,
+                                     mission=mission,
+                                     action_time=cs.world.world_time + settings.COMMUNICATION_DELAY))
+
+    def assign_agents_to_requests(self) -> None:
+        while len(self.requests) > 0 and self.requests[0].action_time <= cs.world.world_time:
+            request = self.requests.pop(0)
+            zone = request.target.get_current_zone()
+
+            successful = self.select_agent_for_request(request, zone)
+            if not successful:
+                self.requests.insert(0, request)
+                return
+
+    def select_agent_for_request(self, request, zone) -> bool:
+        # Try assigning an agent in holding
+        for agent in self.active_agents:
+            if agent.mission.mission_type != "hold":
+                continue
+            elif not agent.check_if_valid_target(request.target):
+                continue
+            elif not agent.reach_and_return(request.target.location):
+                continue
+            else:
+                agent.mission.complete()
+                missions.Track(agent, request.target)
+                return True
+
+        # Otherwise assign any ready inactive agent
+        for agent in self.inactive_agents:
+            if agent.remaining_maintenance_time > 0:
+                continue
+            elif not agent.check_if_valid_target(request.target):
+                continue
+            elif not agent.reach_and_return(request.target.location):
+                continue
+            else:
+                agent.activate()
+                missions.Track(agent, request.target)
+                return True
+        return False
 
     @abstractmethod
     def activate_agent(self, agents: list) -> None:
@@ -171,9 +238,6 @@ class EscortManager(Manager):
         # TODO: Calculate Utilisation rate properly
         return 0.02
 
-    def assign_agents_to_tasks(self) -> None:
-        pass
-
     def activate_agent(self, agents: list) -> None:
         agent = random.choice(agents)
         zone = self.select_zone_to_patrol(agent)
@@ -184,13 +248,13 @@ class EscortManager(Manager):
         agent.activate()
         agent.go_to_patrol(zone)
 
-    def select_zone_to_patrol(self, agent) -> Zone | None:
+    def select_zone_to_patrol(self, agent) -> zones.Zone | None:
         set_assignment = settings.zone_assignment_coalition[agent.service]
-        zones = list(set_assignment.keys())
+        potential_zones = list(set_assignment.keys())
         share = list(set_assignment.values())
         if sum(share) == 0:
             return None
-        selected_zone = random.choices(zones, share)[0]
+        selected_zone = random.choices(potential_zones, share)[0]
         return selected_zone
 
 
@@ -291,13 +355,10 @@ class MerchantManager(Manager):
         """
         pass
 
-    def assign_agents_to_tasks(self) -> None:
-        pass
-
     def activate_agent(self, agents: list) -> None:
         pass
 
-    def select_zone_to_patrol(self, agent) -> Zone:
+    def select_zone_to_patrol(self, agent) -> zones.Zone:
         pass
 
     @staticmethod
@@ -353,9 +414,6 @@ class ChinaNavyManager(Manager):
         # TODO: Calculate Utilisation rate properly
         return 0.02
 
-    def assign_agents_to_tasks(self) -> None:
-        pass
-
     def activate_agent(self, agents: list) -> None:
         agent = random.choice(agents)
         zone = self.select_zone_to_patrol(agent)
@@ -366,7 +424,7 @@ class ChinaNavyManager(Manager):
         agent.activate()
         agent.go_to_patrol(zone)
 
-    def select_zone_to_patrol(self, agent) -> Zone | None:
+    def select_zone_to_patrol(self, agent) -> zones.Zone | None:
         set_assignment = settings.zone_assignment_hunter[agent.service]
         zones = list(set_assignment.keys())
         share = list(set_assignment.values())
@@ -392,9 +450,6 @@ class ChinaAirManager(Manager):
                       Base(name="Liangcheng", location=Point(116.75, 25.68), icon="AirportRed", agent_share=0.33)]
 
     def calc_utilization_rate(self) -> float:
-        pass
-
-    def assign_agents_to_tasks(self) -> None:
         pass
 
     def activate_agent(self, agents: list) -> None:

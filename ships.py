@@ -287,9 +287,6 @@ class ChineseShip(Ship):
         else:
             self.go_to_attack(target)
 
-    def request_support(self) -> None:
-        pass
-
     def prepare_to_board(self, target: Merchant) -> None:
         print(f"{self} is attempting to board {target}")
         if self.location.distance_to_point(target.location) > 12:
@@ -333,7 +330,7 @@ class ChineseShip(Ship):
 
     def go_to_attack(self, target: Agent) -> None:
         if not self.armed:
-            self.request_support()
+            self.request_support(target)
 
         # TODO: Create attack interaction here
 

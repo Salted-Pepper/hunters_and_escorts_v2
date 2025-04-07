@@ -43,6 +43,11 @@ class World:
         # Managers
         self.managers = []
         self.merchant_manager = None
+        self.tw_manager_escorts = None
+        self.jp_manager_escorts = None
+        self.us_manager_escorts = None
+        self.china_manager_air = None
+        self.china_manager_navy = None
         self.all_agents = []
         self.initiate_managers()
 
@@ -69,12 +74,18 @@ class World:
 
     def initiate_managers(self) -> None:
         self.merchant_manager = MerchantManager()
+        self.tw_manager_escorts = EscortManagerTW()
+        self.jp_manager_escorts = EscortManagerJP()
+        self.us_manager_escorts = EscortManagerUS()
+        self.china_manager_air = ChinaAirManager()
+        self.china_manager_navy = ChinaNavyManager()
+
         self.managers = [self.merchant_manager,
-                         ChinaNavyManager(),
-                         ChinaAirManager(),
-                         EscortManagerTW(),
-                         EscortManagerJP(),
-                         EscortManagerUS(),
+                         self.china_manager_air,
+                         self.china_manager_navy,
+                         self.tw_manager_escorts,
+                         self.jp_manager_escorts,
+                         self.us_manager_escorts,
                          ]
 
         for manager in self.managers:
@@ -101,7 +112,7 @@ class World:
             manager.pre_turn_actions()
             manager.check_if_agents_have_to_return()
             manager.have_agents_observe()
-            manager.assign_agents_to_tasks()
+            manager.assign_agents_to_requests()
             manager.continue_other_missions()
 
         self.receptor_grid.depreciate_pheromones()
