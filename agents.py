@@ -3,6 +3,7 @@ from abc import abstractmethod
 import copy
 
 import settings
+import tracker
 from bases import Base
 
 from points import Point
@@ -28,6 +29,7 @@ class Agent:
         self.model = model
         self.service = None
         self.agent_type = None
+        self.combat_type = None
         self.dwt = None
 
         # ---- Detection Parameters ----
@@ -193,18 +195,33 @@ class Agent:
             return True
 
     def return_to_base(self) -> None:
-        self.mission.abort()
+        if self.mission is not None:
+            self.mission.abort()
         self.mission = missions.Return(self, self.base.location)
 
     def enter_base(self) -> None:
         self.manager.active_agents.remove(self)
-        self.manager.inactive_agents.append(self)
+        if not self.CTL:
+            self.manager.inactive_agents.append(self)
+        else:
+            self.create_event("CTL")
         self.mission.complete()
         self.activated = False
         self.in_combat = False
         self.base.receive_agent(self)
         self.set_up_for_maintenance()
         self.remove_from_missions()
+
+    def create_event(self, type_of_event):
+        if self.combat_type == "COALITION ESCORT":
+            identifier = "Escorts"
+        elif self.combat_type.startswith("CN"):
+            identifier = "Hunters"
+        else:
+            identifier = "Merchants"
+
+        tracker.Event(text=f"{self.agent_id} - {self.service} has been {type_of_event}",
+                      event_type=f"{identifier} {type_of_event}")
 
     def set_up_for_maintenance(self) -> None:
         self.remaining_maintenance_time = self.maintenance_time
@@ -226,6 +243,10 @@ class Agent:
         if self.team == 1:
             # if coalition, it depends on the r_o_e
             rules = settings.coalition_r_o_e_rules
+            if target_zone == zones.ZONE_P:
+                target_zone = zones.ZONE_B
+            elif target_zone == zones.ZONE_N:
+                target_zone = zones.ZONE_H
             rule_value = rules[self.service][target_zone.name]
             if rule_value == 1:
                 return True
@@ -247,7 +268,9 @@ class Agent:
             zone_rules = settings.zone_assignment_hunter
             target_rules = settings.hunter_target_rules
 
-            valid_zone = True if zone_rules[self.service].get(target_zone, 0) > 0 else False
+            valid_zone = True if (zone_rules[self.service].get(target_zone, 0) > 0 or
+                                  (zone_rules[self.service][zones.ZONE_A] > 0 and
+                                   target_zone not in settings.HUNTER_ILLEGAL_ZONES)) else False
             valid_target = target_rules[self.service][target.service]
 
             if valid_zone and valid_target:
@@ -269,6 +292,8 @@ class Agent:
         self.destroyed = True
         self.activated = False
         self.manager.agent_was_destroyed(self)
+        print(f"{cs.world.world_time}-{self} was destroyed.")
+        self.create_event(type_of_event="Destroyed")
 
     def check_if_in_zone(self, zone: zones.Zone) -> bool:
         """
@@ -291,12 +316,15 @@ class Agent:
         for zone in zones.ZONES:
             if zone.check_if_agent_in_zone(self):
                 return zone
+        raise ValueError(f"No zone found for {self} at {self.location}")
 
     def allowed_to_enter_zone(self, zone: zones.Zone) -> bool:
         if self.team == 1:
             return settings.zone_assignment_coalition[self.service][zone]
         elif self.team == 2:
             return settings.zone_assignment_hunter[self.service][zone]
+        else:
+            raise ValueError(f"Unaccounted team {self.team}.")
 
     @abstractmethod
     def surface_detection(self, agent: Agent) -> bool:
@@ -318,11 +346,11 @@ class Agent:
         agents_to_remove = []
 
         if self.ship_detection_skill is None:
-            agents_to_remove.extend([a for a in agents if a.agent_class == "ship"])
+            agents_to_remove.extend([a for a in agents if a.agent_type == "ship"])
         elif self.air_detection_skill is None:
-            agents_to_remove.extend([a for a in agents if a.agent_class == "aircraft"])
+            agents_to_remove.extend([a for a in agents if a.agent_type == "aircraft"])
         elif self.sub_detection_skill is None:
-            agents_to_remove.extend([a for a in agents if a.agent_class == "sub"])
+            agents_to_remove.extend([a for a in agents if a.agent_type == "sub"])
 
         if len(agents_to_remove) > 0:
             return [a for a in agents if a not in agents_to_remove]
@@ -362,7 +390,7 @@ class Agent:
                 return
 
     def go_to_patrol(self, zone: zones.Zone) -> None:
-        if zone.name == "N":
+        if zone == zones.ZONE_N:
             self.mission = missions.Travel(agent=self,
                                            target=zone.sample_patrol_location(),
                                            next_mission=missions.Holding,
@@ -409,6 +437,13 @@ class Agent:
             options[location] = value
         return min(options, key=options.get)
 
+    def hold(self) -> None:
+        """
+        Accounts for agents for an agent waiting in the holding zone.
+        """
+        self.remaining_endurance -= self.movement_left_in_turn
+        self.movement_left_in_turn = 0
+
     def spread_pheromones(self, location) -> None:
         # TODO: Consider set up for pheromone spread (based on radius or just closest - and if so what radius)
         # radius: float
@@ -427,3 +462,28 @@ class Agent:
             receptor.china_pheromones += assigned_pheromones
         else:
             raise ValueError(f"{self} - Invalid Team {self.team}")
+
+    def set_combat_type(self) -> None:
+        """
+        Gets the attacker/defender type
+        """
+        if self.team == 1:
+            if self.agent_type == "ship":
+                self.combat_type = "COALITION ESCORT"
+            elif self.agent_type == "sub":
+                self.combat_type = "COALITION SUB"
+            elif self.agent_type == "air":
+                self.combat_type = "COALITION AIR"
+        elif self.team == 2:
+            if self.agent_type == "ship":
+                self.combat_type = "CN NAVY"
+            elif self.agent_type == "sub":
+                self.combat_type = "CN SUB"
+            elif self.agent_type == "air":
+                self.combat_type = "CN AIR"
+        else:
+            raise ValueError(f"Invalid Team {self.team}")
+
+    @abstractmethod
+    def attempt_to_attack(self, target) -> None:
+        pass

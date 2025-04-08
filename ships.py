@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-import math
 import random
 from abc import abstractmethod
 
 import constants as cs
+import data_functions
 import settings
 from agents import Agent
+from ammo import Ammunition
 from bases import Base
 from points import Point
 
@@ -23,7 +24,7 @@ class Ship(Agent):
         super().__init__(manager, model, base)
         self.helicopter = False
         self.aws_enabled = False
-        self.agent_class = "ship"
+        self.agent_type = "ship"
 
     @abstractmethod
     def initiate_model(self) -> None:
@@ -33,7 +34,6 @@ class Ship(Agent):
         self.team = model_data["team"]
         self.service = model_data["service"]
         self.armed = True if model_data.get("Armed", "Y") == "Y" else False
-        self.agent_type = model_data.get("type", None)
 
         self.ship_visibility = self.parse_string_input(model_data, "SurfaceVisibility", cs.SMALL)
         self.air_visibility = self.parse_string_input(model_data, "AirVisibility", cs.SMALL)
@@ -76,6 +76,7 @@ class Merchant(Ship):
         self.set_service()
         self.team = 1
         self.boarded = False
+        self.damage = 0
 
         self.entry_point = None
         self.sample_entry_point()
@@ -109,6 +110,7 @@ class Merchant(Ship):
         self.sub_visibility = attribute["Visibility"]
         self.movement_left_in_turn = self.speed_current * settings.time_delta
         self.remaining_endurance = 0
+        self.combat_type = cs.MERCHANT
 
     def set_service(self) -> None:
         if self.country == settings.TAIWAN:
@@ -172,6 +174,9 @@ class Merchant(Ship):
     def track(self, target: Agent) -> None:
         pass
 
+    def attempt_to_attack(self, target) -> None:
+        raise TypeError (f"{self} is unable to attack.")
+
     def is_boarded(self, boarder: Agent) -> None:
         print(f"{self} got boarded.")
         self.mission.abort()
@@ -199,7 +204,7 @@ class ChineseShip(Ship):
         super().__init__(manager, model, base)
         self.aws_enabled = False
         self.helicopter = False
-
+        self.combat_type = "CN NAVY"
         self.initiate_model()
 
     def __repr__(self):
@@ -279,28 +284,40 @@ class ChineseShip(Ship):
         if self.location.distance_to_point(target.location) > 12:
             self.move_through_route()
 
-        if self.location.distance_to_point(target.location) > 12:
-            return
-
         if settings.CHINA_SELECTED_LEVEL == 1 and isinstance(target, Merchant):
             self.prepare_to_board(target)
-        else:
-            self.go_to_attack(target)
+        elif isinstance(target, Merchant):
+            if self.armed and self.anti_ship_skill is not None:
+                self.mission.change()
+                missions.Attack(self, target)
+            else:
+                self.request_support(target)
+        elif ((target.agent_type == "ship" and self.anti_ship_skill is not None) or
+              (target.agent_type == "air" and self.anti_air_skill is not None) or
+              (target.agent_type == "sub" and self.anti_sub_skill is not None)):
+            self.mission.change()
+            missions.Attack(self, target)
+            return
 
     def prepare_to_board(self, target: Merchant) -> None:
-        print(f"{self} is attempting to board {target}")
         if self.location.distance_to_point(target.location) > 12:
             return
-        else:
-            successful = self.attempt_boarding(target)
+
+        successful = self.attempt_boarding(target)
 
         if successful:
             self.mission.complete()
             target.is_boarded(self)
             missions.Guard(self, target)
-        else:
-            # TODO: Set up rules for attacking merchants here
-            pass
+            return
+        elif self.armed:
+            if ((target.agent_type == "ship" and self.anti_ship_skill is not None) or
+                (target.agent_type == "air" and self.anti_air_skill is not None) or
+                (target.agent_type == "sub" and self.anti_sub_skill is not None)):
+                self.mission.change()
+                missions.Attack(self, target)
+                return
+        self.request_support(target)
 
     def attempt_boarding(self, target) -> bool:
         resistance_level = target.get_resistance_level()
@@ -328,19 +345,98 @@ class ChineseShip(Ship):
         else:
             return False
 
-    def go_to_attack(self, target: Agent) -> None:
-        if not self.armed:
-            self.request_support(target)
+    def attempt_to_attack(self, target: Agent) -> None:
+        if target.agent_type == "ship" or target.agent_type == cs.MERCHANT:
+            if self.anti_ship_ammo == 0:
+                self.abort_attack()
+                return
+            attacker_skill = self.anti_ship_skill
+        elif target.agent_type == "air":
+            if self.anti_air_ammo == 0:
+                self.abort_attack()
+                return
+            attacker_skill = self.anti_air_skill
+        elif target.agent_type == "sub":
+            if self.anti_sub_ammo == 0:
+                self.abort_attack()
+                return
+            attacker_skill = self.anti_sub_skill
+        else:
+            raise ValueError(f"No protocol for {target} - {target.agent_type}")
 
-        # TODO: Create attack interaction here
+        defender_type = target.combat_type
+        attacker_type = self.combat_type
 
+        viable_ammunition = [a for a in self.manager.ammunition
+                             if a.attacker.lower() == attacker_type.lower()
+                             and a.defender.lower() == defender_type.lower()
+                             and a.stock > 0]
+
+        if len(viable_ammunition) == 0:
+            print(f"No viable ammunition")
+            self.abort_attack()
+            return
+
+        ammo = self.select_ammo(viable_ammunition, target, attacker_skill)
+        max_distance = ammo.range
+
+        self.generate_route(target.location)
+        self.move_through_route()
+
+        if self.location.distance_to_point(target.location) < max_distance:
+            self.attack(target, ammo, attacker_skill)
+
+    def attack(self, target, ammo, attacker_skill):
+        # TODO: SORT THIS OUT
+        #  - IT'S DIFFERENT FOR SUBS AND OTHER AGENTS,
+        #  AND THEN MERCHANTS UNIQUE TOO
+        #  (None, but should be to custom table)
+        if target.agent_type == "sub":
+            defense_skill = target.ship_visibility
+        else:
+            defense_skill = target.defender_skill
+        probabilities = data_functions.get_attack_probabilities(self.combat_type, attacker_skill,
+                                                                target.combat_type, defense_skill)
+        outcome = random.choices(list(probabilities.keys()), list(probabilities.values()))[0]
+
+        if target.agent_type == "ship":
+            self.anti_ship_ammo -= 1
+        elif target.agent_type == "air":
+            self.anti_air_ammo -= 1
+        elif target.agent_type == "sub":
+            self.anti_sub_ammo -= 1
+        ammo.stock -= 1
+
+        if outcome == "sunk":
+            target.is_destroyed()
+            self.mission.complete()
+        elif outcome == "ctl":
+            target.CTL = True
+        elif outcome == "nothing":
+            if target.combat_type == cs.MERCHANT:
+                target.damaged += 1
+        else:
+            raise ValueError(f"Unknown outcome {outcome}")
+
+    @staticmethod
+    def select_ammo(options: list, target: Agent, attacker_skill: str) -> Ammunition:
+        if target.combat_type == cs.MERCHANT:
+            options = [a for a in options if a.attacker_skill.lower() == cs.ATT_BASIC]
+            return options[0]
+        else:
+            if attacker_skill == cs.ATT_BASIC:
+                options = [a for a in options if a.attacker_skill.lower() == cs.ATT_BASIC]
+            return options[0]
+
+    def abort_attack(self):
+        self.mission.abort()
 
 class Escort(Ship):
     def __init__(self, manager, model: str, base: Base, country: str):
         super().__init__(manager, model, base)
         self.country = country
-
         self.initiate_model()
+        self.combat_type = "COALITION ESCORT"
 
     def initiate_model(self) -> None:
         model_data = cs.COALITION_NAVY_DATA[self.model]
@@ -442,4 +538,7 @@ class Escort(Ship):
     def attempt_boarding(self, target) -> bool:
         # TODO: Get boarding parameters for escort here - for now just guaranteed success
         return True
+
+    def attempt_to_attack(self, target) -> None:
+        pass
 

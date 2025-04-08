@@ -1,0 +1,330 @@
+[
+  {
+    "Attacker Type": "CN AIRCRAFT",
+    "Attacker Skill": "Advanced",
+    "Defender Type": "COALITION ESCORT",
+    "Weapon Name": "YJ-12",
+    "Weapon Range": 500,
+    "World Weapon Ammunition": ""
+  },
+  {
+    "Attacker Type": "CN AIRCRAFT",
+    "Attacker Skill": "Advanced",
+    "Defender Type": "COALITION ESCORT",
+    "Weapon Name": "YJ-100",
+    "Weapon Range": 1500,
+    "World Weapon Ammunition": ""
+  },
+  {
+    "Attacker Type": "CN AIRCRAFT",
+    "Attacker Skill": "Advanced",
+    "Defender Type": "COALITION AIRCRAFT",
+    "Weapon Name": "PL-12",
+    "Weapon Range": 74,
+    "World Weapon Ammunition": ""
+  },
+  {
+    "Attacker Type": "CN AIRCRAFT",
+    "Attacker Skill": "Advanced",
+    "Defender Type": "COALITION AIRCRAFT",
+    "Weapon Name": "PL-15",
+    "Weapon Range": 106,
+    "World Weapon Ammunition": ""
+  },
+  {
+    "Attacker Type": "CN AIRCRAFT",
+    "Attacker Skill": "Basic",
+    "Defender Type": "COALITION ESCORT",
+    "Weapon Name": "JDAM",
+    "Weapon Range": 5,
+    "World Weapon Ammunition": "INF"
+  },
+  {
+    "Attacker Type": "CN AIRCRAFT",
+    "Attacker Skill": "Basic",
+    "Defender Type": "COALITION ESCORT",
+    "Weapon Name": "Glide Bomb",
+    "Weapon Range": 40,
+    "World Weapon Ammunition": ""
+  },
+  {
+    "Attacker Type": "CN AIRCRAFT",
+    "Attacker Skill": "Basic",
+    "Defender Type": "COALITION AIRCRAFT",
+    "Weapon Name": "PL-11",
+    "Weapon Range": 25,
+    "World Weapon Ammunition": "INF"
+  },
+  {
+    "Attacker Type": "CN AIRCRAFT",
+    "Attacker Skill": "Basic",
+    "Defender Type": "COALITION SUB",
+    "Weapon Name": "Torpedo",
+    "Weapon Range": 11,
+    "World Weapon Ammunition": "INF"
+  },
+  {
+    "Attacker Type": "CN AIRCRAFT",
+    "Attacker Skill": "Basic",
+    "Defender Type": "Merchant",
+    "Weapon Name": "Range bombs",
+    "Weapon Range": 5,
+    "World Weapon Ammunition": "INF"
+  },
+  {
+    "Attacker Type": "CN NAVY",
+    "Attacker Skill": "Advanced",
+    "Defender Type": "COALITION ESCORT",
+    "Weapon Name": "YJ-18B",
+    "Weapon Range": 306,
+    "World Weapon Ammunition": ""
+  },
+  {
+    "Attacker Type": "CN NAVY",
+    "Attacker Skill": "Advanced",
+    "Defender Type": "COALITION ESCORT",
+    "Weapon Name": "YJ-21",
+    "Weapon Range": 1500,
+    "World Weapon Ammunition": ""
+  },
+  {
+    "Attacker Type": "CN NAVY",
+    "Attacker Skill": "Advanced",
+    "Defender Type": "Merchant",
+    "Weapon Name": "C-802 et al",
+    "Weapon Range": 40,
+    "World Weapon Ammunition": ""
+  },
+  {
+    "Attacker Type": "CN NAVY",
+    "Attacker Skill": "Basic",
+    "Defender Type": "COALITION ESCORT",
+    "Weapon Name": "YJ-83",
+    "Weapon Range": 180,
+    "World Weapon Ammunition": ""
+  },
+  {
+    "Attacker Type": "CN NAVY",
+    "Attacker Skill": "Basic",
+    "Defender Type": "COALITION AIRCRAFT",
+    "Weapon Name": "Guns",
+    "Weapon Range": 4,
+    "World Weapon Ammunition": ""
+  },
+  {
+    "Attacker Type": "CN NAVY",
+    "Attacker Skill": "Basic",
+    "Defender Type": "COALITION AIRCRAFT",
+    "Weapon Name": "HQ-16B",
+    "Weapon Range": 70,
+    "World Weapon Ammunition": ""
+  },
+  {
+    "Attacker Type": "CN NAVY",
+    "Attacker Skill": "Basic",
+    "Defender Type": "COALITION AIRCRAFT",
+    "Weapon Name": "HQ-9B",
+    "Weapon Range": 300,
+    "World Weapon Ammunition": ""
+  },
+  {
+    "Attacker Type": "CN NAVY",
+    "Attacker Skill": "Basic",
+    "Defender Type": "COALITION SUB",
+    "Weapon Name": "Yu-7",
+    "Weapon Range": 9,
+    "World Weapon Ammunition": "INF"
+  },
+  {
+    "Attacker Type": "CN NAVY",
+    "Attacker Skill": "Basic",
+    "Defender Type": "Merchant",
+    "Weapon Name": "Deckgun",
+    "Weapon Range": 5,
+    "World Weapon Ammunition": "INF"
+  },
+  {
+    "Attacker Type": "CN SUB",
+    "Attacker Skill": "Advanced",
+    "Defender Type": "COALITION SUB",
+    "Weapon Name": "YJ018B",
+    "Weapon Range": 306,
+    "World Weapon Ammunition": ""
+  },
+  {
+    "Attacker Type": "CN SUB",
+    "Attacker Skill": "Basic",
+    "Defender Type": "COALITION SUB",
+    "Weapon Name": "Yu-10 -> Yu-12",
+    "Weapon Range": 20,
+    "World Weapon Ammunition": "INF"
+  },
+  {
+    "Attacker Type": "CN SUB",
+    "Attacker Skill": "Basic",
+    "Defender Type": "COALITION SUB",
+    "Weapon Name": "YJ-82",
+    "Weapon Range": 31,
+    "World Weapon Ammunition": ""
+  },
+  {
+    "Attacker Type": "CN SUB",
+    "Attacker Skill": "Basic",
+    "Defender Type": "COALITION SUB",
+    "Weapon Name": "Torpedo",
+    "Weapon Range": 11,
+    "World Weapon Ammunition": "INF"
+  },
+  {
+    "Attacker Type": "CN SUB",
+    "Attacker Skill": "Basic",
+    "Defender Type": "Merchant",
+    "Weapon Name": "Torpedo",
+    "Weapon Range": 11,
+    "World Weapon Ammunition": "INF"
+  },
+  {
+    "Attacker Type": "COALITION AIRCRAFT",
+    "Attacker Skill": "Advanced",
+    "Defender Type": "CN NAVY",
+    "Weapon Name": "NSM/SLAM-ER",
+    "Weapon Range": 200,
+    "World Weapon Ammunition": ""
+  },
+  {
+    "Attacker Type": "COALITION AIRCRAFT",
+    "Attacker Skill": "Advanced",
+    "Defender Type": "CN NAVY",
+    "Weapon Name": "LRASM",
+    "Weapon Range": 370,
+    "World Weapon Ammunition": ""
+  },
+  {
+    "Attacker Type": "COALITION AIRCRAFT",
+    "Attacker Skill": "Advanced",
+    "Defender Type": "CN AIRCRAFT",
+    "Weapon Name": "AIM-120D",
+    "Weapon Range": 111,
+    "World Weapon Ammunition": ""
+  },
+  {
+    "Attacker Type": "COALITION AIRCRAFT",
+    "Attacker Skill": "Basic",
+    "Defender Type": "CN NAVY",
+    "Weapon Name": "JDAM",
+    "Weapon Range": 5,
+    "World Weapon Ammunition": "INF"
+  },
+  {
+    "Attacker Type": "COALITION AIRCRAFT",
+    "Attacker Skill": "Basic",
+    "Defender Type": "CN NAVY",
+    "Weapon Name": "JSOW",
+    "Weapon Range": 40,
+    "World Weapon Ammunition": ""
+  },
+  {
+    "Attacker Type": "COALITION AIRCRAFT",
+    "Attacker Skill": "Basic",
+    "Defender Type": "CN AIRCRAFT",
+    "Weapon Name": "Sidewinder",
+    "Weapon Range": 18,
+    "World Weapon Ammunition": "INF"
+  },
+  {
+    "Attacker Type": "COALITION AIRCRAFT",
+    "Attacker Skill": "Basic",
+    "Defender Type": "CN AIRCRAFT",
+    "Weapon Name": "AIM-120<D",
+    "Weapon Range": 81,
+    "World Weapon Ammunition": ""
+  },
+  {
+    "Attacker Type": "COALITION AIRCRAFT",
+    "Attacker Skill": "Basic",
+    "Defender Type": "CN SUB",
+    "Weapon Name": "Torpedo",
+    "Weapon Range": 11,
+    "World Weapon Ammunition": "INF"
+  },
+  {
+    "Attacker Type": "COALITION ESCORT",
+    "Attacker Skill": "Advanced",
+    "Defender Type": "CN AIRCRAFT",
+    "Weapon Name": "SM-6",
+    "Weapon Range": 370,
+    "World Weapon Ammunition": ""
+  },
+  {
+    "Attacker Type": "COALITION ESCORT",
+    "Attacker Skill": "Advanced",
+    "Defender Type": "CN SUB",
+    "Weapon Name": "ASROC",
+    "Weapon Range": 22,
+    "World Weapon Ammunition": ""
+  },
+  {
+    "Attacker Type": "COALITION ESCORT",
+    "Attacker Skill": "Basic",
+    "Defender Type": "CN NAVY",
+    "Weapon Name": "Guns",
+    "Weapon Range": 5,
+    "World Weapon Ammunition": "INF"
+  },
+  {
+    "Attacker Type": "COALITION ESCORT",
+    "Attacker Skill": "Basic",
+    "Defender Type": "CN NAVY",
+    "Weapon Name": "Harpoon",
+    "Weapon Range": 111,
+    "World Weapon Ammunition": ""
+  },
+  {
+    "Attacker Type": "COALITION ESCORT",
+    "Attacker Skill": "Basic",
+    "Defender Type": "CN NAVY",
+    "Weapon Name": "SM-6",
+    "Weapon Range": 370,
+    "World Weapon Ammunition": ""
+  },
+  {
+    "Attacker Type": "COALITION ESCORT",
+    "Attacker Skill": "Basic",
+    "Defender Type": "CN AIRCRAFT",
+    "Weapon Name": "ESSM",
+    "Weapon Range": 26,
+    "World Weapon Ammunition": "INF"
+  },
+  {
+    "Attacker Type": "COALITION ESCORT",
+    "Attacker Skill": "Basic",
+    "Defender Type": "CN AIRCRAFT",
+    "Weapon Name": "SM-2",
+    "Weapon Range": 200,
+    "World Weapon Ammunition": "INF"
+  },
+  {
+    "Attacker Type": "COALITION ESCORT",
+    "Attacker Skill": "Basic",
+    "Defender Type": "CN SUB",
+    "Weapon Name": "Torpedo",
+    "Weapon Range": 15,
+    "World Weapon Ammunition": "INF"
+  },
+  {
+    "Attacker Type": "COALITION SUB",
+    "Attacker Skill": "Basic",
+    "Defender Type": "CN NAVY",
+    "Weapon Name": "Torpedo",
+    "Weapon Range": 42,
+    "World Weapon Ammunition": "INF"
+  },
+  {
+    "Attacker Type": "COALITION SUB",
+    "Attacker Skill": "Basic",
+    "Defender Type": "CN SUB",
+    "Weapon Name": "Torpedo",
+    "Weapon Range": 9,
+    "World Weapon Ammunition": "INF"
+  }
+]

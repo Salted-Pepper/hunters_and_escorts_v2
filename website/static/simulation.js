@@ -187,7 +187,7 @@ function updateLogs(events) {
 
     var event_counts = {"Merchant Seized": 0,
                     "Merchant Sunk": 0,
-                    "Merchant Damaged": 0,
+                    "Merchant CTL": 0,
                     "Merchant Arrived": 0,
                     "Escorts Sunk": 0,
                     "Escorts Damaged": 0,
@@ -209,7 +209,7 @@ function updateLogs(events) {
 
     document.getElementById('merchant-log-seized').innerHTML = event_counts["Merchant Seized"];
     document.getElementById('merchant-log-sunk').innerHTML = event_counts["Merchant Sunk"];
-    document.getElementById('merchant-log-damaged').innerHTML = event_counts["Merchant Damaged"];
+    document.getElementById('merchant-log-damaged').innerHTML = event_counts["Merchant CTL"];
     document.getElementById('merchant-log-arrived').innerHTML = event_counts["Merchant Arrived"];
     document.getElementById('escorts-log-sunk').innerHTML = event_counts["Escorts Sunk"];
     document.getElementById('escorts-log-damaged').innerHTML = event_counts["Escorts Damaged"];

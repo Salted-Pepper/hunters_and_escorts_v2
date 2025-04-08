@@ -8,6 +8,7 @@ USED_TIME = {"Weather": 0,
              "Guard": 0,
              "Return": 0,
              "Holding": 0,
+             "Attack": 0,
              "Depart": 0}
 
 

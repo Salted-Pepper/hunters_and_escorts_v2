@@ -8,8 +8,9 @@ import constant_coords as ccs
 import zones
 import weather
 from polygons import Polygon
-from managers import (MerchantManager, ChinaNavyManager, ChinaAirManager,
+from managers import (MerchantManager, ChinaNavyManager, ChinaAirManager, ChinaSubManager,
                       EscortManagerTW, EscortManagerJP, EscortManagerUS)
+import data_functions
 
 import tracker
 
@@ -48,6 +49,7 @@ class World:
         self.us_manager_escorts = None
         self.china_manager_air = None
         self.china_manager_navy = None
+        self.china_manager_sub =  None
         self.all_agents = []
         self.initiate_managers()
 
@@ -79,17 +81,34 @@ class World:
         self.us_manager_escorts = EscortManagerUS()
         self.china_manager_air = ChinaAirManager()
         self.china_manager_navy = ChinaNavyManager()
+        self.china_manager_sub  = ChinaSubManager()
 
         self.managers = [self.merchant_manager,
-                         self.china_manager_air,
-                         self.china_manager_navy,
                          self.tw_manager_escorts,
                          self.jp_manager_escorts,
                          self.us_manager_escorts,
+                         self.china_manager_air,
+                         self.china_manager_navy,
+                         self.china_manager_sub,
                          ]
 
         for manager in self.managers:
             self.all_agents.extend(manager.inactive_agents)
+
+        self.set_ammunition()
+
+    def set_ammunition(self) -> None:
+        coalition_air_ammo = data_functions.get_ammo_info("COALITION ESCORT")
+        coalition_ship_ammo = data_functions.get_ammo_info("COALITION AIRCRAFT")
+        coalition_sub_ammo = data_functions.get_ammo_info("COALITION SUB")
+
+        self.tw_manager_escorts.ammunition = coalition_ship_ammo
+        self.jp_manager_escorts.ammunition = coalition_ship_ammo
+        self.us_manager_escorts.ammunition = coalition_ship_ammo
+
+        self.china_manager_air.ammunition = data_functions.get_ammo_info("CN AIRCRAFT")
+        self.china_manager_navy.ammunition = data_functions.get_ammo_info("CN NAVY")
+        self.china_manager_sub.ammunition = data_functions.get_ammo_info("CN SUB")
 
     def update_weather_conditions(self) -> None:
         t_0 = time.time()

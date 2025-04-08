@@ -53,7 +53,7 @@ class Mission:
         pass
 
     @abstractmethod
-    def change(self, new_mission):
+    def change(self):
         pass
 
     @abstractmethod
@@ -106,7 +106,7 @@ class Travel(Mission):
 
         tracker.USED_TIME["Travel"] += time.time() - t_0
 
-    def change(self, new_mission) -> None:
+    def change(self) -> None:
         pass
 
     def complete(self) -> None:
@@ -115,14 +115,8 @@ class Travel(Mission):
     def abort(self) -> None:
         self.remove_mission_status()
 
-    @abstractmethod
     def remove_agent_from_mission(self, agent: Agent) -> None:
-        """
-        Checks what happens once the agent is removed from the mission and ensures either the mission seizes correctly
-        or continues if possible.
-        :param agent:
-        :return:
-        """
+        """Observe has no target agent so this is redundant"""
         pass
 
 
@@ -158,8 +152,9 @@ class Track(Mission):
 
         tracker.USED_TIME["Track"] += time.time() - t_0
 
-    def change(self, new_mission) -> None:
-        pass
+    def change(self) -> None:
+        self.remove_mission_status()
+        self.agent.speed_current = self.agent.speed_cruising
 
     def complete(self) -> None:
         self.remove_mission_status()
@@ -169,6 +164,51 @@ class Track(Mission):
         self.remove_mission_status()
         self.agent.speed_current = self.agent.speed_cruising
         self.agent.mission = Observe(self.agent, self.agent.assigned_zone.sample_patrol_location())
+
+    def remove_agent_from_mission(self, agent: Agent) -> None:
+        if agent == self.target:
+            self.abort()
+
+
+class Attack(Mission):
+    """
+    Agent actively following another agent, which calls in or awaits support.
+    """
+    def __init__(self, agent: Agent, target: Agent):
+        super().__init__(agent, target)
+        self.mission_type = "attack"
+        self.agent.generate_route(target.location)
+        self.agent.speed_current = self.agent.speed_max
+
+    def __repr__(self):
+        return f"{self.mission_id} - Attacking {self.target.service}-{self.target.agent_id}"
+
+    def execute(self, *args) -> None:
+        t_0 = time.time()
+
+        if not self.agent.check_if_valid_target(self.target):
+            self.abort()
+            return
+        print(f"{self.agent} is attacking {self.target}")
+        try:
+            self.agent.attempt_to_attack(self.target)
+        except ValueError:
+            raise ValueError(f"{self.agent} failed to attack {self.target}")
+
+        tracker.USED_TIME["Attack"] += time.time() - t_0
+
+    def change(self) -> None:
+        self.remove_mission_status()
+        self.agent.speed_current = self.agent.speed_cruising
+
+    def complete(self) -> None:
+        self.remove_mission_status()
+        self.agent.speed_current = self.agent.speed_cruising
+
+    def abort(self) -> None:
+        self.remove_mission_status()
+        self.agent.speed_current = self.agent.speed_cruising
+        self.agent.return_to_base()
 
     def remove_agent_from_mission(self, agent: Agent) -> None:
         if agent == self.target:
@@ -195,7 +235,7 @@ class Observe(Mission):
 
         tracker.USED_TIME["Observe"] += time.time() - t_0
 
-    def change(self, new_mission) -> None:
+    def change(self) -> None:
         pass
 
     def complete(self) -> None:
@@ -226,7 +266,7 @@ class Guard(Mission):
         self.agent.move_through_route()
         tracker.USED_TIME["Guard"] += time.time() - t_0
 
-    def change(self, new_mission) -> None:
+    def change(self) -> None:
         pass
 
     def complete(self) -> None:
@@ -273,7 +313,7 @@ class Return(Mission):
             raise ValueError(f"Unknown Outcome for Travelling - {outcome}")
         tracker.USED_TIME["Return"] += time.time() - t_0
 
-    def change(self, new_mission) -> None:
+    def change(self) -> None:
         pass
 
     def complete(self) -> None:
@@ -303,10 +343,10 @@ class Holding(Mission):
 
     def execute(self) -> None:
         t_0 = time.time()
-
+        self.agent.hold()
         tracker.USED_TIME["Holding"] += time.time() - t_0
 
-    def change(self, new_mission) -> None:
+    def change(self) -> None:
         pass
 
     def complete(self) -> None:
@@ -343,7 +383,7 @@ class Depart(Mission):
             raise ValueError(f"Unknown Outcome for Travelling - {outcome}")
         tracker.USED_TIME["Depart"] += time.time() - t_0
 
-    def change(self, new_mission) -> None:
+    def change(self) -> None:
         pass
 
     def complete(self) -> None:

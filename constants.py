@@ -46,12 +46,12 @@ rcs_dict = {STEALTHY: 0.25,
             LARGE: 1.5}
 
 # Detection Skill
-DET_BASIC = "Basic"
-DET_ADV = "Advanced"
+DET_BASIC = "basic"
+DET_ADV = "advanced"
 
 # Attack Skill
-ATT_BASIC = "Basic"
-ATT_ADV = "Advanced"
+ATT_BASIC = "basic"
+ATT_ADV = "advanced"
 
 # Merchant Reactions
 COMPLY = "compliant"
@@ -86,6 +86,7 @@ HUNTER_TYPES = [HUNTER_CCG, HUNTER_MSA, HUNTER_PAFMM, HUNTER_PLAN, HUNTER_MINELA
                 HUNTER_UAV, HUNTER_AIRCRAFT]
 
 # Coalition Types
+MERCHANT = "Merchant"
 COALITION_TW_MERCHANT = "TW MER"
 COALITION_US_MERCHANT = "US MER"
 COALITION_JP_MERCHANT = "JP MER"

@@ -9,7 +9,7 @@ CHINA_SELECTED_LEVEL = 1
 COALITION_SELECTED_LEVEL = 2
 
 # ---- Simulation Settings ----
-MULTITHREAD = True
+MULTITHREAD = False
 ITERATION_LIMIT = 500
 WEATHER_RESAMPLING_TIME_SPLIT = 1
 
@@ -261,7 +261,7 @@ min_r_o_e = {
 }
 
 coalition_r_o_e_rules = min_r_o_e[COALITION_SELECTED_LEVEL]
-hunter_target_rules = {hunter_agent: {coalition_agent: True for coalition_agent in cs.COALITION_TYPES}
+hunter_target_rules = {hunter_agent: {coalition_agent: False for coalition_agent in cs.COALITION_TYPES}
                        for hunter_agent in cs.HUNTER_TYPES}
 
 # ---- Zone Assignment Rules ----
@@ -272,4 +272,5 @@ zone_assignment_coalition = {agent_type: {zone: 0 for zone in ZONES}
                              for agent_type in cs.COALITION_TYPES
                              if agent_type not in [cs.COALITION_TW_MERCHANT,
                                                    cs.COALITION_JP_MERCHANT,
-                                                   cs.COALITION_US_MERCHANT]}
+                                                   cs.COALITION_US_MERCHANT,
+                                                   cs.COALITION_MK_MERCHANT]}
