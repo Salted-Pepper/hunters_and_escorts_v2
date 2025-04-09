@@ -205,6 +205,19 @@ COALITION_NAVY_DETECTING_SUB_NO_AWS = {DET_ADV: {LARGE: 0,
                                                    VSMALL: 3.9818,
                                                    STEALTHY: 1.9909}}
 
+# ---- Deterministic Damage Table ----
+MERCHANT_PROBABILITIES = {STEALTHY: {"sunk": 0.077,
+                                   "ctl": 0.154},
+                          VSMALL: {"sunk": 0.036,
+                                  "ctl": 0.214},
+                          SMALL: {"sunk": 0.024,
+                                  "ctl": 0.06},
+                          MEDIUM: {"sunk": 0.0,
+                                  "ctl": 0.0},
+                          LARGE: {"sunk": 0.0,
+                                  "ctl": 0.085},
+                          }
+
 # ---- Weather Data ----
 WEATHER_UPDATE_TIME = 7
 

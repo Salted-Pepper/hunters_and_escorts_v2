@@ -64,7 +64,6 @@ class Polygon:
         self.max_y = max_y
 
     def get_sample_point(self) -> Point:
-        # TODO: Improve this selection by updating the polygons
         while True:
             p = Point(x=random.uniform(self.min_x, self.max_x), y=random.uniform(self.min_y, min(40, self.max_y)))
             if self.contains_point(p):

@@ -43,7 +43,6 @@ RECEPTOR_PLOT_PARAMETER = "Sea States"
 
 # ---- Merchant Settings ----
 
-# TODO: Check the Country x Model permutations
 MERCHANT_INFO = {
     "T1": {"Type": "Tanker", "Class": "VLCC", "DWT": 320, "Cargo Size": 304, "Cargo Value": 160,
            "Speed (km/h)": 29.6, "Visibility": cs.LARGE, "arrivals": 2},
@@ -261,16 +260,24 @@ min_r_o_e = {
 }
 
 coalition_r_o_e_rules = min_r_o_e[COALITION_SELECTED_LEVEL]
-hunter_target_rules = {hunter_agent: {coalition_agent: False for coalition_agent in cs.COALITION_TYPES}
+hunter_target_rules = {hunter_agent: {coalition_agent: True for coalition_agent in cs.COALITION_TYPES}
                        for hunter_agent in cs.HUNTER_TYPES}
 
 # ---- Zone Assignment Rules ----
 zone_assignment_hunter = {agent_type: {zone: 0 for zone in ZONES
                                        if zone not in HUNTER_ILLEGAL_ZONES}
                           for agent_type in cs.HUNTER_TYPES}
+zone_assignment_hunter[cs.HUNTER_CCG][ZONE_P] = 1
+zone_assignment_hunter[cs.HUNTER_PAFMM][ZONE_A] = 1
+zone_assignment_hunter[cs.HUNTER_MSA][ZONE_H] = 1
+zone_assignment_hunter[cs.HUNTER_PLAN][ZONE_P] = 1
+
 zone_assignment_coalition = {agent_type: {zone: 0 for zone in ZONES}
                              for agent_type in cs.COALITION_TYPES
                              if agent_type not in [cs.COALITION_TW_MERCHANT,
                                                    cs.COALITION_JP_MERCHANT,
                                                    cs.COALITION_US_MERCHANT,
                                                    cs.COALITION_MK_MERCHANT]}
+zone_assignment_coalition[cs.COALITION_TW_ESCORT][ZONE_B] = 1
+zone_assignment_coalition[cs.COALITION_JP_ESCORT][ZONE_D] = 1
+zone_assignment_coalition[cs.COALITION_US_ESCORT][ZONE_H] = 1

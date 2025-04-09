@@ -181,19 +181,20 @@ function updatePlot(agents) {
 
 function updateLogs(events) {
     events = JSON.parse(events);
+    console.log(events)
     var new_logger_text = "";
 
     var selected_time = parseFloat(document.getElementById('world_time_select').value);
 
     var event_counts = {"Merchant Seized": 0,
-                    "Merchant Sunk": 0,
-                    "Merchant CTL": 0,
-                    "Merchant Arrived": 0,
-                    "Escorts Sunk": 0,
-                    "Escorts Damaged": 0,
-                    "Hunters Deterred": 0,
-                    "Hunters Destroyed": 0,
-                    "Hunters Damaged": 0,
+                        "Merchant Destroyed": 0,
+                        "Merchant CTL": 0,
+                        "Merchant Arrived": 0,
+                        "Escort Destroyed": 0,
+                        "Escort Damaged": 0,
+                        "Hunter Deterred": 0,
+                        "Hunter Destroyed": 0,
+                        "Hunter Damaged": 0,
     };
 
     for (let i=0; i<events.length; i++){
@@ -208,14 +209,14 @@ function updateLogs(events) {
     }
 
     document.getElementById('merchant-log-seized').innerHTML = event_counts["Merchant Seized"];
-    document.getElementById('merchant-log-sunk').innerHTML = event_counts["Merchant Sunk"];
+    document.getElementById('merchant-log-sunk').innerHTML = event_counts["Merchant Destroyed"];
     document.getElementById('merchant-log-damaged').innerHTML = event_counts["Merchant CTL"];
     document.getElementById('merchant-log-arrived').innerHTML = event_counts["Merchant Arrived"];
-    document.getElementById('escorts-log-sunk').innerHTML = event_counts["Escorts Sunk"];
-    document.getElementById('escorts-log-damaged').innerHTML = event_counts["Escorts Damaged"];
-    document.getElementById('escorts-log-deterred').innerHTML = event_counts["Hunters Deterred"];
-    document.getElementById('hunters-log-sunk').innerHTML = event_counts["Hunters Destroyed"];
-    document.getElementById('hunters-log-damaged').innerHTML = event_counts["Hunters Damaged"];
+    document.getElementById('escorts-log-sunk').innerHTML = event_counts["Escort Destroyed"];
+    document.getElementById('escorts-log-damaged').innerHTML = event_counts["Escort Damaged"];
+    document.getElementById('escorts-log-deterred').innerHTML = event_counts["Hunter Deterred"];
+    document.getElementById('hunters-log-sunk').innerHTML = event_counts["Hunter Destroyed"];
+    document.getElementById('hunters-log-damaged').innerHTML = event_counts["Hunter Damaged"];
 
     document.getElementById('sim-logs').value = new_logger_text;
 }

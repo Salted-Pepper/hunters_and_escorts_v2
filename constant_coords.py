@@ -185,7 +185,7 @@ CHINA_POINTS = [Point(108.6931, 18.5089),
                 Point(117.9813, 43.5329),
                 Point(108.6931, 41.8955)]
 
-PHILIPPINES_POINTS = [Point(120.035, 15.000),
+PHILIPPINES_POINTS = [Point(120.035, 10.000),
                       Point(119.709, 16.256),
                       Point(119.973, 16.470),
                       Point(120.190, 16.0514),
@@ -195,7 +195,7 @@ PHILIPPINES_POINTS = [Point(120.035, 15.000),
                       Point(121.936, 18.270),
                       Point(122.174, 18.597),
                       Point(122.455, 17.125),
-                      Point(121.499, 15.000)]
+                      Point(121.499, 10.000)]
 
 MEDIAN_ZONE = [Point(110.000, 40.000), Point(120.647, 40.000),
                Point(122.000, 27.000), Point(118.000, 23.000),

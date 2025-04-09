@@ -23,14 +23,13 @@ class Mission:
         self.mission_type = None
         self.agent = agent
         self.target = target
-        print(f"{cs.world.world_time} - Setting {agent} to {self}")
+        print(f"{cs.world.world_time} - Setting {agent} to {self} -  (previously {self.agent.previous_mission})")
 
         self.set_mission()
 
     def set_mission(self) -> None:
         if self.agent.mission is not None:
-            raise ValueError(
-                f"{self.agent} - can't set to {self}.")
+            raise ValueError(f"{self.agent} - can't set to {self}.")
         else:
             self.agent.mission = self
 
@@ -54,7 +53,7 @@ class Mission:
 
     @abstractmethod
     def change(self):
-        pass
+        self.remove_mission_status()
 
     @abstractmethod
     def complete(self):
@@ -107,7 +106,7 @@ class Travel(Mission):
         tracker.USED_TIME["Travel"] += time.time() - t_0
 
     def change(self) -> None:
-        pass
+        self.remove_mission_status()
 
     def complete(self) -> None:
         self.remove_mission_status()
@@ -127,6 +126,10 @@ class Track(Mission):
     def __init__(self, agent: Agent, target: Agent):
         super().__init__(agent, target)
         self.mission_type = "track"
+
+        if target.destroyed:
+            raise ValueError(f"{self.agent} tracking destroyed agent  {target}")
+
         self.agent.generate_route(target.location)
         self.agent.speed_current = self.agent.speed_max
 
@@ -236,7 +239,7 @@ class Observe(Mission):
         tracker.USED_TIME["Observe"] += time.time() - t_0
 
     def change(self) -> None:
-        pass
+        self.remove_mission_status()
 
     def complete(self) -> None:
         self.remove_mission_status()
@@ -267,7 +270,7 @@ class Guard(Mission):
         tracker.USED_TIME["Guard"] += time.time() - t_0
 
     def change(self) -> None:
-        pass
+        self.remove_mission_status()
 
     def complete(self) -> None:
         self.remove_mission_status()
@@ -314,7 +317,7 @@ class Return(Mission):
         tracker.USED_TIME["Return"] += time.time() - t_0
 
     def change(self) -> None:
-        pass
+        self.remove_mission_status()
 
     def complete(self) -> None:
         self.remove_mission_status()
@@ -347,7 +350,7 @@ class Holding(Mission):
         tracker.USED_TIME["Holding"] += time.time() - t_0
 
     def change(self) -> None:
-        pass
+        self.remove_mission_status()
 
     def complete(self) -> None:
         self.remove_mission_status()
@@ -384,7 +387,7 @@ class Depart(Mission):
         tracker.USED_TIME["Depart"] += time.time() - t_0
 
     def change(self) -> None:
-        pass
+        self.remove_mission_status()
 
     def complete(self) -> None:
         self.remove_mission_status()

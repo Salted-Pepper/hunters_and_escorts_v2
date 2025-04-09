@@ -98,6 +98,10 @@ class Manager:
     def assign_agents_to_requests(self) -> None:
         while len(self.requests) > 0 and self.requests[0].action_time <= cs.world.world_time:
             request = self.requests.pop(0)
+
+            if request.target.destroyed:
+                raise ValueError(f"Request contains destroyed target {request.target}")
+
             zone = request.target.get_current_zone()
 
             successful = self.select_agent_for_request(request, zone)
@@ -129,6 +133,7 @@ class Manager:
                 continue
             else:
                 agent.activate()
+                agent.assigned_zone = request.target.get_current_zone()
                 missions.Track(agent, request.target)
                 return True
         return False
@@ -177,7 +182,9 @@ class Manager:
         """
         other_agents = [agent for agent in self.active_agents
                         if not isinstance(agent.mission, missions.Observe)]
-
+        for agent in other_agents:
+            if agent.mission is None:
+                raise ValueError(f"No Mission for {agent}")
         [agent.mission.execute() for agent in other_agents]
 
     def sample_random_base(self) -> Base:

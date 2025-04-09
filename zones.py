@@ -11,8 +11,8 @@ def create_poisson_disk_sample(polygon: Polygon, obstacles: list) -> list:
     rng = np.random.default_rng()
     radius = 0.5
     engine = qmc.PoissonDisk(d=2, radius=radius, rng=rng,
-                             l_bounds=[polygon.min_x + 0.001, polygon.min_y - 0.001],
-                             u_bounds=[polygon.max_x + 0.001, polygon.max_y - 0.001])
+                             l_bounds=[polygon.min_x + 0.01, polygon.min_y + 0.01],
+                             u_bounds=[polygon.max_x - 0.01, polygon.max_y - 0.01])
     sample = engine.fill_space()
     points = []
     for p in sample:

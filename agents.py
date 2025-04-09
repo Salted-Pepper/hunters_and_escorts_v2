@@ -74,7 +74,7 @@ class Agent:
         self.in_combat = False
         self.CTL = False
 
-        self.maintenance_time = 3*24  # TODO: Update placeholder
+        self.maintenance_time = 3*24
         self.remaining_maintenance_time = 0
 
         # ---- Ammunition ----
@@ -196,7 +196,7 @@ class Agent:
 
     def return_to_base(self) -> None:
         if self.mission is not None:
-            self.mission.abort()
+            self.mission.change()
         self.mission = missions.Return(self, self.base.location)
 
     def enter_base(self) -> None:
@@ -214,11 +214,11 @@ class Agent:
 
     def create_event(self, type_of_event):
         if self.combat_type == "COALITION ESCORT":
-            identifier = "Escorts"
+            identifier = "Escort"
         elif self.combat_type.startswith("CN"):
-            identifier = "Hunters"
+            identifier = "Hunter"
         else:
-            identifier = "Merchants"
+            identifier = "Merchant"
 
         tracker.Event(text=f"{self.agent_id} - {self.service} has been {type_of_event}",
                       event_type=f"{identifier} {type_of_event}")
@@ -486,4 +486,8 @@ class Agent:
 
     @abstractmethod
     def attempt_to_attack(self, target) -> None:
+        pass
+
+    @abstractmethod
+    def attack(self, target, ammo, attacker_skill) -> None:
         pass
