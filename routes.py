@@ -79,7 +79,7 @@ def add_point_to_graph(point: Point, obstacles: list[Polygon], graph: nx.Graph) 
             point_added = True
 
     if not point_added:
-        raise ValueError(f"Failed to add points {point}")
+        raise ValueError(f"Failed to add point {point}")
     return graph
 
 

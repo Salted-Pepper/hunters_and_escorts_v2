@@ -187,7 +187,10 @@ class Agent:
         if required_endurance_max < self.remaining_endurance:
             return True
 
-        base_route = routes.create_route(self.location, self.base.location, team=self.team)
+        try:
+            base_route = routes.create_route(self.location, self.base.location, team=self.team)
+        except ValueError as e:
+            raise ValueError(f"Failed to create route for {self}: \n{e}")
         if self.remaining_endurance * (1 + cs.SAFETY_ENDURANCE) <= base_route.length:
             self.return_to_base()
             return False

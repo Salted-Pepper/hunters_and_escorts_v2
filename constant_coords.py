@@ -91,7 +91,7 @@ KOREA_POINTS = [Point(126.1105936433172, 34.382635296628266),
                 Point(129.7479976860726, 40.85492641510266),
                 Point(129.6349151828484, 41.51024592280302),
                 Point(130.65265771186637, 42.30134275308864),
-                Point(129.97416269252105, 43.02478186744697),  # N Korea
+                Point(129.97416269252105, 45.0),  # N Korea
                 Point(124.12779727582893, 39.81192015777447),
                 Point(125.2925470590384, 39.50722297163861),
                 Point(124.68190154162761, 38.10617579665901),
@@ -181,9 +181,9 @@ CHINA_POINTS = [Point(108.6931, 18.5089),
                 Point(122.1853, 40.4663),
                 Point(121.3314, 39.7643),
                 Point(124.2560, 39.8955),
-                Point(129.9952, 42.9705),
-                Point(117.9813, 43.5329),
-                Point(108.6931, 41.8955)]
+                Point(129.9952, 45.0),
+                Point(117.9813, 45.0),
+                Point(108.6931, 45.0)]
 
 PHILIPPINES_POINTS = [Point(120.035, 10.000),
                       Point(119.709, 16.256),
@@ -336,9 +336,9 @@ LAND_MASSES = TAIWAN_AND_ISLANDS + JAPAN_AND_ISLANDS + OTHER_LAND
 ALL_MASSES = LAND_MASSES + [CHINA]
 
 
-def set_points_to_bounds(polygon) -> Polygon:
+def set_points_to_bounds(polygon, margin=0) -> Polygon:
     for point in polygon.points:
-        fix_point_to_edge(point)
+        fix_point_to_edge(point, margin)
 
     new_points = copy(polygon.points)
     for i, j in pairwise(polygon.points):
@@ -349,17 +349,17 @@ def set_points_to_bounds(polygon) -> Polygon:
     return polygon
 
 
-def fix_point_to_edge(point: Point) -> None:
-    if point.x < cs.MIN_LAT:
-        point.x = cs.MIN_LAT
-    elif point.x > cs.MAX_LAT:
-        point.x = cs.MAX_LAT
+def fix_point_to_edge(point: Point, margin) -> None:
+    if point.x < cs.MIN_LAT + margin:
+        point.x = cs.MIN_LAT + margin
+    elif point.x > cs.MAX_LAT - margin:
+        point.x = cs.MAX_LAT - margin
 
-    if point.y < cs.MIN_LONG:
-        point.y = cs.MIN_LONG
-    elif point.y > cs.MAX_LONG:
-        point.y = cs.MAX_LONG
+    if point.y < cs.MIN_LONG + margin:
+        point.y = cs.MIN_LONG + margin
+    elif point.y > cs.MAX_LONG - margin:
+        point.y = cs.MAX_LONG - margin
 
-
-for landmass in ALL_MASSES:
-    set_points_to_bounds(landmass)
+# TODO: Check if this is needed (probably better to simplify manually
+# for landmass in ALL_MASSES:
+#     set_points_to_bounds(landmass, margin=2)

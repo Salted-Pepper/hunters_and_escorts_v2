@@ -100,7 +100,11 @@ class Manager:
             request = self.requests.pop(0)
 
             if request.target.destroyed:
-                raise ValueError(f"Request contains destroyed target {request.target}")
+                return
+
+            # Filter out edge case of ship being boarded in meantime
+            if request.target.team == self.team:
+                return
 
             zone = request.target.get_current_zone()
 
