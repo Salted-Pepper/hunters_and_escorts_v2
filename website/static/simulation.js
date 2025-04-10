@@ -191,7 +191,8 @@ function updateLogs(events) {
                         "Merchant CTL": 0,
                         "Merchant Arrived": 0,
                         "Escort Destroyed": 0,
-                        "Escort Damaged": 0,
+                        "Submarine Destroyed": 0,
+                        "Aircraft Destroyed": 0,
                         "Hunter Deterred": 0,
                         "Hunter Destroyed": 0,
                         "Hunter Damaged": 0,
@@ -212,8 +213,11 @@ function updateLogs(events) {
     document.getElementById('merchant-log-sunk').innerHTML = event_counts["Merchant Destroyed"];
     document.getElementById('merchant-log-damaged').innerHTML = event_counts["Merchant CTL"];
     document.getElementById('merchant-log-arrived').innerHTML = event_counts["Merchant Arrived"];
+
     document.getElementById('escorts-log-sunk').innerHTML = event_counts["Escort Destroyed"];
-    document.getElementById('escorts-log-damaged').innerHTML = event_counts["Escort Damaged"];
+    document.getElementById('aircraft-log-sunk').innerHTML = event_counts["Aircraft Destroyed"];
+    document.getElementById('submarines-log-sunk').innerHTML = event_counts["Submarine Destroyed"];
+
     document.getElementById('escorts-log-deterred').innerHTML = event_counts["Hunter Deterred"];
     document.getElementById('hunters-log-sunk').innerHTML = event_counts["Hunter Destroyed"];
     document.getElementById('hunters-log-damaged').innerHTML = event_counts["Hunter Damaged"];

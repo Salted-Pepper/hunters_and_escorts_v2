@@ -14,9 +14,6 @@ from points import Point
 import missions
 import tracker
 
-from aircrafts import Aircraft
-from submarines import Submarine
-
 
 class Ship(Agent):
 
@@ -35,9 +32,9 @@ class Ship(Agent):
         self.service = model_data["service"]
         self.armed = True if model_data.get("Armed", "Y") == "Y" else False
 
-        self.ship_visibility = self.parse_string_input(model_data, "SurfaceVisibility", cs.SMALL)
-        self.air_visibility = self.parse_string_input(model_data, "AirVisibility", cs.SMALL)
-        self.sub_visibility = self.parse_string_input(model_data, "UnderseaVisibility", cs.SMALL)
+        self.ship_visibility = data_functions.parse_string_input(model_data, "SurfaceVisibility", cs.SMALL)
+        self.air_visibility = data_functions.parse_string_input(model_data, "AirVisibility", cs.SMALL)
+        self.sub_visibility = data_functions.parse_string_input(model_data, "UnderseaVisibility", cs.SMALL)
 
         self.speed_max = model_data.get("SpeedMax", 40)
         self.speed_cruising = model_data.get("SpeedCruise", 30)
@@ -46,13 +43,13 @@ class Ship(Agent):
         self.endurance = model_data.get("Endurance", 8100)
         self.remaining_endurance = self.endurance
 
-        self.ship_detection_skill = self.parse_string_input(model_data, "Ship Detection Skill", cs.DET_BASIC)
-        self.air_detection_skill = self.parse_string_input(model_data, "Air Detection Skill", cs.DET_BASIC)
-        self.sub_detection_skill = self.parse_string_input(model_data, "Submarine Detection Skill", cs.DET_BASIC)
+        self.ship_detection_skill = data_functions.parse_string_input(model_data, "Ship Detection Skill", cs.DET_BASIC)
+        self.air_detection_skill = data_functions.parse_string_input(model_data, "Air Detection Skill", cs.DET_BASIC)
+        self.sub_detection_skill = data_functions.parse_string_input(model_data, "Submarine Detection Skill", cs.DET_BASIC)
 
-        self.anti_ship_skill = self.parse_string_input(model_data, "Anti-ship Skill", cs.ATT_BASIC)
-        self.anti_air_skill = self.parse_string_input(model_data, "Anti-air Skill", cs.ATT_BASIC)
-        self.anti_sub_skill = self.parse_string_input(model_data, "Anti-submarine Skill", cs.ATT_BASIC)
+        self.anti_ship_skill = data_functions.parse_string_input(model_data, "Anti-ship Skill", cs.ATT_BASIC)
+        self.anti_air_skill = data_functions.parse_string_input(model_data, "Anti-air Skill", cs.ATT_BASIC)
+        self.anti_sub_skill = data_functions.parse_string_input(model_data, "Anti-submarine Skill", cs.ATT_BASIC)
 
         self.anti_ship_ammo = int(model_data.get("Anti-Ship Ammunition", 6)) if self.anti_ship_skill is not None else 0
         self.anti_air_ammo = int(model_data.get("Anti-air Ammunition", 6))  if  self.anti_air_skill is not None else 0
@@ -60,14 +57,42 @@ class Ship(Agent):
 
         self.helicopter = True if model_data["helicopter"] == "Y" else False
 
-    @staticmethod
-    def parse_string_input(model_data, key, default) -> str | None:
-        value = model_data.get(key, default)
-        if value is None:
-            return value
+    def attack(self, target, ammo, attacker_skill):
+        if target.agent_type == "sub":
+            defense_skill = target.ship_visibility
+            probabilities = data_functions.get_attack_probabilities(self.combat_type, attacker_skill,
+                                                                    target.combat_type, defense_skill)
+            new_probability = probabilities["sunk"] + target.damaged * 0.2
+            probabilities["sunk"] = min(new_probability, 1 - probabilities["ctl"])
+            probabilities["nothing"] = 1 - (probabilities["sunk"] + probabilities["ctl"])
+        elif target.combat_type == cs.MERCHANT:
+            probabilities = cs.MERCHANT_PROBABILITIES[target.ship_visibility]
         else:
-            return value.lower()
+            defense_skill = target.anti_ship_skill
+            probabilities = data_functions.get_attack_probabilities(self.combat_type, attacker_skill,
+                                                                    target.combat_type, defense_skill)
 
+        outcome = random.choices(list(probabilities.keys()), list(probabilities.values()))[0]
+
+        if target.agent_type == "ship":
+            self.anti_ship_ammo -= 1
+        elif target.agent_type == "air":
+            self.anti_air_ammo -= 1
+        elif target.agent_type == "sub":
+            self.anti_sub_ammo -= 1
+        ammo.stock -= 1
+
+        if outcome == "sunk":
+            target.is_destroyed()
+            self.mission.complete()
+            self.return_to_base()
+        elif outcome == "ctl":
+            target.CTL = True
+        elif outcome == "nothing":
+            if target.combat_type == cs.MERCHANT:
+                target.damaged += 1
+        else:
+            raise ValueError(f"Unknown outcome {outcome}")
 
 class Merchant(Ship):
     def __init__(self, manager, model: str, base: Base, country: str):
@@ -201,6 +226,14 @@ class Merchant(Ship):
     def get_resistance_level(self) -> str:
         return settings.merchant_rules[settings.COALITION_SELECTED_LEVEL][self.country]
 
+    def escort_near(self) -> bool:
+        all_escorts = (cs.world.tw_manager_escorts.active_agents  +
+                       cs.world.jp_manager_escorts.active_agents +
+                       cs.world.us_manager_escorts.active_agents)
+        for escort in all_escorts:
+            if self.location.distance_to_point(escort.location) < 12:
+                return True
+        return False
 
 class ChineseShip(Ship):
     def __init__(self, manager, model: str, base: Base):
@@ -267,11 +300,11 @@ class ChineseShip(Ship):
             if not self.check_if_valid_target(agent):
                 continue
 
-            if issubclass(type(agent), Ship):
+            if agent.agent_type == "ship":
                 detected = self.surface_detection(agent)
-            elif issubclass(type(agent), Aircraft):
+            elif agent.agent_type == "air":
                 detected = self.air_detection(agent)
-            elif issubclass(type(agent), Submarine):
+            elif agent.agent_ype == "sub":
                 detected = self.sub_detection(agent)
             else:
                 raise ValueError(f"Unknown Class {type(agent)} - unable to observe.")
@@ -334,10 +367,13 @@ class ChineseShip(Ship):
         else:
             self.request_support(target)
 
-    def attempt_boarding(self, target) -> bool:
+    def attempt_boarding(self, target: Merchant) -> bool:
         resistance_level = target.get_resistance_level()
         receptor = cs.world.receptor_grid.get_receptor_at_location(target.location)
         base_success_rate = 0.22
+
+        if self.team == 1 and target.escort_near():
+            return False
 
         if receptor.sea_state > 4:
             return False
@@ -401,42 +437,7 @@ class ChineseShip(Ship):
         if self.location.distance_to_point(target.location) < max_distance:
             self.attack(target, ammo, attacker_skill)
 
-    def attack(self, target, ammo, attacker_skill):
-        if target.agent_type == "sub":
-            defense_skill = target.ship_visibility
-            probabilities = data_functions.get_attack_probabilities(self.combat_type, attacker_skill,
-                                                                    target.combat_type, defense_skill)
-            new_probability = probabilities["sunk"] + target.damaged * 0.2
-            probabilities["sunk"] = min(new_probability, 1 - probabilities["ctl"])
-            probabilities["nothing"] = 1 - (probabilities["sunk"] + probabilities["ctl"])
-        elif target.combat_type == cs.MERCHANT:
-            probabilities = cs.MERCHANT_PROBABILITIES[target.ship_visibility]
-        else:
-            defense_skill = target.anti_ship_skill
-            probabilities = data_functions.get_attack_probabilities(self.combat_type, attacker_skill,
-                                                                    target.combat_type, defense_skill)
 
-        outcome = random.choices(list(probabilities.keys()), list(probabilities.values()))[0]
-
-        if target.agent_type == "ship":
-            self.anti_ship_ammo -= 1
-        elif target.agent_type == "air":
-            self.anti_air_ammo -= 1
-        elif target.agent_type == "sub":
-            self.anti_sub_ammo -= 1
-        ammo.stock -= 1
-
-        if outcome == "sunk":
-            target.is_destroyed()
-            self.mission.complete()
-            self.return_to_base()
-        elif outcome == "ctl":
-            target.CTL = True
-        elif outcome == "nothing":
-            if target.combat_type == cs.MERCHANT:
-                target.damaged += 1
-        else:
-            raise ValueError(f"Unknown outcome {outcome}")
 
     @staticmethod
     def select_ammo(options: list, target: Agent, attacker_skill: str) -> Ammunition:
@@ -611,9 +612,6 @@ class Escort(Ship):
 
         if self.location.distance_to_point(target.location) < max_distance:
             self.attack(target, ammo, attacker_skill)
-
-    def attack(self, target, ammo, attacker_skill) -> None:
-        pass
 
     def abort_attack(self):
         self.mission.abort()

@@ -161,6 +161,22 @@ CHINA_NAVY_DETECTING_SUB_NO_AWS = {DET_ADV: {LARGE: 0,
                                                VSMALL: 3.9818,
                                                STEALTHY: 1.9909}}
 
+CHINA_AIR_DETECTING_AIR =  {"AEW": {LARGE: 648,
+                                    MEDIUM: 648,
+                                    SMALL: 496,
+                                    VSMALL: 196,
+                                    STEALTHY: 59},
+                            DET_ADV: {LARGE: 333,
+                                      MEDIUM: 274,
+                                      SMALL: 196,
+                                      VSMALL: 78,
+                                      STEALTHY: 24},
+                            DET_BASIC: {LARGE: 254,
+                                        MEDIUM: 178,
+                                        SMALL: 128,
+                                        VSMALL: 50,
+                                        STEALTHY: 11}}
+
 COALITION_NAVY_DETECTING_SHIP = {DET_ADV: {LARGE: 56,
                                            MEDIUM: 56,
                                            SMALL: 37,

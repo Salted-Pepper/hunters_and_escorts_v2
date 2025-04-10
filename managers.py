@@ -15,6 +15,7 @@ import constants as cs
 import data_functions
 
 from ships import Merchant, ChineseShip, Escort
+from aircraft import ChineseAircraft
 
 
 class Request:
@@ -231,7 +232,7 @@ class EscortManager(Manager):
         return utilisation
 
     def initiate_agents(self) -> None:
-        coalition_data = data_functions.get_coalition_data()
+        coalition_data = data_functions.get_coalition_navy_data()
         for model in coalition_data:
             if coalition_data[model]["base"] != self.country:
                 continue
@@ -470,7 +471,12 @@ class ChinaAirManager(Manager):
         pass
 
     def initiate_agents(self) -> None:
-        pass
+        cn_air_data = data_functions.get_chinese_navy_data()
+        for model in cn_air_data:
+            quantity = int(cn_air_data[model]["numberofagents"])
+            for _ in range(quantity):
+                new_aircraft = ChineseAircraft(manager=self, model=model, base=self.sample_random_base())
+                self.inactive_agents.append(new_aircraft)
 
     def initiate_bases(self) -> None:
         self.bases = [Base(name="Ningbo", location=Point(121.57, 29.92), icon="AirportRed", agent_share=0.33),
