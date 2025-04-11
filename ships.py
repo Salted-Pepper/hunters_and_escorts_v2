@@ -7,7 +7,6 @@ import constants as cs
 import data_functions
 import settings
 from agents import Agent
-from ammo import Ammunition
 from bases import Base
 from points import Point
 
@@ -62,24 +61,27 @@ class Ship(Agent):
             defense_skill = target.ship_visibility
             probabilities = data_functions.get_attack_probabilities(self.combat_type, attacker_skill,
                                                                     target.combat_type, defense_skill)
+            self.anti_sub_ammo -= 1
+        elif target.combat_type == cs.MERCHANT:
+            probabilities = cs.MERCHANT_PROBABILITIES[target.ship_visibility]
             new_probability = probabilities["sunk"] + target.damaged * 0.2
             probabilities["sunk"] = min(new_probability, 1 - probabilities["ctl"])
             probabilities["nothing"] = 1 - (probabilities["sunk"] + probabilities["ctl"])
-        elif target.combat_type == cs.MERCHANT:
-            probabilities = cs.MERCHANT_PROBABILITIES[target.ship_visibility]
-        else:
+            self.anti_ship_ammo -= 1
+        elif target.agent_type == "ship":
             defense_skill = target.anti_ship_skill
             probabilities = data_functions.get_attack_probabilities(self.combat_type, attacker_skill,
                                                                     target.combat_type, defense_skill)
-
-        outcome = random.choices(list(probabilities.keys()), list(probabilities.values()))[0]
-
-        if target.agent_type == "ship":
             self.anti_ship_ammo -= 1
         elif target.agent_type == "air":
+            defense_skill = target.anti_ship_skill
+            probabilities = data_functions.get_attack_probabilities(self.combat_type, attacker_skill,
+                                                                    target.combat_type, defense_skill)
             self.anti_air_ammo -= 1
-        elif target.agent_type == "sub":
-            self.anti_sub_ammo -= 1
+        else:
+            raise ValueError(f"Unknown agent type {target.agent_type}")
+
+        outcome = random.choices(list(probabilities.keys()), list(probabilities.values()))[0]
         ammo.stock -= 1
 
         if outcome == "sunk":
@@ -118,7 +120,7 @@ class Merchant(Ship):
         return f"Merchant {self.agent_id} at {self.location} - on {self.mission} - {self.activated}"
 
     def sample_entry_point(self) -> None:
-        x = cs.MAX_LAT
+        x = cs.MAX_LAT - 0.01
         y = random.uniform(cs.MIN_LONG, 34)
         self.entry_point = Point(x, y)
 
@@ -165,7 +167,7 @@ class Merchant(Ship):
         self.remove_from_missions()
 
     def can_continue(self) -> bool:
-        pass
+        return True
 
     def enter_base(self) -> None:
         self.manager.active_agents.remove(self)
@@ -202,7 +204,7 @@ class Merchant(Ship):
     def attempt_to_attack(self, target) -> None:
         raise TypeError (f"{self} is unable to attack.")
 
-    def attack(self, target) -> None:
+    def attack(self, target, ammo, attacker_skill) -> None:
         raise TypeError (f"{self} is unable to attack.")
 
     def is_boarded(self, boarder: Agent) -> None:
@@ -286,36 +288,6 @@ class ChineseShip(Ship):
         else:
             return False
 
-    def observe(self, agents: list[Agent]) -> None:
-        self.make_patrol_move()
-        agents = self.remove_invalid_targets(agents)
-
-        for agent in agents:
-            if agent.destroyed:
-                continue
-
-            if self.location.distance_to_point(agent.location) > cs.CHINESE_NAVY_MAX_DETECTION_RANGE:
-                continue
-
-            if not self.check_if_valid_target(agent):
-                continue
-
-            if agent.agent_type == "ship":
-                detected = self.surface_detection(agent)
-            elif agent.agent_type == "air":
-                detected = self.air_detection(agent)
-            elif agent.agent_ype == "sub":
-                detected = self.sub_detection(agent)
-            else:
-                raise ValueError(f"Unknown Class {type(agent)} - unable to observe.")
-
-            if detected:
-                self.mission.complete()
-                missions.Track(self, agent)
-                return
-
-        self.spread_pheromones(self.location)
-
     def track(self, target: Agent) -> None:
         if cs.world.world_time - self.route.creation_time > 1 or self.route.next_point() is None:
             self.generate_route(target.location)
@@ -337,6 +309,8 @@ class ChineseShip(Ship):
             self.mission.change()
             missions.Attack(self, target)
             return
+        else:
+            self.request_support(target)
 
     def prepare_to_board(self, target: Merchant) -> None:
         if self.location.distance_to_point(target.location) > 12:
@@ -395,62 +369,6 @@ class ChineseShip(Ship):
             return True
         else:
             return False
-
-    def attempt_to_attack(self, target: Agent) -> None:
-        if target.agent_type == "ship" or target.agent_type == cs.MERCHANT:
-            if self.anti_ship_ammo == 0:
-                self.abort_attack()
-                return
-            attacker_skill = self.anti_ship_skill
-        elif target.agent_type == "air":
-            if self.anti_air_ammo == 0:
-                self.abort_attack()
-                return
-            attacker_skill = self.anti_air_skill
-        elif target.agent_type == "sub":
-            if self.anti_sub_ammo == 0:
-                self.abort_attack()
-                return
-            attacker_skill = self.anti_sub_skill
-        else:
-            raise ValueError(f"No protocol for {target} - {target.agent_type}")
-
-        defender_type = target.combat_type
-        attacker_type = self.combat_type
-
-        viable_ammunition = [a for a in self.manager.ammunition
-                             if a.attacker.lower() == attacker_type.lower()
-                             and a.defender.lower() == defender_type.lower()
-                             and a.stock > 0]
-
-        if len(viable_ammunition) == 0:
-            print(f"No viable ammunition")
-            self.abort_attack()
-            return
-
-        ammo = self.select_ammo(viable_ammunition, target, attacker_skill)
-        max_distance = ammo.range
-
-        self.generate_route(target.location)
-        self.move_through_route()
-
-        if self.location.distance_to_point(target.location) < max_distance:
-            self.attack(target, ammo, attacker_skill)
-
-
-
-    @staticmethod
-    def select_ammo(options: list, target: Agent, attacker_skill: str) -> Ammunition:
-        if target.combat_type == cs.MERCHANT:
-            options = [a for a in options if a.attacker_skill.lower() == cs.ATT_BASIC]
-            return options[0]
-        else:
-            if attacker_skill == cs.ATT_BASIC:
-                options = [a for a in options if a.attacker_skill.lower() == cs.ATT_BASIC]
-            return options[0]
-
-    def abort_attack(self):
-        self.mission.abort()
 
 class Escort(Ship):
     def __init__(self, manager, model: str, base: Base, country: str):
@@ -517,11 +435,11 @@ class Escort(Ship):
             if not self.check_if_valid_target(agent):
                 return
 
-            if issubclass(type(agent), Ship):
+            if agent.agent_type == "ship":
                 detected = self.surface_detection(agent)
-            elif issubclass(type(agent), Aircraft):
+            elif agent.agent_type == "air":
                 detected = self.air_detection(agent)
-            elif issubclass(type(agent), Submarine):
+            elif agent.agent_type == "sub":
                 detected = self.sub_detection(agent)
             else:
                 raise ValueError(f"Unknown Class {type(agent)} - unable to observe.")
@@ -569,55 +487,3 @@ class Escort(Ship):
         # TODO: Get boarding parameters for escort here - for now just guaranteed success
         print(f"{self} is counter-boarding {target}")
         return True
-
-    def attempt_to_attack(self, target) -> None:
-        if target.agent_type == "ship":
-            if self.anti_ship_ammo == 0:
-                self.abort_attack()
-                return
-            attacker_skill = self.anti_ship_skill
-        elif target.agent_type == cs.MERCHANT:
-            raise TypeError(f"{self} not allowed to attack type Merchant!")
-        elif target.agent_type == "air":
-            if self.anti_air_ammo == 0:
-                self.abort_attack()
-                return
-            attacker_skill = self.anti_air_skill
-        elif target.agent_type == "sub":
-            if self.anti_sub_ammo == 0:
-                self.abort_attack()
-                return
-            attacker_skill = self.anti_sub_skill
-        else:
-            raise ValueError(f"No protocol for {target} - {target.agent_type}")
-
-        defender_type = target.combat_type
-        attacker_type = self.combat_type
-
-        viable_ammunition = [a for a in self.manager.ammunition
-                             if a.attacker.lower() == attacker_type.lower()
-                             and a.defender.lower() == defender_type.lower()
-                             and a.stock > 0]
-
-        if len(viable_ammunition) == 0:
-            print(f"No viable ammunition")
-            self.abort_attack()
-            return
-
-        ammo = self.select_ammo(viable_ammunition, attacker_skill)
-        max_distance = ammo.range
-
-        self.generate_route(target.location)
-        self.move_through_route()
-
-        if self.location.distance_to_point(target.location) < max_distance:
-            self.attack(target, ammo, attacker_skill)
-
-    def abort_attack(self):
-        self.mission.abort()
-
-    @staticmethod
-    def select_ammo(options: list, attacker_skill: str) -> Ammunition:
-        if attacker_skill == cs.ATT_BASIC:
-            options = [a for a in options if a.attacker_skill.lower() == cs.ATT_BASIC]
-        return options[0]

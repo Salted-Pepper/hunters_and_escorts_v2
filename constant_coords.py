@@ -91,7 +91,7 @@ KOREA_POINTS = [Point(126.1105936433172, 34.382635296628266),
                 Point(129.7479976860726, 40.85492641510266),
                 Point(129.6349151828484, 41.51024592280302),
                 Point(130.65265771186637, 42.30134275308864),
-                Point(129.97416269252105, 45.0),  # N Korea
+                Point(129.97416269252105, 60.0),  # N Korea
                 Point(124.12779727582893, 39.81192015777447),
                 Point(125.2925470590384, 39.50722297163861),
                 Point(124.68190154162761, 38.10617579665901),
@@ -127,9 +127,12 @@ JAPAN_POINTS = [Point(130.6680, 30.9984),
                 Point(145.8152, 43.3725),
                 Point(145.2201, 43.6191),
                 Point(145.3586, 44.3470),
-                Point(144.2777, 44.1120),
-                Point(141.9266, 45.5306),
-                Point(141.0040, 45.4560),
+
+                Point(143, 60.000),
+                # Point(144.2777, 44.1120),
+                # Point(141.9266, 45.5306),
+                # Point(141.0040, 45.4560),
+
                 Point(141.6954, 44.3112),
                 Point(140.3330, 43.3142),
                 Point(139.4117, 42.1322),
@@ -201,10 +204,10 @@ MEDIAN_ZONE = [Point(110.000, 40.000), Point(120.647, 40.000),
                Point(122.000, 27.000), Point(118.000, 23.000),
                Point(110.000, 19.949)]
 
-A_ALL_ZONES = [Point(110.000, 15.000),
-               Point(150.000, 15.000),
-               Point(150.000, 45.000),
-               Point(110.000, 45.000)]
+A_ALL_ZONES = [Point(cs.MIN_LAT, cs.MIN_LONG),
+               Point(cs.MIN_LAT, cs.MAX_LONG),
+               Point(cs.MAX_LAT, cs.MAX_LONG),
+               Point(cs.MAX_LAT, cs.MIN_LONG)]
 
 B_TAIWAN_CONT = [Point(121.492, 25.690),
                  Point(122.466, 25.005),
@@ -237,14 +240,15 @@ D_JAPAN_CONT = [Point(140.000, 45.000),
                 Point(137.879, 38.473),
                 Point(138.837, 42.099),]
 
-E_JAPAN_TERRITORIAL = [Point(146.879, 45.000), Point(144.878, 41.632),
+E_JAPAN_TERRITORIAL = [Point(143, 60.000), Point(145.27, 44.99),
+                       Point(145.8152, 43.3725), Point(144.878, 41.632),
                        Point(139.942, 31.876), Point(138.191, 34.225),
                        Point(133.229, 32.386), Point(131.388, 30.395),
                        Point(128.040, 25.920), Point(126.500, 26.315),
                        Point(128.673, 27.954), Point(129.665, 30.897),
                        Point(128.401, 32.574), Point(129.220, 34.776),
                        Point(133.136, 36.475), Point(138.135, 38.341),
-                       Point(139.163, 42.120), Point(140.920, 45.000)]
+                       Point(139.163, 42.120), Point(141.74, 45.0)]
 
 F_FILIPINO_CONT = [Point(119.623, 15.000), Point(119.376, 16.507),
                    Point(121.346, 20.987), Point(122.350, 20.841),
@@ -336,7 +340,7 @@ LAND_MASSES = TAIWAN_AND_ISLANDS + JAPAN_AND_ISLANDS + OTHER_LAND
 ALL_MASSES = LAND_MASSES + [CHINA]
 
 
-def set_points_to_bounds(polygon, margin=0) -> Polygon:
+def set_points_to_bounds(polygon, margin=2) -> Polygon:
     for point in polygon.points:
         fix_point_to_edge(point, margin)
 

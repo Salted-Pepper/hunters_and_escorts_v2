@@ -76,6 +76,7 @@ function startSimulation(){
 
 sprite_dict = {"Merchant Manager": "static/assets/merchant_24x16.png",
                "China Navy Manager": "static/assets/hunter_24x16.png",
+               "China Air Manager": "static/assets/cn_aircraft_24x16.png",
                "TW Escort Manager": "static/assets/escort_tw_24x16.png",
                "JP Escort Manager": "static/assets/escort_jp_24x16.png",
                "US Escort Manager": "static/assets/escort_us_24x16.png",
@@ -195,7 +196,6 @@ function updateLogs(events) {
                         "Aircraft Destroyed": 0,
                         "Hunter Deterred": 0,
                         "Hunter Destroyed": 0,
-                        "Hunter Damaged": 0,
     };
 
     for (let i=0; i<events.length; i++){
@@ -220,7 +220,6 @@ function updateLogs(events) {
 
     document.getElementById('escorts-log-deterred').innerHTML = event_counts["Hunter Deterred"];
     document.getElementById('hunters-log-sunk').innerHTML = event_counts["Hunter Destroyed"];
-    document.getElementById('hunters-log-damaged').innerHTML = event_counts["Hunter Damaged"];
 
     document.getElementById('sim-logs').value = new_logger_text;
 }

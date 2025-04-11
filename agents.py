@@ -12,6 +12,7 @@ import routes
 import constants as cs
 
 import missions
+from  ammo import Ammunition
 
 agent_id = 0
 
@@ -127,8 +128,9 @@ class Agent:
 
     def generate_route(self, destination: Point = None) -> None:
         try:
+            air = True if self.agent_type == "air" else False
             self.route = routes.create_route(start=self.location,
-                                             end=destination, team=self.team)
+                                             end=destination, team=self.team, air=air)
         except ValueError as e:
             print(f"Failed to create route for {self} to {destination}. "
                   f"Agent was assigned to {self.assigned_zone}. Team {self.team}")
@@ -140,6 +142,8 @@ class Agent:
             raise ValueError(f"Movement set to None - {self.speed_current}, {settings.time_delta}")
 
     def move_through_route(self) -> str:
+        if not zones.ZONE_A.polygon.contains_point(self.location):
+            raise ValueError(f"{self} left zone of interest.")
         iterations = 0
         while self.movement_left_in_turn > 0:
             iterations += 1
@@ -188,7 +192,8 @@ class Agent:
             return True
 
         try:
-            base_route = routes.create_route(self.location, self.base.location, team=self.team)
+            air = True if self.agent_type == "air" else False
+            base_route = routes.create_route(self.location, self.base.location, team=self.team, air=air)
         except ValueError as e:
             raise ValueError(f"Failed to create route for {self}: \n{e}")
         if self.remaining_endurance * (1 + cs.SAFETY_ENDURANCE) <= base_route.length:
@@ -246,7 +251,10 @@ class Agent:
         if self.team == 1:
             # if coalition, it depends on the r_o_e
             rules = settings.coalition_r_o_e_rules
-            if target_zone == zones.ZONE_P:
+            if zones.ZONE_L.polygon.contains_point(target.location):
+                # Filters out all aircraft units returning to land
+                return False
+            elif target_zone == zones.ZONE_P:
                 target_zone = zones.ZONE_B
             elif target_zone == zones.ZONE_N:
                 target_zone = zones.ZONE_H
@@ -259,7 +267,7 @@ class Agent:
                 else:
                     return False
             elif rule_value == 3:
-                if target.agent_type == "UAV":
+                if target.unmanned:
                     return True
                 else:
                     return False
@@ -282,6 +290,25 @@ class Agent:
                 return False
         else:
             raise ValueError(f"Undefined team {self.team}")
+
+    def able_to_attack(self, target) -> bool:
+        if target.agent_type ==  "ship":
+            if self.anti_ship_skill is None or self.anti_ship_ammo == 0:
+                return False
+            else:
+                return True
+        elif target.agent_type == "air":
+            if self.anti_air_skill is None or self.anti_air_ammo == 0:
+                return False
+            else:
+                return True
+        elif target.agent_type == "sub":
+            if self.anti_sub_skill is None or self.anti_sub_ammo == 0:
+                return False
+            else:
+                return True
+        else:
+            raise TypeError(f"Unaccounted agent type {target.agent_type} for {target}")
 
     def update_legal_zones(self) -> None:
         pass
@@ -341,15 +368,38 @@ class Agent:
     def sub_detection(self, agent: Agent) -> bool:
         pass
 
-    @abstractmethod
     def observe(self, agents: list[Agent]) -> None:
-        pass
+        self.make_patrol_move()
+        agents = self.remove_invalid_targets(agents)
+
+        for agent in agents:
+            if not agent.activated:
+                continue
+
+            if not self.check_if_valid_target(agent):
+                continue
+
+            if agent.agent_type == "ship" or agent.agent_type == cs.MERCHANT:
+                detected = self.surface_detection(agent)
+            elif agent.agent_type == "air":
+                detected = self.air_detection(agent)
+            elif agent.agent_ype == "sub":
+                detected = self.sub_detection(agent)
+            else:
+                raise ValueError(f"Unknown Class {type(agent)} - unable to observe.")
+
+            if detected:
+                self.mission.complete()
+                missions.Track(self, agent)
+                return
+
+        self.spread_pheromones(self.location)
 
     def remove_invalid_targets(self, agents: list) -> list:
         agents_to_remove = []
 
         if self.ship_detection_skill is None:
-            agents_to_remove.extend([a for a in agents if a.agent_type == "ship"])
+            agents_to_remove.extend([a for a in agents if a.agent_type == "ship" or a.agent_type == cs.MERCHANT])
         elif self.air_detection_skill is None:
             agents_to_remove.extend([a for a in agents if a.agent_type == "aircraft"])
         elif self.sub_detection_skill is None:
@@ -367,6 +417,7 @@ class Agent:
     def request_support(self, target) -> None:
         if self.mission.support_requested:
             return
+        print(f"{self} is requesting support.")
 
         world = cs.world
         if self.team == 1:
@@ -487,9 +538,59 @@ class Agent:
         else:
             raise ValueError(f"Invalid Team {self.team}")
 
-    @abstractmethod
-    def attempt_to_attack(self, target) -> None:
-        pass
+    def attempt_to_attack(self, target: Agent) -> None:
+        if target.agent_type == "ship" or target.agent_type == cs.MERCHANT:
+            if self.anti_ship_ammo == 0:
+                self.abort_attack()
+                return
+            attacker_skill = self.anti_ship_skill
+        elif target.agent_type == "air":
+            if self.anti_air_ammo == 0:
+                self.abort_attack()
+                return
+            attacker_skill = self.anti_air_skill
+        elif target.agent_type == "sub":
+            if self.anti_sub_ammo == 0:
+                self.abort_attack()
+                return
+            attacker_skill = self.anti_sub_skill
+        else:
+            raise ValueError(f"No protocol for {target} - {target.agent_type}")
+
+        defender_type = target.combat_type
+        attacker_type = self.combat_type
+
+        viable_ammunition = [a for a in self.manager.ammunition
+                             if a.attacker.lower() == attacker_type.lower()
+                             and a.defender.lower() == defender_type.lower()
+                             and a.stock > 0]
+
+        if len(viable_ammunition) == 0:
+            print(f"No viable ammunition")
+            self.abort_attack()
+            return
+
+        ammo = self.select_ammo(viable_ammunition, target, attacker_skill)
+        max_distance = ammo.range
+
+        self.generate_route(target.location)
+        self.move_through_route()
+
+        if self.location.distance_to_point(target.location) < max_distance:
+            self.attack(target, ammo, attacker_skill)
+
+    def abort_attack(self):
+        self.mission.abort()
+
+    @staticmethod
+    def select_ammo(options: list, target: Agent, attacker_skill: str) -> Ammunition:
+        if target.combat_type == cs.MERCHANT:
+            options = [a for a in options if a.attacker_skill.lower() == cs.ATT_BASIC]
+            return options[0]
+        else:
+            if attacker_skill == cs.ATT_BASIC:
+                options = [a for a in options if a.attacker_skill.lower() == cs.ATT_BASIC]
+            return options[0]
 
     @abstractmethod
     def attack(self, target, ammo, attacker_skill) -> None:

@@ -37,7 +37,6 @@ class Mission:
             self.target.involved_missions.append(self)
 
     def remove_mission_status(self) -> None:
-        print(f"Closing mission {self}")
         self.agent.previous_mission = str(self.agent.mission)
         self.agent.mission = None
 
@@ -130,7 +129,10 @@ class Track(Mission):
         if target.destroyed:
             raise ValueError(f"{self.agent} tracking destroyed agent  {target}")
 
-        self.agent.generate_route(target.location)
+        try:
+            self.agent.generate_route(target.location)
+        except ValueError as e:
+            raise ValueError(f"Failed to generate route to {target} -\n {e}")
         self.agent.speed_current = self.agent.speed_max
 
         self.support_requested = False

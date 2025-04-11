@@ -7,13 +7,15 @@ import data_functions
 
 from agents import Agent
 from bases import Base
+import missions
 
 
 class Aircraft(Agent):
     def __init__(self, manager, model: str, base: Base):
         super().__init__(manager, model, base)
         self.agent_type = "air"
-        self.manned = False
+        self.manned = True
+        self.max_detection_range = 648
 
     @abstractmethod
     def initiate_model(self) -> None:
@@ -21,14 +23,14 @@ class Aircraft(Agent):
 
     def set_agent_attributes(self, model_data: dict) -> None:
         self.team = model_data["team"]
-        self.service = model_data["service"]
+        self.manned = False if model_data["type"] == "UAV" else True
 
         self.ship_visibility = data_functions.parse_string_input(model_data, "SurfaceVisibility", cs.SMALL)
         self.air_visibility = data_functions.parse_string_input(model_data, "AirVisibility", cs.SMALL)
         self.sub_visibility = data_functions.parse_string_input(model_data, "UnderseaVisibility", cs.SMALL)
 
-        self.speed_max = model_data.get("SpeedMax", 40)
-        self.speed_cruising = model_data.get("SpeedCruise", 30)
+        self.speed_max = float(model_data.get("SpeedMax", 40))
+        self.speed_cruising = float(model_data.get("SpeedCruise", 30))
         self.speed_current = self.speed_cruising
         self.endurance = model_data.get("Endurance", 8100)
         self.remaining_endurance = self.endurance
@@ -58,15 +60,7 @@ class Aircraft(Agent):
         pass
 
     @abstractmethod
-    def observe(self, agents: list[Agent]) -> None:
-        pass
-
-    @abstractmethod
     def track(self, target: Agent) -> None:
-        pass
-
-    @abstractmethod
-    def attempt_to_attack(self, target) -> None:
         pass
 
     @abstractmethod
@@ -90,22 +84,33 @@ class ChineseAircraft(Aircraft):
         model_data = cs.CHINA_AIR_DATA[self.model]
         self.set_agent_attributes(model_data)
 
-    def surface_detection(self, agent: Agent) -> bool:
-        if self.anti_ship_skill == cs.DET_BASIC:
-            k = 2.747
-        elif self.anti_ship_skill == cs.DET_ADV:
-            k = 39.633
+        if self.manned:
+            self.service = "Air Manned"
         else:
-            raise ValueError(f"Invalid anti-ship skill for {self.model}")
+            self.service = "Air UAV"
+
+    def surface_detection(self, agent: Agent) -> bool:
+        if self.anti_ship_skill is None:
+            return False
+        elif self.anti_ship_skill == cs.DET_BASIC:
+            k = 2747
+        elif self.anti_ship_skill == cs.DET_ADV:
+            k = 39633
+        else:
+            raise ValueError(f"Invalid anti-ship skill for {self.model}: {self.anti_ship_skill}")
+
+
+        distance = self.location.distance_to_point(agent.location)
+        if distance > 300:
+            return False
 
         sea_state = cs.world.receptor_grid.get_receptor_at_location(self.location).sea_state
         h = 10
-        s = cs.sea_state_values[sea_state]
+        s = cs.sea_state_values.get(sea_state, 0.4)
         r = cs.rcs_dict[agent.air_visibility]
-        distance = self.location.distance_to_point(agent.location)
 
         detection_probability = (1 - math.exp(-(k * h * r * s) / distance ** 3))
-
+        print(f"Detection prob {self} - {agent} is {detection_probability}")
         if random.uniform(0, 1) < detection_probability:
             return True
         else:
@@ -134,9 +139,6 @@ class ChineseAircraft(Aircraft):
         else:
             return True
 
-    def observe(self, agents: list[Agent]) -> None:
-        pass
-
     def detection(self, target) -> bool:
         if target.agent_type == "ship" or target.agent_type == cs.MERCHANT:
             if self.anti_ship_skill is None:
@@ -156,11 +158,58 @@ class ChineseAircraft(Aircraft):
             raise ValueError(f"Unhandled agent type {target.agent_type} for {target}")
 
     def track(self, target: Agent) -> None:
-        pass
+        if cs.world.world_time - self.route.creation_time > 1 or self.route.next_point() is None:
+            self.generate_route(target.location)
 
-    def attempt_to_attack(self, target) -> None:
-        pass
+        if self.location.distance_to_point(target.location) > 12:
+            self.move_through_route()
+
+        if ((target.agent_type == "ship" and self.anti_ship_skill is not None) or
+              (target.agent_type == "air" and self.anti_air_skill is not None) or
+              (target.agent_type == "sub" and self.anti_sub_skill is not None)):
+            self.mission.change()
+            missions.Attack(self, target)
+            return
+        else:
+            self.request_support(target)
 
     def attack(self, target: Agent, ammo, attacker_skill: str) -> None:
-        pass
+        if target.agent_type == "sub":
+            defense_skill = target.air_visibility
+            probabilities = data_functions.get_attack_probabilities(self.combat_type, attacker_skill,
+                                                                    target.combat_type, defense_skill)
+            self.anti_sub_ammo -= 1
+        elif target.combat_type == cs.MERCHANT:
+            probabilities = cs.MERCHANT_PROBABILITIES[target.air_visibility]
+            new_probability = probabilities["sunk"] + target.damage * 0.2
+            probabilities["sunk"] = min(new_probability, 1 - probabilities["ctl"])
+            probabilities["nothing"] = 1 - (probabilities["sunk"] + probabilities["ctl"])
+            self.anti_ship_ammo -= 1
+        elif target.agent_type == "ship":
+            defense_skill = target.anti_air_skill
+            probabilities = data_functions.get_attack_probabilities(self.combat_type, attacker_skill,
+                                                                    target.combat_type, defense_skill)
+            self.anti_ship_ammo -= 1
+        elif target.agent_type == "air":
+            defense_skill = target.anti_air_skill
+            probabilities = data_functions.get_attack_probabilities(self.combat_type, attacker_skill,
+                                                                    target.combat_type, defense_skill)
+            self.anti_air_ammo -= 1
+        else:
+            raise ValueError(f"Unknown agent type {target.agent_type}")
+
+        outcome = random.choices(list(probabilities.keys()), list(probabilities.values()))[0]
+        ammo.stock -= 1
+
+        if outcome == "sunk":
+            target.is_destroyed()
+            self.mission.complete()
+            self.return_to_base()
+        elif outcome == "ctl":
+            target.CTL = True
+        elif outcome == "nothing":
+            if target.combat_type == cs.MERCHANT:
+                target.damage += 1
+        else:
+            raise ValueError(f"Unknown outcome {outcome}")
 

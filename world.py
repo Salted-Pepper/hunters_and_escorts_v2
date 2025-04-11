@@ -84,12 +84,12 @@ class World:
         self.china_manager_sub  = ChinaSubManager()
 
         self.managers = [self.merchant_manager,
-                         self.tw_manager_escorts,
-                         self.jp_manager_escorts,
-                         self.us_manager_escorts,
                          self.china_manager_air,
                          self.china_manager_navy,
                          self.china_manager_sub,
+                         self.tw_manager_escorts,
+                         self.jp_manager_escorts,
+                         self.us_manager_escorts,
                          ]
 
         for manager in self.managers:
@@ -120,7 +120,6 @@ class World:
         tracker.USED_TIME["Weather"] += time.time() - t_0
 
     def simulate_step(self) -> None:
-
         self.update_weather_conditions()
         if self.world_time % 24 == 0:
             print(f"\nTime is {self.world_time}")

@@ -111,7 +111,7 @@ class ReceptorGrid:
         max_lon = cs.MAX_LONG + cs.LONG_GRID_EXTRA
 
         if max_lat < point.x or point.x < min_lat or max_lon < point.y or point.y < min_lon:
-            return None
+            raise ValueError(f"Illegal location - {point}")
 
         row = int((point.x - min_lat) / cs.GRID_HEIGHT)
         col = int((point.y - min_lon) / cs.GRID_WIDTH)

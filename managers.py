@@ -24,6 +24,9 @@ class Request:
         self.mission = mission
         self.action_time = action_time
 
+    def __str__(self):
+        return f"Request {self.mission} - {self.target}"
+
 
 class Manager:
     def __init__(self):
@@ -123,9 +126,12 @@ class Manager:
                 continue
             elif not agent.reach_and_return(request.target.location):
                 continue
+            elif not agent.able_to_attack(request.target):
+                continue
             else:
                 agent.mission.complete()
                 missions.Track(agent, request.target)
+                print(f"Sending {agent} to {request}")
                 return True
 
         # Otherwise assign any ready inactive agent
@@ -136,10 +142,13 @@ class Manager:
                 continue
             elif not agent.reach_and_return(request.target.location):
                 continue
+            elif not agent.able_to_attack(request.target):
+                continue
             else:
                 agent.activate()
                 agent.assigned_zone = request.target.get_current_zone()
                 missions.Track(agent, request.target)
+                print(f"Sending {agent} to {request}")
                 return True
         return False
 
@@ -455,6 +464,7 @@ class ChinaNavyManager(Manager):
 
         selected_zone = None
         while selected_zone in invalid_zones:
+            # TODO: Ensure that this doesn't get stuck in a loop when an entire category is only set to zone N
             selected_zone = random.choices(options, share)[0]
 
         return selected_zone
@@ -468,10 +478,23 @@ class ChinaAirManager(Manager):
         self.initiate_agents()
 
     def pre_turn_actions(self) -> None:
-        pass
+        for agent in self.active_agents:
+            agent.set_turn_movement()
+
+        utilisation = self.get_current_utilisation()
+        eligible_agents = [agent for agent in self.inactive_agents if agent.remaining_maintenance_time == 0]
+
+        while utilisation < self.calc_utilization_rate() and len(eligible_agents) > 0:
+            successful = self.activate_agent(eligible_agents)
+
+            if not successful:
+                return
+
+            utilisation = self.get_current_utilisation()
+            eligible_agents = [agent for agent in self.inactive_agents if agent.remaining_maintenance_time == 0]
 
     def initiate_agents(self) -> None:
-        cn_air_data = data_functions.get_chinese_navy_data()
+        cn_air_data = data_functions.get_chinese_aircraft_data()
         for model in cn_air_data:
             quantity = int(cn_air_data[model]["numberofagents"])
             for _ in range(quantity):
@@ -484,13 +507,45 @@ class ChinaAirManager(Manager):
                       Base(name="Liangcheng", location=Point(116.75, 25.68), icon="AirportRed", agent_share=0.33)]
 
     def calc_utilization_rate(self) -> float:
-        pass
+        # TODO: Calculate Utilisation rate properly
+        return 0.02
 
-    def activate_agent(self, agents: list) -> None:
-        pass
+    def get_current_utilisation(self) -> float:
+        if len(self.active_agents) > 0:
+            utilisation = len(self.active_agents) / (len(self.active_agents) + len(self.inactive_agents))
+        else:
+            utilisation = 0
+        return utilisation
 
-    def select_zone_to_patrol(self, agent) -> None:
-        pass
+    def activate_agent(self, agents: list) -> bool:
+        agent = random.choice(agents)
+        zone = self.select_zone_to_patrol(agent)
+
+        if zone is None:
+            return False
+
+        agent.activate()
+        agent.go_to_patrol(zone)
+        return True
+
+    def select_zone_to_patrol(self, agent) -> zones.Zone | None:
+        set_assignment = settings.zone_assignment_hunter[agent.service]
+        options = list(set_assignment.keys())
+        share = list(set_assignment.values())
+        if sum(share) == 0:
+            return None
+
+        invalid_zones = [None]
+
+        if not agent.armed:
+            invalid_zones.append(zones.ZONE_N)
+
+        selected_zone = None
+        while selected_zone in invalid_zones:
+            # TODO: Ensure that this doesn't get stuck in a loop when an entire category is only set to zone N
+            selected_zone = random.choices(options, share)[0]
+
+        return selected_zone
 
 
 class ChinaSubManager(Manager):

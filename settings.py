@@ -271,6 +271,8 @@ zone_assignment_hunter[cs.HUNTER_CCG][ZONE_P] = 1
 zone_assignment_hunter[cs.HUNTER_PAFMM][ZONE_A] = 1
 zone_assignment_hunter[cs.HUNTER_MSA][ZONE_H] = 1
 zone_assignment_hunter[cs.HUNTER_PLAN][ZONE_P] = 1
+zone_assignment_hunter[cs.HUNTER_UAV][ZONE_A] = 1
+zone_assignment_hunter[cs.HUNTER_AIRCRAFT][ZONE_A] = 1
 
 zone_assignment_coalition = {agent_type: {zone: 0 for zone in ZONES}
                              for agent_type in cs.COALITION_TYPES

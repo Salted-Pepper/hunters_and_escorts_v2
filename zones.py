@@ -25,7 +25,10 @@ def create_poisson_disk_sample(polygon: Polygon, obstacles: list) -> list:
 class Zone:
     def __init__(self, name: str, polygon: Polygon):
         self.name = name
-        self.polygon = ccs.set_points_to_bounds(polygon)
+        if name in ["C", "E", "G"]:
+            self.polygon  = polygon
+        else:
+            self.polygon = ccs.set_points_to_bounds(polygon)
         self.obstacles = [landmass for landmass in (ccs.LAND_MASSES + [ccs.CHINA])
                           if any([self.polygon.contains_point(point) for point in landmass.points])]
         self.patrol_locations = create_poisson_disk_sample(self.polygon, self.obstacles)
