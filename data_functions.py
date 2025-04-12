@@ -80,10 +80,16 @@ attack_probability_data = set_attack_probabilities()
 def get_attack_probabilities(attack_type, attack_skill, target_type, target_size) -> dict:
     global attack_probability_data
     df: pd.DataFrame = attack_probability_data
-    df = df[((df["Attacker Type"] == attack_type) &
-             (df["Attacker Skill"] == attack_skill) &
-             (df["Defender Type"] == target_type) &
-             (df["Defender Skill"] == target_size))]
+    if target_size is None:
+        df = df[((df["Attacker Type"] == attack_type) &
+                 (df["Attacker Skill"] == attack_skill) &
+                 (df["Defender Type"] == target_type) &
+                 (df["Defender Skill"].isna()))]
+    else:
+        df = df[((df["Attacker Type"] == attack_type) &
+                 (df["Attacker Skill"] == attack_skill) &
+                 (df["Defender Type"] == target_type) &
+                 (df["Defender Skill"] == target_size))]
 
     if len(df) == 0:
         raise ValueError(f"{attack_type=}, "

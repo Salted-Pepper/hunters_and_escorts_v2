@@ -380,10 +380,16 @@ class Agent:
                 continue
 
             if agent.agent_type == "ship" or agent.agent_type == cs.MERCHANT:
+                if self.ship_detection_skill is None:
+                    continue
                 detected = self.surface_detection(agent)
             elif agent.agent_type == "air":
+                if self.air_detection_skill is None:
+                    continue
                 detected = self.air_detection(agent)
             elif agent.agent_ype == "sub":
+                if self.sub_detection_skill is None:
+                    continue
                 detected = self.sub_detection(agent)
             else:
                 raise ValueError(f"Unknown Class {type(agent)} - unable to observe.")

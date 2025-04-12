@@ -32,7 +32,7 @@ class Aircraft(Agent):
         self.speed_max = float(model_data.get("SpeedMax", 40))
         self.speed_cruising = float(model_data.get("SpeedCruise", 30))
         self.speed_current = self.speed_cruising
-        self.endurance = model_data.get("Endurance", 8100)
+        self.endurance = float(model_data.get("Endurance", 8100))
         self.remaining_endurance = self.endurance
 
         self.ship_detection_skill = data_functions.parse_string_input(model_data, "Ship Detection Skill", cs.DET_BASIC)

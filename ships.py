@@ -28,7 +28,7 @@ class Ship(Agent):
 
     def set_agent_attributes(self, model_data: dict) -> None:
         self.team = model_data["team"]
-        self.service = model_data["service"]
+        self.service = "Ship " + model_data["service"]
         self.armed = True if model_data.get("Armed", "Y") == "Y" else False
 
         self.ship_visibility = data_functions.parse_string_input(model_data, "SurfaceVisibility", cs.SMALL)
@@ -39,7 +39,7 @@ class Ship(Agent):
         self.speed_cruising = model_data.get("SpeedCruise", 30)
         self.speed_current = self.speed_cruising
         self.dwt = model_data.get("Displacement", 1500)
-        self.endurance = model_data.get("Endurance", 8100)
+        self.endurance = float(model_data.get("Endurance", 8100))
         self.remaining_endurance = self.endurance
 
         self.ship_detection_skill = data_functions.parse_string_input(model_data, "Ship Detection Skill", cs.DET_BASIC)
@@ -436,10 +436,16 @@ class Escort(Ship):
                 return
 
             if agent.agent_type == "ship":
+                if self.ship_detection_skill is None:
+                    continue
                 detected = self.surface_detection(agent)
             elif agent.agent_type == "air":
+                if self.air_detection_skill is None:
+                    continue
                 detected = self.air_detection(agent)
             elif agent.agent_type == "sub":
+                if self.sub_detection_skill is None:
+                    continue
                 detected = self.sub_detection(agent)
             else:
                 raise ValueError(f"Unknown Class {type(agent)} - unable to observe.")
