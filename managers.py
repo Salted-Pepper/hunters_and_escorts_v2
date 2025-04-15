@@ -15,7 +15,7 @@ import constants as cs
 import data_functions
 
 from ships import Merchant, ChineseShip, Escort
-from aircraft import ChineseAircraft
+from aircraft import ChineseAircraft, CoalitionAircraft
 
 
 class Request:
@@ -65,6 +65,13 @@ class Manager:
     def initiate_bases(self) -> None:
         raise NotImplementedError("Initiate Bases not defined on MANAGER Level")
 
+    def get_current_utilisation(self) -> float:
+        if len(self.active_agents) > 0:
+            utilisation = len(self.active_agents) / (len(self.active_agents) + len(self.inactive_agents))
+        else:
+            utilisation = 0
+        return utilisation
+
     @abstractmethod
     def calc_utilization_rate(self) -> float:
         pass
@@ -110,14 +117,12 @@ class Manager:
             if request.target.team == self.team:
                 return
 
-            zone = request.target.get_current_zone()
-
-            successful = self.select_agent_for_request(request, zone)
+            successful = self.select_agent_for_request(request)
             if not successful:
                 self.requests.insert(0, request)
                 return
 
-    def select_agent_for_request(self, request, zone) -> bool:
+    def select_agent_for_request(self, request) -> bool:
         # Try assigning an agent in holding
         for agent in self.active_agents:
             if agent.mission.mission_type != "hold":
@@ -233,13 +238,6 @@ class EscortManager(Manager):
             self.activate_agent(eligible_agents)
             utilisation = self.get_current_utilisation()
 
-    def get_current_utilisation(self) -> float:
-        if len(self.active_agents) > 0:
-            utilisation = len(self.active_agents) / (len(self.active_agents) + len(self.inactive_agents))
-        else:
-            utilisation = 0
-        return utilisation
-
     def initiate_agents(self) -> None:
         coalition_data = data_functions.get_coalition_navy_data()
         for model in coalition_data:
@@ -321,6 +319,75 @@ class EscortManagerUS(EscortManager):
 
     def initiate_bases(self) -> None:
         self.bases = [Base(name="Yokosuka", location=Point(137.307, 34.2), agent_share=1)]
+
+
+class CoalitionAirManager(Manager):
+    def __init__(self):
+        super().__init__()
+        self.initiate_agents()
+
+    def __str__(self):
+        return "Coalition Air Manager"
+
+    def pre_turn_actions(self) -> None:
+        for agent in self.active_agents:
+            agent.set_turn_movement()
+
+        utilisation = self.get_current_utilisation()
+        eligible_agents = [agent for agent in self.inactive_agents if agent.remaining_maintenance_time == 0
+                           and sum(settings.zone_assignment_coalition[agent.service].values()) > 0]
+
+        while utilisation < self.calc_utilization_rate() and len(eligible_agents) > 0:
+            self.activate_agent(eligible_agents)
+            utilisation = self.get_current_utilisation()
+
+    def initiate_agents(self) -> None:
+        coalition_data = data_functions.get_coalition_aircraft_data()
+
+        for model in coalition_data:
+            quantity = int(coalition_data[model]["numberofagents"])
+            for _ in range(quantity):
+                base, country = self.select_base(country=coalition_data[model]["base"])
+                new_ship = CoalitionAircraft(manager=self, model=model, base=base, country=country)
+                self.inactive_agents.append(new_ship)
+
+    def initiate_bases(self) -> None:
+        self.bases = [Base(name="US Air", location=Point(139.371, 35.768), agent_share=0.1, icon="AirportBlue"),
+                      Base(name="JP Air", location=Point(128.236, 26.758), agent_share=0.45, icon="AirportWhite"),
+                      Base(name="TW Air", location=Point(121.537, 25.028), agent_share=0.45, icon="AirportGreen")]
+
+    def select_base(self, country: str) -> tuple[Base, str]:
+        if country == "Taiwan":
+            return self.bases[2], settings.TAIWAN
+        elif country == "Japan":
+            return self.bases[1], settings.JAPAN
+        elif country == "US":
+            return self.bases[0], settings.USA
+        else:
+            raise ValueError(f"Invalid Country {country} for Coalition Aircraft base selection.")
+
+    def calc_utilization_rate(self) -> float:
+        return 0.04
+
+    def activate_agent(self, agents: list) -> None:
+        agent = random.choice(agents)
+        agents.remove(agent)
+        zone = self.select_zone_to_patrol(agent)
+
+        if zone is None:
+            return
+
+        agent.activate()
+        agent.go_to_patrol(zone)
+
+    def select_zone_to_patrol(self, agent) -> zones.Zone | None:
+        set_assignment = settings.zone_assignment_coalition[agent.service]
+        potential_zones = list(set_assignment.keys())
+        share = list(set_assignment.values())
+        if sum(share) == 0:
+            return None
+        selected_zone = random.choices(potential_zones, share)[0]
+        return selected_zone
 
 
 class MerchantManager(Manager):
@@ -428,13 +495,6 @@ class ChinaNavyManager(Manager):
             utilisation = self.get_current_utilisation()
             eligible_agents = [agent for agent in self.inactive_agents if agent.remaining_maintenance_time == 0]
 
-    def get_current_utilisation(self) -> float:
-        if len(self.active_agents) > 0:
-            utilisation = len(self.active_agents) / (len(self.active_agents) + len(self.inactive_agents))
-        else:
-            utilisation = 0
-        return utilisation
-
     def calc_utilization_rate(self) -> float:
         # TODO: Calculate Utilisation rate properly
         return 0.1
@@ -509,13 +569,6 @@ class ChinaAirManager(Manager):
     def calc_utilization_rate(self) -> float:
         # TODO: Calculate Utilisation rate properly
         return 0.02
-
-    def get_current_utilisation(self) -> float:
-        if len(self.active_agents) > 0:
-            utilisation = len(self.active_agents) / (len(self.active_agents) + len(self.inactive_agents))
-        else:
-            utilisation = 0
-        return utilisation
 
     def activate_agent(self, agents: list) -> bool:
         agent = random.choice(agents)

@@ -223,6 +223,8 @@ class Agent:
     def create_event(self, type_of_event):
         if self.combat_type == "COALITION ESCORT":
             identifier = "Escort"
+        elif self.combat_type == "COALITION AIRCRAFT":
+            identifier = "Coalition Aircraft"
         elif self.combat_type.startswith("CN"):
             identifier = "Hunter"
         else:

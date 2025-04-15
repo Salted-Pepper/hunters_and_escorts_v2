@@ -9,7 +9,7 @@ import zones
 import weather
 from polygons import Polygon
 from managers import (MerchantManager, ChinaNavyManager, ChinaAirManager, ChinaSubManager,
-                      EscortManagerTW, EscortManagerJP, EscortManagerUS)
+                      EscortManagerTW, EscortManagerJP, EscortManagerUS, CoalitionAirManager)
 import data_functions
 
 import tracker
@@ -30,6 +30,7 @@ class World:
         self.china_polygon = ccs.CHINA
         self.coalition_obstacles = None
         self.visibility_graph_coalition = None
+        self.visibility_graph_coalition_air = None
         self.china_air_obstacles = None
         self.visibility_graph_air_china = None
         self.china_water_obstacles = None
@@ -47,9 +48,10 @@ class World:
         self.tw_manager_escorts = None
         self.jp_manager_escorts = None
         self.us_manager_escorts = None
+        self.coalition_manager_air = None
         self.china_manager_air = None
         self.china_manager_navy = None
-        self.china_manager_sub =  None
+        self.china_manager_sub = None
         self.all_agents = []
         self.initiate_managers()
 
@@ -60,11 +62,13 @@ class World:
     def initiate_visibility_graphs(self) -> None:
         self.coalition_obstacles = self.landmasses + [self.china_polygon]
         self.visibility_graph_coalition = routes.create_base_graph(self.coalition_obstacles)
+        self.visibility_graph_coalition_air = routes.create_base_graph([self.china_polygon, ccs.KOREA])
 
         china_avoid_zones = [landmass for landmass in self.landmasses
                              if landmass != ccs.TAIWAN_LAND and landmass not in ccs.JAPAN_AND_ISLANDS]
         for zone in zones.HUNTER_ILLEGAL_ZONES:
             china_avoid_zones.append(zone.polygon)
+            china_avoid_zones.append(ccs.KOREA)
 
         self.china_air_obstacles = china_avoid_zones
         self.visibility_graph_air_china = routes.create_base_graph(self.china_air_obstacles)
@@ -79,9 +83,10 @@ class World:
         self.tw_manager_escorts = EscortManagerTW()
         self.jp_manager_escorts = EscortManagerJP()
         self.us_manager_escorts = EscortManagerUS()
+        self.coalition_manager_air = CoalitionAirManager()
         self.china_manager_air = ChinaAirManager()
         self.china_manager_navy = ChinaNavyManager()
-        self.china_manager_sub  = ChinaSubManager()
+        self.china_manager_sub = ChinaSubManager()
 
         self.managers = [self.merchant_manager,
                          self.china_manager_air,
@@ -90,6 +95,7 @@ class World:
                          self.tw_manager_escorts,
                          self.jp_manager_escorts,
                          self.us_manager_escorts,
+                         self.coalition_manager_air,
                          ]
 
         for manager in self.managers:
@@ -105,6 +111,7 @@ class World:
         self.tw_manager_escorts.ammunition = coalition_ship_ammo
         self.jp_manager_escorts.ammunition = coalition_ship_ammo
         self.us_manager_escorts.ammunition = coalition_ship_ammo
+        self.coalition_manager_air.ammunition = coalition_air_ammo
 
         self.china_manager_air.ammunition = data_functions.get_ammo_info("CN AIRCRAFT")
         self.china_manager_navy.ammunition = data_functions.get_ammo_info("CN NAVY")

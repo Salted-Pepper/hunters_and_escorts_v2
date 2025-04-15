@@ -80,8 +80,13 @@ sprite_dict = {"Merchant Manager": "static/assets/merchant_24x16.png",
                "TW Escort Manager": "static/assets/escort_tw_24x16.png",
                "JP Escort Manager": "static/assets/escort_jp_24x16.png",
                "US Escort Manager": "static/assets/escort_us_24x16.png",
+               "Coalition Air Manager": "static/assets/coalition_aircraft_24x16.png",
                "Harbour": "static/assets/anchor_grey_16x16.png",
-               "AirportRed": "static/assets/airport_red_16x16.png"};
+               "AirportRed": "static/assets/airport_red_16x16.png",
+               "AirportBlue": "static/assets/airport_blue_16x16.png",
+               "AirportWhite": "static/assets/airport_white_16x16.png",
+               "AirportGreen": "static/assets/airport_green_16x16.png",
+               };
 
 function placeBases(app, bases) {
     bases.forEach(base => {

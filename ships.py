@@ -44,15 +44,17 @@ class Ship(Agent):
 
         self.ship_detection_skill = data_functions.parse_string_input(model_data, "Ship Detection Skill", cs.DET_BASIC)
         self.air_detection_skill = data_functions.parse_string_input(model_data, "Air Detection Skill", cs.DET_BASIC)
-        self.sub_detection_skill = data_functions.parse_string_input(model_data, "Submarine Detection Skill", cs.DET_BASIC)
+        self.sub_detection_skill = data_functions.parse_string_input(model_data, "Submarine Detection Skill",
+                                                                     cs.DET_BASIC)
 
         self.anti_ship_skill = data_functions.parse_string_input(model_data, "Anti-ship Skill", cs.ATT_BASIC)
         self.anti_air_skill = data_functions.parse_string_input(model_data, "Anti-air Skill", cs.ATT_BASIC)
         self.anti_sub_skill = data_functions.parse_string_input(model_data, "Anti-submarine Skill", cs.ATT_BASIC)
 
         self.anti_ship_ammo = int(model_data.get("Anti-Ship Ammunition", 6)) if self.anti_ship_skill is not None else 0
-        self.anti_air_ammo = int(model_data.get("Anti-air Ammunition", 6))  if  self.anti_air_skill is not None else 0
-        self.anti_sub_ammo = int(model_data.get("Anti-submarine Ammunition", 6)) if self.anti_sub_skill is not None else 0
+        self.anti_air_ammo = int(model_data.get("Anti-air Ammunition", 6)) if self.anti_air_skill is not None else 0
+        self.anti_sub_ammo = int(
+            model_data.get("Anti-submarine Ammunition", 6)) if self.anti_sub_skill is not None else 0
 
         self.helicopter = True if model_data["helicopter"] == "Y" else False
 
@@ -95,6 +97,7 @@ class Ship(Agent):
                 target.damaged += 1
         else:
             raise ValueError(f"Unknown outcome {outcome}")
+
 
 class Merchant(Ship):
     def __init__(self, manager, model: str, base: Base, country: str):
@@ -202,10 +205,10 @@ class Merchant(Ship):
         pass
 
     def attempt_to_attack(self, target) -> None:
-        raise TypeError (f"{self} is unable to attack.")
+        raise TypeError(f"{self} is unable to attack.")
 
     def attack(self, target, ammo, attacker_skill) -> None:
-        raise TypeError (f"{self} is unable to attack.")
+        raise TypeError(f"{self} is unable to attack.")
 
     def is_boarded(self, boarder: Agent) -> None:
         print(f"{self} got boarded.")
@@ -229,13 +232,14 @@ class Merchant(Ship):
         return settings.merchant_rules[settings.COALITION_SELECTED_LEVEL][self.country]
 
     def escort_near(self) -> bool:
-        all_escorts = (cs.world.tw_manager_escorts.active_agents  +
+        all_escorts = (cs.world.tw_manager_escorts.active_agents +
                        cs.world.jp_manager_escorts.active_agents +
                        cs.world.us_manager_escorts.active_agents)
         for escort in all_escorts:
             if self.location.distance_to_point(escort.location) < 12:
                 return True
         return False
+
 
 class ChineseShip(Ship):
     def __init__(self, manager, model: str, base: Base):
@@ -369,6 +373,7 @@ class ChineseShip(Ship):
             return True
         else:
             return False
+
 
 class Escort(Ship):
     def __init__(self, manager, model: str, base: Base, country: str):

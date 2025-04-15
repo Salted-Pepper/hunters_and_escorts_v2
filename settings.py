@@ -283,3 +283,6 @@ zone_assignment_coalition = {agent_type: {zone: 0 for zone in ZONES}
 zone_assignment_coalition[cs.COALITION_TW_ESCORT][ZONE_B] = 1
 zone_assignment_coalition[cs.COALITION_JP_ESCORT][ZONE_D] = 1
 zone_assignment_coalition[cs.COALITION_US_ESCORT][ZONE_H] = 1
+zone_assignment_coalition[cs.COALITION_US_AIRCRAFT][ZONE_H] = 1
+zone_assignment_coalition[cs.COALITION_JP_AIRCRAFT][ZONE_D] = 1
+zone_assignment_coalition[cs.COALITION_TW_AIRCRAFT][ZONE_B] = 1

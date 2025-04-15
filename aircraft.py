@@ -4,6 +4,7 @@ from abc import abstractmethod
 
 import constants as cs
 import data_functions
+import settings
 
 from agents import Agent
 from bases import Base
@@ -35,59 +36,21 @@ class Aircraft(Agent):
         self.endurance = float(model_data.get("Endurance", 8100))
         self.remaining_endurance = self.endurance
 
-        self.ship_detection_skill = data_functions.parse_string_input(model_data, "Ship Detection Skill", cs.DET_BASIC)
-        self.air_detection_skill = data_functions.parse_string_input(model_data, "Air Detection Skill", cs.DET_BASIC)
-        self.sub_detection_skill = data_functions.parse_string_input(model_data, "Submarine Detection Skill", cs.DET_BASIC)
+        self.ship_detection_skill = data_functions.parse_string_input(model_data, "Ship Detection Skill",
+                                                                      cs.DET_BASIC)
+        self.air_detection_skill = data_functions.parse_string_input(model_data, "Air Detection Skill",
+                                                                     cs.DET_BASIC)
+        self.sub_detection_skill = data_functions.parse_string_input(model_data, "Submarine Detection Skill",
+                                                                     cs.DET_BASIC)
 
         self.anti_ship_skill = data_functions.parse_string_input(model_data, "Anti-ship Skill", cs.ATT_BASIC)
         self.anti_air_skill = data_functions.parse_string_input(model_data, "Anti-air Skill", cs.ATT_BASIC)
         self.anti_sub_skill = data_functions.parse_string_input(model_data, "Anti-submarine Skill", cs.ATT_BASIC)
 
         self.anti_ship_ammo = int(model_data.get("Anti-Ship Ammunition", 6)) if self.anti_ship_skill is not None else 0
-        self.anti_air_ammo = int(model_data.get("Anti-air Ammunition", 6))  if  self.anti_air_skill is not None else 0
-        self.anti_sub_ammo = int(model_data.get("Anti-submarine Ammunition", 6)) if self.anti_sub_skill is not None else 0
-
-    @abstractmethod
-    def surface_detection(self, agent: Agent) -> bool:
-        pass
-
-    @abstractmethod
-    def air_detection(self, agent: Agent) -> bool:
-        pass
-
-    @abstractmethod
-    def sub_detection(self, agent: Agent) -> bool:
-        pass
-
-    @abstractmethod
-    def track(self, target: Agent) -> None:
-        pass
-
-    @abstractmethod
-    def attack(self, target: Agent, ammo, attacker_skill: str) -> None:
-        pass
-
-
-class ChineseAircraft(Aircraft):
-    def __init__(self, manager, model: str, base: Base):
-        super().__init__(manager, model, base)
-        self.combat_type = "CN AIRCRAFT"
-        self.initiate_model()
-
-    def __repr__(self):
-        return f"{self.service}-{self.agent_id} - on mission: {self.mission} - zone: {self.assigned_zone}"
-
-    def __str__(self):
-        return f"{self.service}-{self.agent_id} - on mission: {self.mission} - zone: {self.assigned_zone}"
-
-    def initiate_model(self) -> None:
-        model_data = cs.CHINA_AIR_DATA[self.model]
-        self.set_agent_attributes(model_data)
-
-        if self.manned:
-            self.service = "Air Manned"
-        else:
-            self.service = "Air UAV"
+        self.anti_air_ammo = int(model_data.get("Anti-air Ammunition", 6)) if self.anti_air_skill is not None else 0
+        self.anti_sub_ammo = int(
+            model_data.get("Anti-submarine Ammunition", 6)) if self.anti_sub_skill is not None else 0
 
     def surface_detection(self, agent: Agent) -> bool:
         if self.anti_ship_skill is None:
@@ -98,7 +61,6 @@ class ChineseAircraft(Aircraft):
             k = 39633
         else:
             raise ValueError(f"Invalid anti-ship skill for {self.model}: {self.anti_ship_skill}")
-
 
         distance = self.location.distance_to_point(agent.location)
         if distance > 300:
@@ -116,13 +78,9 @@ class ChineseAircraft(Aircraft):
         else:
             return False
 
+    @abstractmethod
     def air_detection(self, agent: Agent) -> bool:
-        distance = self.location.distance_to_point(agent.location)
-        max_distance = cs.CHINA_AIR_DETECTING_AIR[self.anti_air_skill][agent.air_visibility]
-        if distance > max_distance:
-            return False
-        else:
-            return True
+        pass
 
     def sub_detection(self, agent: Agent) -> bool:
         distance = self.location.distance_to_point(agent.location)
@@ -138,6 +96,22 @@ class ChineseAircraft(Aircraft):
             return False
         else:
             return True
+
+    def track(self, target: Agent) -> None:
+        if cs.world.world_time - self.route.creation_time > 1 or self.route.next_point() is None:
+            self.generate_route(target.location)
+
+        if self.location.distance_to_point(target.location) > 12:
+            self.move_through_route()
+
+        if ((target.agent_type == "ship" and self.anti_ship_skill is not None) or
+                (target.agent_type == "air" and self.anti_air_skill is not None) or
+                (target.agent_type == "sub" and self.anti_sub_skill is not None)):
+            self.mission.change()
+            missions.Attack(self, target)
+            return
+        else:
+            self.request_support(target)
 
     def detection(self, target) -> bool:
         if target.agent_type == "ship" or target.agent_type == cs.MERCHANT:
@@ -157,29 +131,13 @@ class ChineseAircraft(Aircraft):
         else:
             raise ValueError(f"Unhandled agent type {target.agent_type} for {target}")
 
-    def track(self, target: Agent) -> None:
-        if cs.world.world_time - self.route.creation_time > 1 or self.route.next_point() is None:
-            self.generate_route(target.location)
-
-        if self.location.distance_to_point(target.location) > 12:
-            self.move_through_route()
-
-        if ((target.agent_type == "ship" and self.anti_ship_skill is not None) or
-              (target.agent_type == "air" and self.anti_air_skill is not None) or
-              (target.agent_type == "sub" and self.anti_sub_skill is not None)):
-            self.mission.change()
-            missions.Attack(self, target)
-            return
-        else:
-            self.request_support(target)
-
     def attack(self, target: Agent, ammo, attacker_skill: str) -> None:
         if target.agent_type == "sub":
             defense_skill = target.air_visibility
             probabilities = data_functions.get_attack_probabilities(self.combat_type, attacker_skill,
                                                                     target.combat_type, defense_skill)
             self.anti_sub_ammo -= 1
-        elif target.combat_type == cs.MERCHANT:
+        elif target.combat_type == cs.MERCHANT and self.team == 2:
             probabilities = cs.MERCHANT_PROBABILITIES[target.air_visibility]
             new_probability = probabilities["sunk"] + target.damage * 0.2
             probabilities["sunk"] = min(new_probability, 1 - probabilities["ctl"])
@@ -213,3 +171,68 @@ class ChineseAircraft(Aircraft):
         else:
             raise ValueError(f"Unknown outcome {outcome}")
 
+
+class ChineseAircraft(Aircraft):
+    def __init__(self, manager, model: str, base: Base):
+        super().__init__(manager, model, base)
+        self.combat_type = "CN AIRCRAFT"
+        self.initiate_model()
+
+    def __repr__(self):
+        return f"{self.service}-{self.agent_id} - on mission: {self.mission} - zone: {self.assigned_zone}"
+
+    def __str__(self):
+        return f"{self.service}-{self.agent_id} - on mission: {self.mission} - zone: {self.assigned_zone}"
+
+    def initiate_model(self) -> None:
+        model_data = cs.CHINA_AIR_DATA[self.model]
+        self.set_agent_attributes(model_data)
+
+        if self.manned:
+            self.service = "Air Manned"
+        else:
+            self.service = "Air UAV"
+
+    def air_detection(self, agent: Agent) -> bool:
+        distance = self.location.distance_to_point(agent.location)
+        max_distance = cs.CHINA_AIR_DETECTING_AIR[self.air_detection_skill][agent.air_visibility]
+        if distance > max_distance:
+            return False
+        else:
+            return True
+
+
+class CoalitionAircraft(Aircraft):
+    def __init__(self, manager, model: str, base: Base, country: str):
+        super().__init__(manager, model, base)
+        self.country = country
+        self.initiate_model()
+
+    def __repr__(self):
+        return f"{self.service}-{self.agent_id} - on mission: {self.mission} - zone: {self.assigned_zone}"
+
+    def __str__(self):
+        return f"{self.service}-{self.agent_id} - on mission: {self.mission} - zone: {self.assigned_zone}"
+
+    def initiate_model(self) -> None:
+        if self.country == settings.TAIWAN:
+            self.service = cs.COALITION_TW_AIRCRAFT
+        elif self.country == settings.JAPAN:
+            self.service = cs.COALITION_JP_AIRCRAFT
+        elif self.country == settings.USA:
+            self.service = cs.COALITION_US_AIRCRAFT
+        else:
+            raise ValueError(f"Invalid country {self.country}")
+
+        self.combat_type = "COALITION AIRCRAFT"
+
+        model_data = cs.COALITION_AIR_DATA[self.model]
+        self.set_agent_attributes(model_data)
+
+    def air_detection(self, agent: Agent) -> bool:
+        distance = self.location.distance_to_point(agent.location)
+        max_distance = cs.COALITION_AIR_DETECTING_AIR[self.air_detection_skill][agent.air_visibility]
+        if distance > max_distance:
+            return False
+        else:
+            return True

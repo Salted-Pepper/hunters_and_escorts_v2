@@ -6,6 +6,7 @@ import copy
 from itertools import pairwise
 
 import constants as cs
+import constant_coords as ccs
 import general_maths as gm
 from points import Point
 from polygons import Polygon
@@ -69,7 +70,8 @@ def create_base_graph(obstacles: list[Polygon]) -> nx.Graph:
 
 
 def add_point_to_graph(point: Point, obstacles: list[Polygon], graph: nx.Graph) -> nx.Graph:
-    vertices = [point for obstacle in obstacles for point in obstacle.points]
+    # vertices = [point for obstacle in obstacles for point in obstacle.points]
+    vertices = [n for n in graph.nodes]
     point_added = False
 
     for vertex in vertices:
@@ -97,8 +99,12 @@ def create_route(start: Point, end: Point, team: int, air=False) -> Route:
     :return:
     """
     if team == 1:
-        world_graph = cs.world.visibility_graph_coalition
-        obstacles = copy.copy(cs.world.coalition_obstacles)
+        if air:
+            world_graph = cs.world.visibility_graph_coalition_air
+            obstacles = copy.copy([ccs.CHINA, ccs.KOREA])
+        else:
+            world_graph = cs.world.visibility_graph_coalition
+            obstacles = copy.copy(cs.world.coalition_obstacles)
     elif team == 2:
         if air:
             world_graph = cs.world.visibility_graph_air_china

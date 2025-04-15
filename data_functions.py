@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 import math
 import pandas as pd
@@ -19,6 +21,19 @@ def get_chinese_navy_data() -> dict:
     return data_dict
 
 
+def get_chinese_aircraft_data() -> dict:
+    with open("data/chinese_aircraft.json") as file:
+        data = json.load(file)
+
+    data_dict = {}
+    for model in data:
+        name = model.pop("name")
+        data_dict[name] = model
+
+    cs.CHINA_AIR_DATA = data_dict
+    return data_dict
+
+
 def get_coalition_navy_data() -> dict:
     with open("data/coalition_ships.json") as file:
         data = json.load(file)
@@ -31,8 +46,9 @@ def get_coalition_navy_data() -> dict:
     cs.COALITION_NAVY_DATA = data_dict
     return data_dict
 
-def get_chinese_aircraft_data() -> dict:
-    with open("data/chinese_aircraft.json") as file:
+
+def get_coalition_aircraft_data() -> dict:
+    with open("data/coalition_aircraft.json") as file:
         data = json.load(file)
 
     data_dict = {}
@@ -40,8 +56,9 @@ def get_chinese_aircraft_data() -> dict:
         name = model.pop("name")
         data_dict[name] = model
 
-    cs.CHINA_AIR_DATA = data_dict
+    cs.COALITION_AIR_DATA = data_dict
     return data_dict
+
 
 def get_ammo_info(manager: str) -> list:
     with open("data/ammunition.json") as file:
@@ -67,6 +84,7 @@ def get_ammo_info(manager: str) -> list:
                                         stock=stock_value))
     return munition_list
 
+
 def set_attack_probabilities() -> pd.DataFrame:
     global attack_probability_data
 
@@ -75,7 +93,9 @@ def set_attack_probabilities() -> pd.DataFrame:
 
     return pd.json_normalize(data)
 
+
 attack_probability_data = set_attack_probabilities()
+
 
 def get_attack_probabilities(attack_type, attack_skill, target_type, target_size) -> dict:
     global attack_probability_data
@@ -101,6 +121,7 @@ def get_attack_probabilities(attack_type, attack_skill, target_type, target_size
     return {"sunk": row["Prob Sunk"],
             "ctl": row["Prob CTL"],
             "nothing": row["Prob Nothing"]}
+
 
 def parse_string_input(model_data, key, default) -> str | None:
     value = model_data.get(key, default)

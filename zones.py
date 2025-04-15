@@ -8,6 +8,7 @@ import constant_coords as ccs
 
 
 def create_poisson_disk_sample(polygon: Polygon, obstacles: list) -> list:
+    obstacles.append(ccs.CHINA)
     rng = np.random.default_rng()
     radius = 0.5
     engine = qmc.PoissonDisk(d=2, radius=radius, rng=rng,
@@ -26,7 +27,7 @@ class Zone:
     def __init__(self, name: str, polygon: Polygon):
         self.name = name
         if name in ["C", "E", "G"]:
-            self.polygon  = polygon
+            self.polygon = polygon
         else:
             self.polygon = ccs.set_points_to_bounds(polygon)
         self.obstacles = [landmass for landmass in (ccs.LAND_MASSES + [ccs.CHINA])

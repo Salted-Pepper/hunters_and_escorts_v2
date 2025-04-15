@@ -4,10 +4,9 @@ import settings
 
 
 class Base:
-    def __init__(self, name: str, location: Point, agent_share: float, color: str = "000000", icon: str = "Harbour"):
+    def __init__(self, name: str, location: Point, agent_share: float, icon: str = "Harbour"):
         self.name = name
         self.location = location
-        self.color = color
         self.agent_share = agent_share
         self.icon = icon
 
@@ -23,7 +22,6 @@ class Base:
         return {"name": self.name,
                 "x": self.location.x,
                 "y": self.location.y,
-                "color": self.color,
                 "icon": self.icon,
                 "stalled": len(self.stationed_agents)}
 
