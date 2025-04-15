@@ -62,7 +62,7 @@ class World:
     def initiate_visibility_graphs(self) -> None:
         self.coalition_obstacles = self.landmasses + [self.china_polygon]
         self.visibility_graph_coalition = routes.create_base_graph(self.coalition_obstacles)
-        self.visibility_graph_coalition_air = routes.create_base_graph([self.china_polygon, ccs.KOREA])
+        self.visibility_graph_coalition_air = routes.create_base_graph([self.china_polygon] + ccs.OTHER_LAND)
 
         china_avoid_zones = [landmass for landmass in self.landmasses
                              if landmass != ccs.TAIWAN_LAND and landmass not in ccs.JAPAN_AND_ISLANDS]
@@ -104,8 +104,8 @@ class World:
         self.set_ammunition()
 
     def set_ammunition(self) -> None:
-        coalition_air_ammo = data_functions.get_ammo_info("COALITION ESCORT")
-        coalition_ship_ammo = data_functions.get_ammo_info("COALITION AIRCRAFT")
+        coalition_air_ammo = data_functions.get_ammo_info("COALITION AIRCRAFT")
+        coalition_ship_ammo = data_functions.get_ammo_info("COALITION ESCORT")
         coalition_sub_ammo = data_functions.get_ammo_info("COALITION SUB")
 
         self.tw_manager_escorts.ammunition = coalition_ship_ammo

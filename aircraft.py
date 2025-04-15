@@ -72,7 +72,7 @@ class Aircraft(Agent):
         r = cs.rcs_dict[agent.air_visibility]
 
         detection_probability = (1 - math.exp(-(k * h * r * s) / distance ** 3))
-        print(f"Detection prob {self} - {agent} is {detection_probability}")
+        # print(f"Detection prob {self} - {agent} is {detection_probability}")
         if random.uniform(0, 1) < detection_probability:
             return True
         else:

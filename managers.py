@@ -324,6 +324,7 @@ class EscortManagerUS(EscortManager):
 class CoalitionAirManager(Manager):
     def __init__(self):
         super().__init__()
+        self.team = 1
         self.initiate_agents()
 
     def __str__(self):
@@ -388,6 +389,73 @@ class CoalitionAirManager(Manager):
             return None
         selected_zone = random.choices(potential_zones, share)[0]
         return selected_zone
+
+
+class CoalitionSubManager(Manager):
+    def __init__(self):
+        super().__init__()
+        self.name = "Coalition Sub Manager"
+        self.team = 1
+
+    def pre_turn_actions(self) -> None:
+        for agent in self.active_agents:
+            agent.set_turn_movement()
+
+        utilisation = self.get_current_utilisation()
+        eligible_agents = [agent for agent in self.inactive_agents if agent.remaining_maintenance_time == 0]
+
+        while utilisation < self.calc_utilization_rate() and len(eligible_agents) > 0:
+            successful = self.activate_agent(eligible_agents)
+
+            if not successful:
+                return
+
+            utilisation = self.get_current_utilisation()
+            eligible_agents = [agent for agent in self.inactive_agents if agent.remaining_maintenance_time == 0]
+
+    def activate_agent(self, agents: list) -> bool:
+        agent = random.choice(agents)
+        zone = self.select_zone_to_patrol(agent)
+
+        if zone is None:
+            return False
+
+        agent.activate()
+        agent.go_to_patrol(zone)
+        return True
+
+    def select_zone_to_patrol(self, agent) -> zones.Zone | None:
+        set_assignment = settings.zone_assignment_hunter[agent.service]
+        options = list(set_assignment.keys())
+        share = list(set_assignment.values())
+        if sum(share) == 0:
+            return None
+
+        invalid_zones = [None]
+
+        if not agent.armed:
+            invalid_zones.append(zones.ZONE_N)
+
+        selected_zone = None
+        while selected_zone in invalid_zones:
+            # TODO: Ensure that this doesn't get stuck in a loop when an entire category is only set to zone N
+            selected_zone = random.choices(options, share)[0]
+
+        return selected_zone
+
+    def initiate_agents(self) -> None:
+        coalition_sub_data = data_functions.get_coalition_sub_data()
+        for model in coalition_sub_data:
+            quantity = int(coalition_sub_data[model]["numberofagents"])
+            for _ in range(quantity):
+                new_sub = CoalitionSub(manager=self, model=model, base=self.sample_random_base())
+                self.inactive_agents.append(new_sub)
+
+    def initiate_bases(self) -> None:
+        self.bases = [Base(name="Okinawa", location=Point(127.737, 26.588), agent_share=1)]
+
+    def calc_utilization_rate(self) -> float:
+        return 0.04
 
 
 class MerchantManager(Manager):

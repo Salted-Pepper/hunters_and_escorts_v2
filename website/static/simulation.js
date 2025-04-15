@@ -80,7 +80,7 @@ sprite_dict = {"Merchant Manager": "static/assets/merchant_24x16.png",
                "TW Escort Manager": "static/assets/escort_tw_24x16.png",
                "JP Escort Manager": "static/assets/escort_jp_24x16.png",
                "US Escort Manager": "static/assets/escort_us_24x16.png",
-               "Coalition Air Manager": "static/assets/coalition_aircraft_24x16.png",
+               "Coalition Air Manager": "static/assets/coalition_aircraft_24x16_right.png",
                "Harbour": "static/assets/anchor_grey_16x16.png",
                "AirportRed": "static/assets/airport_red_16x16.png",
                "AirportBlue": "static/assets/airport_blue_16x16.png",
@@ -136,7 +136,7 @@ function updatePlot(agents) {
             app.stage.addChild(sprite);
             sprites[agent.agent_id] = sprite;
 
-            var text = agent.service + ' - ' + agent.agent_id + '\non ' + agent.mission + '\nEndurance ' + agent.rem_endurance.toFixed(0);
+            var text = agent.service + ' - ' + agent.model + '\n'  + agent.agent_id + '\non ' + agent.mission + '\nEndurance ' + agent.rem_endurance.toFixed(0);
             var message = new PIXI.Text(text, {fontSize: 16, fill: 0xff1010});
             sprite.message = message
 
@@ -197,10 +197,12 @@ function updateLogs(events) {
                         "Merchant CTL": 0,
                         "Merchant Arrived": 0,
                         "Escort Destroyed": 0,
+                        "Coalition Aircraft Destroyed": 0,
                         "Submarine Destroyed": 0,
                         "Aircraft Destroyed": 0,
                         "Hunter Deterred": 0,
                         "Hunter Destroyed": 0,
+                        "CN Aircraft Destroyed": 0,
     };
 
     for (let i=0; i<events.length; i++){
@@ -215,16 +217,17 @@ function updateLogs(events) {
     }
 
     document.getElementById('merchant-log-seized').innerHTML = event_counts["Merchant Seized"];
-    document.getElementById('merchant-log-sunk').innerHTML = event_counts["Merchant Destroyed"];
+    document.getElementById('merchant-log-destroyed').innerHTML = event_counts["Merchant Destroyed"];
     document.getElementById('merchant-log-damaged').innerHTML = event_counts["Merchant CTL"];
     document.getElementById('merchant-log-arrived').innerHTML = event_counts["Merchant Arrived"];
 
-    document.getElementById('escorts-log-sunk').innerHTML = event_counts["Escort Destroyed"];
-    document.getElementById('aircraft-log-sunk').innerHTML = event_counts["Aircraft Destroyed"];
-    document.getElementById('submarines-log-sunk').innerHTML = event_counts["Submarine Destroyed"];
+    document.getElementById('escorts-log-destroyed').innerHTML = event_counts["Escort Destroyed"];
+    document.getElementById('aircraft-log-destroyed').innerHTML = event_counts["Coalition Aircraft Destroyed"];
+    document.getElementById('submarines-log-destroyed').innerHTML = event_counts["Submarine Destroyed"];
 
     document.getElementById('escorts-log-deterred').innerHTML = event_counts["Hunter Deterred"];
-    document.getElementById('hunters-log-sunk').innerHTML = event_counts["Hunter Destroyed"];
+    document.getElementById('hunters-log-destroyed').innerHTML = event_counts["Hunter Destroyed"];
+    document.getElementById('cn-aircraft-log-destroyed').innerHTML = event_counts["CN Aircraft Destroyed"];
 
     document.getElementById('sim-logs').value = new_logger_text;
 }

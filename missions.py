@@ -23,7 +23,7 @@ class Mission:
         self.mission_type = None
         self.agent = agent
         self.target = target
-        print(f"{cs.world.world_time} - Setting {agent} to {self} -  (previously {self.agent.previous_mission})")
+        # print(f"{cs.world.world_time} - Setting {agent} to {self} -  (previously {self.agent.previous_mission})")
 
         self.set_mission()
 
@@ -132,7 +132,7 @@ class Track(Mission):
         try:
             self.agent.generate_route(target.location)
         except ValueError as e:
-            raise ValueError(f"Failed to generate route to {target} -\n {e}")
+            raise ValueError(f"{self} Failed to generate route to {target} -\n {e}")
         self.agent.speed_current = self.agent.speed_max
 
         self.support_requested = False
@@ -194,7 +194,7 @@ class Attack(Mission):
         if not self.agent.check_if_valid_target(self.target):
             self.abort()
             return
-        print(f"{self.agent} is attacking {self.target}")
+        # print(f"{self.agent} is attacking {self.target}")
         try:
             self.agent.attempt_to_attack(self.target)
         except ValueError:

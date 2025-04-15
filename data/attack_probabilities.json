@@ -8,8 +8,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.75,
     "Prob CTL":0.0,
-    "Prob Nothing":0.25,
-    "Unnamed: 10":null
+    "Prob Nothing":0.25
   },
   {
     "Attacker Type":"CN NAVY",
@@ -20,8 +19,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.55,
     "Prob CTL":0.0,
-    "Prob Nothing":0.45,
-    "Unnamed: 10":null
+    "Prob Nothing":0.45
   },
   {
     "Attacker Type":"CN NAVY",
@@ -32,8 +30,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.35,
     "Prob CTL":0.0,
-    "Prob Nothing":0.65,
-    "Unnamed: 10":null
+    "Prob Nothing":0.65
   },
   {
     "Attacker Type":"CN NAVY",
@@ -44,8 +41,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.2,
     "Prob CTL":0.0,
-    "Prob Nothing":0.8,
-    "Unnamed: 10":null
+    "Prob Nothing":0.8
   },
   {
     "Attacker Type":"CN NAVY",
@@ -56,8 +52,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.1,
     "Prob CTL":0.0,
-    "Prob Nothing":0.9,
-    "Unnamed: 10":null
+    "Prob Nothing":0.9
   },
   {
     "Attacker Type":"CN NAVY",
@@ -68,8 +63,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.85,
     "Prob CTL":0.0,
-    "Prob Nothing":0.15,
-    "Unnamed: 10":null
+    "Prob Nothing":0.15
   },
   {
     "Attacker Type":"CN NAVY",
@@ -80,8 +74,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.8,
     "Prob CTL":0.0,
-    "Prob Nothing":0.2,
-    "Unnamed: 10":null
+    "Prob Nothing":0.2
   },
   {
     "Attacker Type":"CN NAVY",
@@ -92,8 +85,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.7,
     "Prob CTL":0.0,
-    "Prob Nothing":0.3,
-    "Unnamed: 10":null
+    "Prob Nothing":0.3
   },
   {
     "Attacker Type":"CN NAVY",
@@ -104,8 +96,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.45,
     "Prob CTL":0.0,
-    "Prob Nothing":0.55,
-    "Unnamed: 10":null
+    "Prob Nothing":0.55
   },
   {
     "Attacker Type":"CN NAVY",
@@ -116,8 +107,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.25,
     "Prob CTL":0.0,
-    "Prob Nothing":0.75,
-    "Unnamed: 10":null
+    "Prob Nothing":0.75
   },
   {
     "Attacker Type":"COALITION ESCORT",
@@ -128,8 +118,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.75,
     "Prob CTL":0.0,
-    "Prob Nothing":0.25,
-    "Unnamed: 10":null
+    "Prob Nothing":0.25
   },
   {
     "Attacker Type":"COALITION ESCORT",
@@ -140,8 +129,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.55,
     "Prob CTL":0.0,
-    "Prob Nothing":0.45,
-    "Unnamed: 10":null
+    "Prob Nothing":0.45
   },
   {
     "Attacker Type":"COALITION ESCORT",
@@ -152,8 +140,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.35,
     "Prob CTL":0.0,
-    "Prob Nothing":0.65,
-    "Unnamed: 10":null
+    "Prob Nothing":0.65
   },
   {
     "Attacker Type":"COALITION ESCORT",
@@ -164,8 +151,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.2,
     "Prob CTL":0.0,
-    "Prob Nothing":0.8,
-    "Unnamed: 10":null
+    "Prob Nothing":0.8
   },
   {
     "Attacker Type":"COALITION ESCORT",
@@ -176,8 +162,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.1,
     "Prob CTL":0.0,
-    "Prob Nothing":0.9,
-    "Unnamed: 10":null
+    "Prob Nothing":0.9
   },
   {
     "Attacker Type":"COALITION ESCORT",
@@ -188,8 +173,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.85,
     "Prob CTL":0.0,
-    "Prob Nothing":0.15,
-    "Unnamed: 10":null
+    "Prob Nothing":0.15
   },
   {
     "Attacker Type":"COALITION ESCORT",
@@ -200,8 +184,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.8,
     "Prob CTL":0.0,
-    "Prob Nothing":0.2,
-    "Unnamed: 10":null
+    "Prob Nothing":0.2
   },
   {
     "Attacker Type":"COALITION ESCORT",
@@ -212,8 +195,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.7,
     "Prob CTL":0.0,
-    "Prob Nothing":0.3,
-    "Unnamed: 10":null
+    "Prob Nothing":0.3
   },
   {
     "Attacker Type":"COALITION ESCORT",
@@ -224,8 +206,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.45,
     "Prob CTL":0.0,
-    "Prob Nothing":0.55,
-    "Unnamed: 10":null
+    "Prob Nothing":0.55
   },
   {
     "Attacker Type":"COALITION ESCORT",
@@ -236,8 +217,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.25,
     "Prob CTL":0.0,
-    "Prob Nothing":0.75,
-    "Unnamed: 10":null
+    "Prob Nothing":0.75
   },
   {
     "Attacker Type":"CN NAVY",
@@ -248,8 +228,7 @@
     "Reload Time":15.0,
     "Prob Sunk":0.25,
     "Prob CTL":0.5,
-    "Prob Nothing":0.25,
-    "Unnamed: 10":null
+    "Prob Nothing":0.25
   },
   {
     "Attacker Type":"CN NAVY",
@@ -260,8 +239,7 @@
     "Reload Time":15.0,
     "Prob Sunk":0.25,
     "Prob CTL":0.5,
-    "Prob Nothing":0.25,
-    "Unnamed: 10":null
+    "Prob Nothing":0.25
   },
   {
     "Attacker Type":"CN NAVY",
@@ -272,8 +250,7 @@
     "Reload Time":15.0,
     "Prob Sunk":0.075,
     "Prob CTL":0.325,
-    "Prob Nothing":0.6,
-    "Unnamed: 10":null
+    "Prob Nothing":0.6
   },
   {
     "Attacker Type":"CN NAVY",
@@ -284,8 +261,7 @@
     "Reload Time":15.0,
     "Prob Sunk":0.025,
     "Prob CTL":0.075,
-    "Prob Nothing":0.9,
-    "Unnamed: 10":null
+    "Prob Nothing":0.9
   },
   {
     "Attacker Type":"CN NAVY",
@@ -296,8 +272,7 @@
     "Reload Time":15.0,
     "Prob Sunk":0.49,
     "Prob CTL":0.42,
-    "Prob Nothing":0.09,
-    "Unnamed: 10":null
+    "Prob Nothing":0.09
   },
   {
     "Attacker Type":"CN NAVY",
@@ -308,8 +283,7 @@
     "Reload Time":15.0,
     "Prob Sunk":0.49,
     "Prob CTL":0.42,
-    "Prob Nothing":0.09,
-    "Unnamed: 10":null
+    "Prob Nothing":0.09
   },
   {
     "Attacker Type":"CN NAVY",
@@ -320,8 +294,7 @@
     "Reload Time":15.0,
     "Prob Sunk":0.147,
     "Prob CTL":0.466,
-    "Prob Nothing":0.387,
-    "Unnamed: 10":null
+    "Prob Nothing":0.387
   },
   {
     "Attacker Type":"CN NAVY",
@@ -332,8 +305,7 @@
     "Reload Time":15.0,
     "Prob Sunk":0.049,
     "Prob CTL":0.151,
-    "Prob Nothing":0.8,
-    "Unnamed: 10":null
+    "Prob Nothing":0.8
   },
   {
     "Attacker Type":"CN NAVY",
@@ -344,8 +316,7 @@
     "Reload Time":15.0,
     "Prob Sunk":0.3,
     "Prob CTL":0.0,
-    "Prob Nothing":0.7,
-    "Unnamed: 10":null
+    "Prob Nothing":0.7
   },
   {
     "Attacker Type":"CN NAVY",
@@ -356,8 +327,7 @@
     "Reload Time":15.0,
     "Prob Sunk":0.15,
     "Prob CTL":0.0,
-    "Prob Nothing":0.85,
-    "Unnamed: 10":null
+    "Prob Nothing":0.85
   },
   {
     "Attacker Type":"CN NAVY",
@@ -368,8 +338,7 @@
     "Reload Time":15.0,
     "Prob Sunk":0.05,
     "Prob CTL":0.0,
-    "Prob Nothing":0.95,
-    "Unnamed: 10":null
+    "Prob Nothing":0.95
   },
   {
     "Attacker Type":"CN NAVY",
@@ -380,8 +349,7 @@
     "Reload Time":15.0,
     "Prob Sunk":0.6,
     "Prob CTL":0.0,
-    "Prob Nothing":0.4,
-    "Unnamed: 10":null
+    "Prob Nothing":0.4
   },
   {
     "Attacker Type":"CN NAVY",
@@ -392,8 +360,7 @@
     "Reload Time":15.0,
     "Prob Sunk":0.3,
     "Prob CTL":0.0,
-    "Prob Nothing":0.7,
-    "Unnamed: 10":null
+    "Prob Nothing":0.7
   },
   {
     "Attacker Type":"CN NAVY",
@@ -404,8 +371,7 @@
     "Reload Time":15.0,
     "Prob Sunk":0.1,
     "Prob CTL":0.0,
-    "Prob Nothing":0.9,
-    "Unnamed: 10":null
+    "Prob Nothing":0.9
   },
   {
     "Attacker Type":"COALITION ESCORT",
@@ -416,8 +382,7 @@
     "Reload Time":15.0,
     "Prob Sunk":0.3,
     "Prob CTL":0.0,
-    "Prob Nothing":0.7,
-    "Unnamed: 10":null
+    "Prob Nothing":0.7
   },
   {
     "Attacker Type":"COALITION ESCORT",
@@ -428,8 +393,7 @@
     "Reload Time":15.0,
     "Prob Sunk":0.15,
     "Prob CTL":0.0,
-    "Prob Nothing":0.85,
-    "Unnamed: 10":null
+    "Prob Nothing":0.85
   },
   {
     "Attacker Type":"COALITION ESCORT",
@@ -440,8 +404,7 @@
     "Reload Time":15.0,
     "Prob Sunk":0.05,
     "Prob CTL":0.0,
-    "Prob Nothing":0.95,
-    "Unnamed: 10":null
+    "Prob Nothing":0.95
   },
   {
     "Attacker Type":"COALITION ESCORT",
@@ -452,8 +415,7 @@
     "Reload Time":15.0,
     "Prob Sunk":0.6,
     "Prob CTL":0.0,
-    "Prob Nothing":0.4,
-    "Unnamed: 10":null
+    "Prob Nothing":0.4
   },
   {
     "Attacker Type":"COALITION ESCORT",
@@ -464,8 +426,7 @@
     "Reload Time":15.0,
     "Prob Sunk":0.3,
     "Prob CTL":0.0,
-    "Prob Nothing":0.7,
-    "Unnamed: 10":null
+    "Prob Nothing":0.7
   },
   {
     "Attacker Type":"COALITION ESCORT",
@@ -476,9 +437,144 @@
     "Reload Time":15.0,
     "Prob Sunk":0.1,
     "Prob CTL":0.0,
-    "Prob Nothing":0.9,
-    "Unnamed: 10":null
+    "Prob Nothing":0.9
   },
+
+
+  {
+    "Attacker Type":"COALITION ESCORT",
+    "Attacker Skill":"basic",
+    "Defender Type":"CN NAVY",
+    "Defender Skill":null,
+    "Number of Attacks":3.0,
+    "Reload Time":15.0,
+    "Prob Sunk":0.3,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.7
+  },
+  {
+    "Attacker Type":"COALITION ESCORT",
+    "Attacker Skill":"basic",
+    "Defender Type":"CN NAVY",
+    "Defender Skill":"basic",
+    "Number of Attacks":3.0,
+    "Reload Time":15.0,
+    "Prob Sunk":0.15,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.85
+  },
+  {
+    "Attacker Type":"COALITION ESCORT",
+    "Attacker Skill":"basic",
+    "Defender Type":"CN NAVY",
+    "Defender Skill":"advanced",
+    "Number of Attacks":3.0,
+    "Reload Time":15.0,
+    "Prob Sunk":0.05,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.95
+  },
+  {
+    "Attacker Type":"COALITION ESCORT",
+    "Attacker Skill":"advanced",
+    "Defender Type":"CN NAVY",
+    "Defender Skill":null,
+    "Number of Attacks":6.0,
+    "Reload Time":15.0,
+    "Prob Sunk":0.6,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.4
+  },
+  {
+    "Attacker Type":"COALITION ESCORT",
+    "Attacker Skill":"advanced",
+    "Defender Type":"CN NAVY",
+    "Defender Skill":"basic",
+    "Number of Attacks":6.0,
+    "Reload Time":15.0,
+    "Prob Sunk":0.3,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.7
+  },
+  {
+    "Attacker Type":"COALITION ESCORT",
+    "Attacker Skill":"advanced",
+    "Defender Type":"CN AIRCRAFT",
+    "Defender Skill":"advanced",
+    "Number of Attacks":6.0,
+    "Reload Time":15.0,
+    "Prob Sunk":0.1,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.9
+  },
+
+  {
+    "Attacker Type":"COALITION AIRCRAFT",
+    "Attacker Skill":"basic",
+    "Defender Type":"CN AIRCRAFT",
+    "Defender Skill":null,
+    "Number of Attacks":3.0,
+    "Reload Time":15.0,
+    "Prob Sunk":0.3,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.7
+  },
+  {
+    "Attacker Type":"COALITION AIRCRAFT",
+    "Attacker Skill":"basic",
+    "Defender Type":"CN AIRCRAFT",
+    "Defender Skill":"basic",
+    "Number of Attacks":3.0,
+    "Reload Time":15.0,
+    "Prob Sunk":0.15,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.85
+  },
+  {
+    "Attacker Type":"COALITION AIRCRAFT",
+    "Attacker Skill":"basic",
+    "Defender Type":"CN AIRCRAFT",
+    "Defender Skill":"advanced",
+    "Number of Attacks":3.0,
+    "Reload Time":15.0,
+    "Prob Sunk":0.05,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.95
+  },
+  {
+    "Attacker Type":"COALITION AIRCRAFT",
+    "Attacker Skill":"advanced",
+    "Defender Type":"CN AIRCRAFT",
+    "Defender Skill":null,
+    "Number of Attacks":6.0,
+    "Reload Time":15.0,
+    "Prob Sunk":0.6,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.4
+  },
+  {
+    "Attacker Type":"COALITION AIRCRAFT",
+    "Attacker Skill":"advanced",
+    "Defender Type":"CN AIRCRAFT",
+    "Defender Skill":"basic",
+    "Number of Attacks":6.0,
+    "Reload Time":15.0,
+    "Prob Sunk":0.3,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.7
+  },
+  {
+    "Attacker Type":"COALITION AIRCRAFT",
+    "Attacker Skill":"advanced",
+    "Defender Type":"CN AIRCRAFT",
+    "Defender Skill":"advanced",
+    "Number of Attacks":6.0,
+    "Reload Time":15.0,
+    "Prob Sunk":0.1,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.9
+  },
+
   {
     "Attacker Type":"CN SUB",
     "Attacker Skill":"basic",
@@ -500,8 +596,7 @@
     "Reload Time":45.0,
     "Prob Sunk":0.4,
     "Prob CTL":0.0,
-    "Prob Nothing":0.6,
-    "Unnamed: 10":null
+    "Prob Nothing":0.6
   },
   {
     "Attacker Type":"CN SUB",
@@ -512,8 +607,7 @@
     "Reload Time":45.0,
     "Prob Sunk":0.25,
     "Prob CTL":0.0,
-    "Prob Nothing":0.75,
-    "Unnamed: 10":null
+    "Prob Nothing":0.75
   },
   {
     "Attacker Type":"CN SUB",
@@ -524,8 +618,7 @@
     "Reload Time":45.0,
     "Prob Sunk":0.1,
     "Prob CTL":0.0,
-    "Prob Nothing":0.9,
-    "Unnamed: 10":null
+    "Prob Nothing":0.9
   },
   {
     "Attacker Type":"CN SUB",
@@ -536,8 +629,7 @@
     "Reload Time":45.0,
     "Prob Sunk":0.05,
     "Prob CTL":0.0,
-    "Prob Nothing":0.95,
-    "Unnamed: 10":null
+    "Prob Nothing":0.95
   },
   {
     "Attacker Type":"CN SUB",
@@ -548,8 +640,7 @@
     "Reload Time":45.0,
     "Prob Sunk":0.95,
     "Prob CTL":0.0,
-    "Prob Nothing":0.05,
-    "Unnamed: 10":null
+    "Prob Nothing":0.05
   },
   {
     "Attacker Type":"CN SUB",
@@ -560,8 +651,7 @@
     "Reload Time":45.0,
     "Prob Sunk":0.55,
     "Prob CTL":0.0,
-    "Prob Nothing":0.45,
-    "Unnamed: 10":null
+    "Prob Nothing":0.45
   },
   {
     "Attacker Type":"CN SUB",
@@ -572,8 +662,7 @@
     "Reload Time":45.0,
     "Prob Sunk":0.35,
     "Prob CTL":0.0,
-    "Prob Nothing":0.65,
-    "Unnamed: 10":null
+    "Prob Nothing":0.65
   },
   {
     "Attacker Type":"CN SUB",
@@ -584,8 +673,7 @@
     "Reload Time":45.0,
     "Prob Sunk":0.15,
     "Prob CTL":0.0,
-    "Prob Nothing":0.85,
-    "Unnamed: 10":null
+    "Prob Nothing":0.85
   },
   {
     "Attacker Type":"CN SUB",
@@ -596,8 +684,7 @@
     "Reload Time":45.0,
     "Prob Sunk":0.05,
     "Prob CTL":0.0,
-    "Prob Nothing":0.95,
-    "Unnamed: 10":null
+    "Prob Nothing":0.95
   },
   {
     "Attacker Type":"CN SUB",
@@ -608,8 +695,7 @@
     "Reload Time":45.0,
     "Prob Sunk":0.5,
     "Prob CTL":0.0,
-    "Prob Nothing":0.5,
-    "Unnamed: 10":null
+    "Prob Nothing":0.5
   },
   {
     "Attacker Type":"CN SUB",
@@ -620,8 +706,7 @@
     "Reload Time":45.0,
     "Prob Sunk":0.25,
     "Prob CTL":0.0,
-    "Prob Nothing":0.75,
-    "Unnamed: 10":null
+    "Prob Nothing":0.75
   },
   {
     "Attacker Type":"CN SUB",
@@ -632,8 +717,7 @@
     "Reload Time":45.0,
     "Prob Sunk":0.1,
     "Prob CTL":0.0,
-    "Prob Nothing":0.9,
-    "Unnamed: 10":null
+    "Prob Nothing":0.9
   },
   {
     "Attacker Type":"CN SUB",
@@ -644,8 +728,7 @@
     "Reload Time":45.0,
     "Prob Sunk":0.7,
     "Prob CTL":0.0,
-    "Prob Nothing":0.3,
-    "Unnamed: 10":null
+    "Prob Nothing":0.3
   },
   {
     "Attacker Type":"CN SUB",
@@ -656,8 +739,7 @@
     "Reload Time":45.0,
     "Prob Sunk":0.5,
     "Prob CTL":0.0,
-    "Prob Nothing":0.5,
-    "Unnamed: 10":null
+    "Prob Nothing":0.5
   },
   {
     "Attacker Type":"CN SUB",
@@ -668,8 +750,7 @@
     "Reload Time":45.0,
     "Prob Sunk":0.2,
     "Prob CTL":0.0,
-    "Prob Nothing":0.8,
-    "Unnamed: 10":null
+    "Prob Nothing":0.8
   },
   {
     "Attacker Type":"COALITION SUB",
@@ -680,8 +761,7 @@
     "Reload Time":45.0,
     "Prob Sunk":0.5,
     "Prob CTL":0.0,
-    "Prob Nothing":0.5,
-    "Unnamed: 10":null
+    "Prob Nothing":0.5
   },
   {
     "Attacker Type":"COALITION SUB",
@@ -692,8 +772,7 @@
     "Reload Time":45.0,
     "Prob Sunk":0.25,
     "Prob CTL":0.0,
-    "Prob Nothing":0.75,
-    "Unnamed: 10":null
+    "Prob Nothing":0.75
   },
   {
     "Attacker Type":"COALITION SUB",
@@ -704,8 +783,7 @@
     "Reload Time":45.0,
     "Prob Sunk":0.1,
     "Prob CTL":0.0,
-    "Prob Nothing":0.9,
-    "Unnamed: 10":null
+    "Prob Nothing":0.9
   },
   {
     "Attacker Type":"COALITION SUB",
@@ -716,8 +794,7 @@
     "Reload Time":45.0,
     "Prob Sunk":0.7,
     "Prob CTL":0.0,
-    "Prob Nothing":0.3,
-    "Unnamed: 10":null
+    "Prob Nothing":0.3
   },
   {
     "Attacker Type":"COALITION SUB",
@@ -728,8 +805,7 @@
     "Reload Time":45.0,
     "Prob Sunk":0.5,
     "Prob CTL":0.0,
-    "Prob Nothing":0.5,
-    "Unnamed: 10":null
+    "Prob Nothing":0.5
   },
   {
     "Attacker Type":"COALITION SUB",
@@ -740,8 +816,7 @@
     "Reload Time":45.0,
     "Prob Sunk":0.2,
     "Prob CTL":0.0,
-    "Prob Nothing":0.8,
-    "Unnamed: 10":null
+    "Prob Nothing":0.8
   },
   {
     "Attacker Type":"CN AIRCRAFT",
@@ -752,8 +827,7 @@
     "Reload Time":60.0,
     "Prob Sunk":0.55,
     "Prob CTL":0.0,
-    "Prob Nothing":0.45,
-    "Unnamed: 10":null
+    "Prob Nothing":0.45
   },
   {
     "Attacker Type":"CN AIRCRAFT",
@@ -764,8 +838,7 @@
     "Reload Time":60.0,
     "Prob Sunk":0.4,
     "Prob CTL":0.0,
-    "Prob Nothing":0.6,
-    "Unnamed: 10":null
+    "Prob Nothing":0.6
   },
   {
     "Attacker Type":"CN AIRCRAFT",
@@ -776,8 +849,7 @@
     "Reload Time":60.0,
     "Prob Sunk":0.25,
     "Prob CTL":0.0,
-    "Prob Nothing":0.75,
-    "Unnamed: 10":null
+    "Prob Nothing":0.75
   },
   {
     "Attacker Type":"CN AIRCRAFT",
@@ -788,8 +860,7 @@
     "Reload Time":60.0,
     "Prob Sunk":0.1,
     "Prob CTL":0.0,
-    "Prob Nothing":0.9,
-    "Unnamed: 10":null
+    "Prob Nothing":0.9
   },
   {
     "Attacker Type":"CN AIRCRAFT",
@@ -800,8 +871,7 @@
     "Reload Time":60.0,
     "Prob Sunk":0.05,
     "Prob CTL":0.0,
-    "Prob Nothing":0.95,
-    "Unnamed: 10":null
+    "Prob Nothing":0.95
   },
   {
     "Attacker Type":"CN AIRCRAFT",
@@ -812,8 +882,7 @@
     "Reload Time":60.0,
     "Prob Sunk":0.95,
     "Prob CTL":0.0,
-    "Prob Nothing":0.05,
-    "Unnamed: 10":null
+    "Prob Nothing":0.05
   },
   {
     "Attacker Type":"CN AIRCRAFT",
@@ -824,8 +893,7 @@
     "Reload Time":60.0,
     "Prob Sunk":0.55,
     "Prob CTL":0.0,
-    "Prob Nothing":0.45,
-    "Unnamed: 10":null
+    "Prob Nothing":0.45
   },
   {
     "Attacker Type":"CN AIRCRAFT",
@@ -836,8 +904,7 @@
     "Reload Time":60.0,
     "Prob Sunk":0.35,
     "Prob CTL":0.0,
-    "Prob Nothing":0.65,
-    "Unnamed: 10":null
+    "Prob Nothing":0.65
   },
   {
     "Attacker Type":"CN AIRCRAFT",
@@ -848,8 +915,7 @@
     "Reload Time":60.0,
     "Prob Sunk":0.15,
     "Prob CTL":0.0,
-    "Prob Nothing":0.85,
-    "Unnamed: 10":null
+    "Prob Nothing":0.85
   },
   {
     "Attacker Type":"CN AIRCRAFT",
@@ -860,8 +926,7 @@
     "Reload Time":60.0,
     "Prob Sunk":0.05,
     "Prob CTL":0.0,
-    "Prob Nothing":0.95,
-    "Unnamed: 10":null
+    "Prob Nothing":0.95
   },
   {
     "Attacker Type":"COALITION AIRCRAFT",
@@ -872,8 +937,7 @@
     "Reload Time":60.0,
     "Prob Sunk":0.55,
     "Prob CTL":0.0,
-    "Prob Nothing":0.45,
-    "Unnamed: 10":null
+    "Prob Nothing":0.45
   },
   {
     "Attacker Type":"COALITION AIRCRAFT",
@@ -884,8 +948,7 @@
     "Reload Time":60.0,
     "Prob Sunk":0.4,
     "Prob CTL":0.0,
-    "Prob Nothing":0.6,
-    "Unnamed: 10":null
+    "Prob Nothing":0.6
   },
   {
     "Attacker Type":"COALITION AIRCRAFT",
@@ -896,8 +959,7 @@
     "Reload Time":60.0,
     "Prob Sunk":0.25,
     "Prob CTL":0.0,
-    "Prob Nothing":0.75,
-    "Unnamed: 10":null
+    "Prob Nothing":0.75
   },
   {
     "Attacker Type":"COALITION AIRCRAFT",
@@ -908,8 +970,7 @@
     "Reload Time":60.0,
     "Prob Sunk":0.1,
     "Prob CTL":0.0,
-    "Prob Nothing":0.9,
-    "Unnamed: 10":null
+    "Prob Nothing":0.9
   },
   {
     "Attacker Type":"COALITION AIRCRAFT",
@@ -920,8 +981,7 @@
     "Reload Time":60.0,
     "Prob Sunk":0.05,
     "Prob CTL":0.0,
-    "Prob Nothing":0.95,
-    "Unnamed: 10":null
+    "Prob Nothing":0.95
   },
   {
     "Attacker Type":"COALITION AIRCRAFT",
@@ -932,8 +992,7 @@
     "Reload Time":60.0,
     "Prob Sunk":0.95,
     "Prob CTL":0.0,
-    "Prob Nothing":0.05,
-    "Unnamed: 10":null
+    "Prob Nothing":0.05
   },
   {
     "Attacker Type":"COALITION AIRCRAFT",
@@ -944,8 +1003,7 @@
     "Reload Time":60.0,
     "Prob Sunk":0.55,
     "Prob CTL":0.0,
-    "Prob Nothing":0.45,
-    "Unnamed: 10":null
+    "Prob Nothing":0.45
   },
   {
     "Attacker Type":"COALITION AIRCRAFT",
@@ -956,8 +1014,7 @@
     "Reload Time":60.0,
     "Prob Sunk":0.35,
     "Prob CTL":0.0,
-    "Prob Nothing":0.65,
-    "Unnamed: 10":null
+    "Prob Nothing":0.65
   },
   {
     "Attacker Type":"COALITION AIRCRAFT",
@@ -968,8 +1025,7 @@
     "Reload Time":60.0,
     "Prob Sunk":0.15,
     "Prob CTL":0.0,
-    "Prob Nothing":0.85,
-    "Unnamed: 10":null
+    "Prob Nothing":0.85
   },
   {
     "Attacker Type":"COALITION AIRCRAFT",
@@ -980,8 +1036,7 @@
     "Reload Time":60.0,
     "Prob Sunk":0.05,
     "Prob CTL":0.0,
-    "Prob Nothing":0.95,
-    "Unnamed: 10":null
+    "Prob Nothing":0.95
   },
   {
     "Attacker Type":"CN AIRCRAFT",
@@ -992,8 +1047,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.25,
     "Prob CTL":0.5,
-    "Prob Nothing":0.25,
-    "Unnamed: 10":null
+    "Prob Nothing":0.25
   },
   {
     "Attacker Type":"CN AIRCRAFT",
@@ -1004,8 +1058,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.075,
     "Prob CTL":0.325,
-    "Prob Nothing":0.6,
-    "Unnamed: 10":null
+    "Prob Nothing":0.6
   },
   {
     "Attacker Type":"CN AIRCRAFT",
@@ -1016,8 +1069,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.025,
     "Prob CTL":0.075,
-    "Prob Nothing":0.9,
-    "Unnamed: 10":null
+    "Prob Nothing":0.9
   },
   {
     "Attacker Type":"CN AIRCRAFT",
@@ -1028,8 +1080,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.49,
     "Prob CTL":0.42,
-    "Prob Nothing":0.09,
-    "Unnamed: 10":null
+    "Prob Nothing":0.09
   },
   {
     "Attacker Type":"CN AIRCRAFT",
@@ -1040,8 +1091,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.147,
     "Prob CTL":0.466,
-    "Prob Nothing":0.387,
-    "Unnamed: 10":null
+    "Prob Nothing":0.387
   },
   {
     "Attacker Type":"CN AIRCRAFT",
@@ -1052,8 +1102,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.049,
     "Prob CTL":0.151,
-    "Prob Nothing":0.8,
-    "Unnamed: 10":null
+    "Prob Nothing":0.8
   },
   {
     "Attacker Type":"COALITION AIRCRAFT",
@@ -1064,8 +1113,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.25,
     "Prob CTL":0.5,
-    "Prob Nothing":0.25,
-    "Unnamed: 10":null
+    "Prob Nothing":0.25
   },
   {
     "Attacker Type":"COALITION AIRCRAFT",
@@ -1076,8 +1124,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.075,
     "Prob CTL":0.325,
-    "Prob Nothing":0.6,
-    "Unnamed: 10":null
+    "Prob Nothing":0.6
   },
   {
     "Attacker Type":"COALITION AIRCRAFT",
@@ -1088,8 +1135,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.025,
     "Prob CTL":0.075,
-    "Prob Nothing":0.9,
-    "Unnamed: 10":null
+    "Prob Nothing":0.9
   },
   {
     "Attacker Type":"COALITION AIRCRAFT",
@@ -1100,8 +1146,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.49,
     "Prob CTL":0.42,
-    "Prob Nothing":0.09,
-    "Unnamed: 10":null
+    "Prob Nothing":0.09
   },
   {
     "Attacker Type":"COALITION AIRCRAFT",
@@ -1112,8 +1157,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.147,
     "Prob CTL":0.466,
-    "Prob Nothing":0.387,
-    "Unnamed: 10":null
+    "Prob Nothing":0.387
   },
   {
     "Attacker Type":"COALITION AIRCRAFT",
@@ -1124,8 +1168,7 @@
     "Reload Time":10.0,
     "Prob Sunk":0.049,
     "Prob CTL":0.151,
-    "Prob Nothing":0.8,
-    "Unnamed: 10":null
+    "Prob Nothing":0.8
   },
   {
     "Attacker Type":"CN AIRCRAFT",
@@ -1136,8 +1179,7 @@
     "Reload Time":1.0,
     "Prob Sunk":0.7,
     "Prob CTL":0.0,
-    "Prob Nothing":0.3,
-    "Unnamed: 10":null
+    "Prob Nothing":0.3
   },
   {
     "Attacker Type":"CN AIRCRAFT",
@@ -1148,8 +1190,7 @@
     "Reload Time":1.0,
     "Prob Sunk":0.4,
     "Prob CTL":0.0,
-    "Prob Nothing":0.6,
-    "Unnamed: 10":null
+    "Prob Nothing":0.6
   },
   {
     "Attacker Type":"CN AIRCRAFT",
@@ -1160,8 +1201,7 @@
     "Reload Time":1.0,
     "Prob Sunk":0.2,
     "Prob CTL":0.0,
-    "Prob Nothing":0.8,
-    "Unnamed: 10":null
+    "Prob Nothing":0.8
   },
   {
     "Attacker Type":"CN AIRCRAFT",
@@ -1172,8 +1212,7 @@
     "Reload Time":1.0,
     "Prob Sunk":0.9,
     "Prob CTL":0.0,
-    "Prob Nothing":0.1,
-    "Unnamed: 10":null
+    "Prob Nothing":0.1
   },
   {
     "Attacker Type":"CN AIRCRAFT",
@@ -1184,8 +1223,7 @@
     "Reload Time":1.0,
     "Prob Sunk":0.5,
     "Prob CTL":0.0,
-    "Prob Nothing":0.5,
-    "Unnamed: 10":null
+    "Prob Nothing":0.5
   },
   {
     "Attacker Type":"CN AIRCRAFT",
@@ -1196,7 +1234,6 @@
     "Reload Time":1.0,
     "Prob Sunk":0.3,
     "Prob CTL":0.0,
-    "Prob Nothing":0.7,
-    "Unnamed: 10":null
+    "Prob Nothing":0.7
   }
 ]

@@ -237,7 +237,7 @@
     "Defender Type": "CN AIRCRAFT",
     "Weapon Name": "AIM-120<D",
     "Weapon Range": 81,
-    "World Weapon Ammunition": ""
+    "World Weapon Ammunition": "INF"
   },
   {
     "Attacker Type": "COALITION AIRCRAFT",

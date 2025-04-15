@@ -20,7 +20,7 @@ class Submarine(Agent):
         pass
 
     def air_detection(self, agent: Agent) -> bool:
-        pass
+        return False
 
     def sub_detection(self, agent: Agent) -> bool:
         pass
@@ -36,3 +36,21 @@ class Submarine(Agent):
 
     def attack(self, target, ammo, attacker_skill) -> None:
         pass
+
+
+class ChineseSub(Submarine):
+    def __init__(self, manager, model: str, base: Base):
+        super().__init__(manager, model, base)
+
+    def initiate_model(self) -> None:
+        pass
+
+
+class CoalitionSub(Submarine):
+    def __init__(self, manager, model: str, base: Base):
+        super().__init__(manager, model, base)
+
+    def initiate_model(self) -> None:
+        pass
+
+

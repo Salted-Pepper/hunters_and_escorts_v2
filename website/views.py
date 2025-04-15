@@ -47,17 +47,15 @@ def settings_page():
         coalition_esc = data.get('coalition_esc')
         show_sim = data.get('show-sim')
         plot_type = data.get('receptor-type')
-
         print(f"Updating Settings...")
         settings.simulation_period = float(iterations)
         settings.time_delta = float(time_delta)
-        settings.CHINA_ESCALATION_LEVELS = int(china_esc)
+        settings.CHINA_SELECTED_LEVEL = int(china_esc)
         settings.COALITION_SELECTED_LEVEL = int(coalition_esc)
         settings.PLOTTING_MODE = bool(show_sim)
         settings.RECEPTOR_PLOT_PARAMETER = plot_type
 
         last_settings_update = time.time()
-
     current_settings = {"iter_time": settings.simulation_period,
                         "time_delta": settings.time_delta,
                         "china_esc": settings.CHINA_SELECTED_LEVEL,

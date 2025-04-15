@@ -2,6 +2,7 @@ from __future__ import annotations
 from abc import abstractmethod
 import copy
 
+import constant_coords
 import settings
 import tracker
 from bases import Base
@@ -109,6 +110,7 @@ class Agent:
     def to_dict(self) -> dict:
         return {"x": self.location.x,
                 "y": self.location.y,
+                "model": self.model,
                 "agent_id": self.agent_id,
                 "activated": self.activated,
                 "mission": str(self.mission),
@@ -225,8 +227,10 @@ class Agent:
             identifier = "Escort"
         elif self.combat_type == "COALITION AIRCRAFT":
             identifier = "Coalition Aircraft"
-        elif self.combat_type.startswith("CN"):
+        elif self.combat_type == "CN NAVY":
             identifier = "Hunter"
+        elif self.combat_type == "CN AIRCRAFT":
+            identifier = "CN Aircraft"
         else:
             identifier = "Merchant"
 
@@ -250,11 +254,16 @@ class Agent:
     def check_if_valid_target(self, target) -> bool:
         target_zone = target.get_current_zone()
 
+        # if (self.agent_type == "ship" or self.agent_type == "sub") and target.agent_type == "air":
+        #     for mass in constant_coords.ALL_MASSES:
+        #         if mass.contains_point(target.location):
+        #             return False
+
         if self.team == 1:
             # if coalition, it depends on the r_o_e
             rules = settings.coalition_r_o_e_rules
             if zones.ZONE_L.polygon.contains_point(target.location):
-                # Filters out all aircraft units returning to land
+                # Filters out all Chinese aircraft returning to land
                 return False
             elif target_zone == zones.ZONE_P:
                 target_zone = zones.ZONE_B
@@ -294,7 +303,7 @@ class Agent:
             raise ValueError(f"Undefined team {self.team}")
 
     def able_to_attack(self, target) -> bool:
-        if target.agent_type ==  "ship":
+        if target.agent_type == "ship":
             if self.anti_ship_skill is None or self.anti_ship_ammo == 0:
                 return False
             else:
@@ -425,7 +434,7 @@ class Agent:
     def request_support(self, target) -> None:
         if self.mission.support_requested:
             return
-        print(f"{self} is requesting support.")
+        # print(f"{self} is requesting support.")
 
         world = cs.world
         if self.team == 1:
@@ -574,7 +583,7 @@ class Agent:
                              and a.stock > 0]
 
         if len(viable_ammunition) == 0:
-            print(f"No viable ammunition")
+            print(f"No viable ammunition for {attacker_type} - {defender_type}")
             self.abort_attack()
             return
 

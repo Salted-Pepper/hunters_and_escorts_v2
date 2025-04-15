@@ -34,6 +34,19 @@ def get_chinese_aircraft_data() -> dict:
     return data_dict
 
 
+def get_chinese_sub_data() -> dict:
+    with open("data/chinese_submarines.json") as file:
+        data = json.load(file)
+
+    data_dict = {}
+    for model in data:
+        name = model.pop("name")
+        data_dict[name] = model
+
+    cs.CHINA_SUB_DATA = data_dict
+    return data_dict
+
+
 def get_coalition_navy_data() -> dict:
     with open("data/coalition_ships.json") as file:
         data = json.load(file)
@@ -57,6 +70,19 @@ def get_coalition_aircraft_data() -> dict:
         data_dict[name] = model
 
     cs.COALITION_AIR_DATA = data_dict
+    return data_dict
+
+
+def get_coalition_sub_data() -> dict:
+    with open("data/coalition_submarines.json") as file:
+        data = json.load(file)
+
+    data_dict = {}
+    for model in data:
+        name = model.pop("name")
+        data_dict[name] = model
+
+    cs.COALITION_SUB_DATA = data_dict
     return data_dict
 
 

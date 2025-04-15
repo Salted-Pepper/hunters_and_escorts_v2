@@ -66,7 +66,7 @@ class Ship(Agent):
             self.anti_sub_ammo -= 1
         elif target.combat_type == cs.MERCHANT:
             probabilities = cs.MERCHANT_PROBABILITIES[target.ship_visibility]
-            new_probability = probabilities["sunk"] + target.damaged * 0.2
+            new_probability = probabilities["sunk"] + target.damage * 0.2
             probabilities["sunk"] = min(new_probability, 1 - probabilities["ctl"])
             probabilities["nothing"] = 1 - (probabilities["sunk"] + probabilities["ctl"])
             self.anti_ship_ammo -= 1
@@ -94,7 +94,7 @@ class Ship(Agent):
             target.CTL = True
         elif outcome == "nothing":
             if target.combat_type == cs.MERCHANT:
-                target.damaged += 1
+                target.damage += 1
         else:
             raise ValueError(f"Unknown outcome {outcome}")
 
@@ -441,16 +441,16 @@ class Escort(Ship):
                 return
 
             if agent.agent_type == "ship":
-                if self.ship_detection_skill is None:
-                    continue
+                # if self.ship_detection_skill is None:
+                #     continue
                 detected = self.surface_detection(agent)
             elif agent.agent_type == "air":
-                if self.air_detection_skill is None:
-                    continue
+                # if self.air_detection_skill is None:
+                #     continue
                 detected = self.air_detection(agent)
             elif agent.agent_type == "sub":
-                if self.sub_detection_skill is None:
-                    continue
+                # if self.sub_detection_skill is None:
+                #     continue
                 detected = self.sub_detection(agent)
             else:
                 raise ValueError(f"Unknown Class {type(agent)} - unable to observe.")
