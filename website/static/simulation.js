@@ -1,5 +1,5 @@
 
-const WIDTH = 1000, HEIGHT = 700;
+const WIDTH = 1300, HEIGHT = 820;
 const app = new PIXI.Application({ width: WIDTH, height: HEIGHT, backgroundColor: 0x1099bb, resolution:
                                     1, antialias: true});
 
@@ -81,6 +81,8 @@ sprite_dict = {"Merchant Manager": "static/assets/merchant_24x16.png",
                "JP Escort Manager": "static/assets/escort_jp_24x16.png",
                "US Escort Manager": "static/assets/escort_us_24x16.png",
                "Coalition Air Manager": "static/assets/coalition_aircraft_24x16_right.png",
+               "China Sub Manager": "static/assets/cn_sub_24x16.png",
+               "Coalition Sub Manager": "static/assets/coalition_sub_24x16.png",
                "Harbour": "static/assets/anchor_grey_16x16.png",
                "AirportRed": "static/assets/airport_red_16x16.png",
                "AirportBlue": "static/assets/airport_blue_16x16.png",
@@ -136,8 +138,8 @@ function updatePlot(agents) {
             app.stage.addChild(sprite);
             sprites[agent.agent_id] = sprite;
 
-            var text = agent.service + ' - ' + agent.model + '\n'  + agent.agent_id + '\non ' + agent.mission + '\nEndurance ' + agent.rem_endurance.toFixed(0);
-            var message = new PIXI.Text(text, {fontSize: 16, fill: 0xff1010});
+            var text = agent.service + ' - ' + agent.model + '\n'  + agent.agent_id + ' on ' + agent.mission + '\nEndurance ' + agent.rem_endurance.toFixed(0);
+            var message = new PIXI.Text(text, {fontSize: 14, fill: 0x6C3BAA, stroke:0x000000, fontWeight: "bolder"});
             sprite.message = message
 
             sprite.on('mouseover', function(event){
@@ -151,8 +153,8 @@ function updatePlot(agents) {
                     return;
                 }
 
-                sprite.message.x = event.data.global.x + 10;
-                sprite.message.y = event.data.global.y;
+                sprite.message.x = event.data.global.x - 30;
+                sprite.message.y = event.data.global.y + 15;
             });
 
             sprite.on('mouseout', function(event){
@@ -172,12 +174,12 @@ function updatePlot(agents) {
                 sprite = sprites[agent.agent_id];
                 sprite.x = agent.x;
                 sprite.y = agent.y;
-                sprite.message.x = sprite.x + 10;
-                sprite.message.y = sprite.y;
+                sprite.message.x = sprite.x - 30;
+                sprite.message.y = sprite.y + 15;
 
                 app.stage.removeChild(sprite.message);
-                var text = agent.service + ' - ' + agent.agent_id + '\non ' + agent.mission + '\nEndurance ' + agent.rem_endurance.toFixed(0);
-                var message = new PIXI.Text(text, {fontSize: 16, fill: 0xff1010});
+                var text = agent.service + ' - ' + agent.model + '\n'  + agent.agent_id + ' on ' + agent.mission + '\nEndurance ' + agent.rem_endurance.toFixed(0);
+                var message = new PIXI.Text(text, {fontSize: 14, fill: 0x6C3BAA, stroke:0x000000, fontWeight: "bolder"});
                 sprite.message = message
 
             }
@@ -198,11 +200,12 @@ function updateLogs(events) {
                         "Merchant Arrived": 0,
                         "Escort Destroyed": 0,
                         "Coalition Aircraft Destroyed": 0,
-                        "Submarine Destroyed": 0,
+                        "Coalition Submarine Destroyed": 0,
                         "Aircraft Destroyed": 0,
                         "Hunter Deterred": 0,
                         "Hunter Destroyed": 0,
                         "CN Aircraft Destroyed": 0,
+                        "CN Submarine Destroyed": 0,
     };
 
     for (let i=0; i<events.length; i++){
@@ -223,11 +226,12 @@ function updateLogs(events) {
 
     document.getElementById('escorts-log-destroyed').innerHTML = event_counts["Escort Destroyed"];
     document.getElementById('aircraft-log-destroyed').innerHTML = event_counts["Coalition Aircraft Destroyed"];
-    document.getElementById('submarines-log-destroyed').innerHTML = event_counts["Submarine Destroyed"];
+    document.getElementById('submarines-log-destroyed').innerHTML = event_counts["Coalition Submarine Destroyed"];
 
     document.getElementById('escorts-log-deterred').innerHTML = event_counts["Hunter Deterred"];
     document.getElementById('hunters-log-destroyed').innerHTML = event_counts["Hunter Destroyed"];
     document.getElementById('cn-aircraft-log-destroyed').innerHTML = event_counts["CN Aircraft Destroyed"];
+    document.getElementById('cn-submarines-log-destroyed').innerHTML = event_counts["CN Submarine Destroyed"];
 
     document.getElementById('sim-logs').value = new_logger_text;
 }

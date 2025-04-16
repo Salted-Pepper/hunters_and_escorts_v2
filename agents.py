@@ -231,6 +231,10 @@ class Agent:
             identifier = "Hunter"
         elif self.combat_type == "CN AIRCRAFT":
             identifier = "CN Aircraft"
+        elif self.combat_type == "CN SUB":
+            identifier = "CN Submarine"
+        elif self.combat_type == "COALITION SUB":
+            identifier = "Coalition Submarine"
         else:
             identifier = "Merchant"
 
@@ -398,7 +402,7 @@ class Agent:
                 if self.air_detection_skill is None:
                     continue
                 detected = self.air_detection(agent)
-            elif agent.agent_ype == "sub":
+            elif agent.agent_type == "sub":
                 if self.sub_detection_skill is None:
                     continue
                 detected = self.sub_detection(agent)

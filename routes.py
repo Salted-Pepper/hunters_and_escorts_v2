@@ -101,7 +101,7 @@ def create_route(start: Point, end: Point, team: int, air=False) -> Route:
     if team == 1:
         if air:
             world_graph = cs.world.visibility_graph_coalition_air
-            obstacles = copy.copy([ccs.CHINA, ccs.KOREA])
+            obstacles = copy.copy([ccs.CHINA] + ccs.OTHER_LAND)
         else:
             world_graph = cs.world.visibility_graph_coalition
             obstacles = copy.copy(cs.world.coalition_obstacles)

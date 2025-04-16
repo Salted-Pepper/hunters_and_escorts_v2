@@ -9,7 +9,7 @@ import zones
 import weather
 from polygons import Polygon
 from managers import (MerchantManager, ChinaNavyManager, ChinaAirManager, ChinaSubManager,
-                      EscortManagerTW, EscortManagerJP, EscortManagerUS, CoalitionAirManager)
+                      EscortManagerTW, EscortManagerJP, EscortManagerUS, CoalitionAirManager, CoalitionSubManager)
 import data_functions
 
 import tracker
@@ -49,6 +49,7 @@ class World:
         self.jp_manager_escorts = None
         self.us_manager_escorts = None
         self.coalition_manager_air = None
+        self.coalition_manager_sub = None
         self.china_manager_air = None
         self.china_manager_navy = None
         self.china_manager_sub = None
@@ -84,18 +85,20 @@ class World:
         self.jp_manager_escorts = EscortManagerJP()
         self.us_manager_escorts = EscortManagerUS()
         self.coalition_manager_air = CoalitionAirManager()
+        self.coalition_manager_sub = CoalitionSubManager()
         self.china_manager_air = ChinaAirManager()
         self.china_manager_navy = ChinaNavyManager()
         self.china_manager_sub = ChinaSubManager()
 
         self.managers = [self.merchant_manager,
+                         self.us_manager_escorts,
                          self.china_manager_air,
                          self.china_manager_navy,
                          self.china_manager_sub,
                          self.tw_manager_escorts,
                          self.jp_manager_escorts,
-                         self.us_manager_escorts,
                          self.coalition_manager_air,
+                         self.coalition_manager_sub,
                          ]
 
         for manager in self.managers:

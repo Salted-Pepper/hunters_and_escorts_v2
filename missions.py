@@ -126,6 +126,9 @@ class Track(Mission):
         super().__init__(agent, target)
         self.mission_type = "track"
 
+        if agent.team == target.team:
+            raise ValueError(f"Tracking same team")
+
         if target.destroyed:
             raise ValueError(f"{self.agent} tracking destroyed agent  {target}")
 
@@ -194,7 +197,7 @@ class Attack(Mission):
         if not self.agent.check_if_valid_target(self.target):
             self.abort()
             return
-        # print(f"{self.agent} is attacking {self.target}")
+
         try:
             self.agent.attempt_to_attack(self.target)
         except ValueError:

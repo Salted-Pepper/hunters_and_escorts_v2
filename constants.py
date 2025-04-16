@@ -53,6 +53,10 @@ DET_ADV = "advanced"
 ATT_BASIC = "basic"
 ATT_ADV = "advanced"
 
+# Defender Skill
+DEF_BASIC = "basic"
+DEF_ADV = "advanced"
+
 # Merchant Reactions
 COMPLY = "compliant"
 EVADE = "evade"
@@ -76,7 +80,7 @@ HUNTER_MSA = "Ship MSA"
 HUNTER_PAFMM = "Ship PAFMM"
 HUNTER_PLAN = "Ship PLAN"
 
-HUNTER_SUBMARINE = "Submarine"
+HUNTER_SUBMARINE = "CN SUB"
 HUNTER_MINELAYER = "Minelayer"
 
 HUNTER_UAV = "Air UAV"
@@ -179,6 +183,33 @@ CHINA_AIR_DETECTING_AIR = {"aew": {LARGE: 648,
                                        VSMALL: 50,
                                        STEALTHY: 11}}
 
+CHINA_SUB_DETECTING_SHIP = {DET_ADV: {LARGE: 90,
+                                      MEDIUM: 90,
+                                      SMALL: 45,
+                                      VSMALL: 9,
+                                      STEALTHY: 0},
+                            DET_BASIC: {LARGE: 45,
+                                        MEDIUM: 9,
+                                        SMALL: 9,
+                                        VSMALL: 0,
+                                        STEALTHY: 0}}
+
+CHINA_SUB_DETECTING_SUB = {"asw": {LARGE: 37,
+                                   MEDIUM: 14.8,
+                                   SMALL: 7.4,
+                                   VSMALL: 3.7,
+                                   STEALTHY: 1.85},
+                           DET_ADV: {LARGE: 27.78,
+                                     MEDIUM: 11.112,
+                                     SMALL: 5.556,
+                                     VSMALL: 2.778,
+                                     STEALTHY: 1.389},
+                           DET_BASIC: {LARGE: 18.52,
+                                       MEDIUM: 7.408,
+                                       SMALL: 5.556,
+                                       VSMALL: 3.704,
+                                       STEALTHY: 0.926}}
+
 COALITION_NAVY_DETECTING_SHIP = {DET_ADV: {LARGE: 56,
                                            MEDIUM: 56,
                                            SMALL: 37,
@@ -239,7 +270,36 @@ COALITION_AIR_DETECTING_AIR = {"aew": {LARGE: 648,
                                            VSMALL: 50,
                                            STEALTHY: 11}}
 
-COALITION_AIR_DETECTING_SUB = {}
+COALITION_SUB_DETECTING_SHIP = {DET_ADV: {LARGE: 90,
+                                          MEDIUM: 90,
+                                          SMALL: 45,
+                                          VSMALL: 9,
+                                          STEALTHY: 0},
+                                DET_BASIC: {LARGE: 45,
+                                            MEDIUM: 9,
+                                            SMALL: 9,
+                                            VSMALL: 0,
+                                            STEALTHY: 0}}
+
+COALITION_SUB_DETECTING_SUB = {"asw": {LARGE: 37,
+                                       MEDIUM: 14.8,
+                                       SMALL: 7.4,
+                                       VSMALL: 3.7,
+                                       STEALTHY: 1.85},
+                               DET_ADV: {LARGE: 27.78,
+                                         MEDIUM: 11.112,
+                                         SMALL: 5.556,
+                                         VSMALL: 2.778,
+                                         STEALTHY: 1.389},
+                               DET_BASIC: {LARGE: 18.52,
+                                           MEDIUM: 7.408,
+                                           SMALL: 5.556,
+                                           VSMALL: 3.704,
+                                           STEALTHY: 0.926}}
+
+# ---- Sub Damage Probabilities ----
+SUB_HIT_CHANCE = {ATT_BASIC: {None: 0.5, DEF_BASIC: 0.25, DEF_ADV: 0.1},
+                  ATT_ADV: {None: 0.7, DEF_BASIC: 0.5, DEF_ADV: 0.2}}
 
 # ---- Deterministic Damage Table ----
 MERCHANT_PROBABILITIES = {STEALTHY: {"sunk": 0.077,

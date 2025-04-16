@@ -86,14 +86,14 @@ def get_coalition_sub_data() -> dict:
     return data_dict
 
 
-def get_ammo_info(manager: str) -> list:
+def get_ammo_info(attack_type: str) -> list:
     with open("data/ammunition.json") as file:
         data = json.load(file)
 
     munition_list = []
 
     for ammo in data:
-        if ammo["Attacker Type"] != manager:
+        if ammo["Attacker Type"] != attack_type:
             continue
 
         if ammo["World Weapon Ammunition"] == "INF":

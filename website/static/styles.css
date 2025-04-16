@@ -20,22 +20,22 @@
   width: 100%;
   overflow: hidden;
   background-color: #f5f5f5;
-  padding: 20px 80px 0 40px;
+  padding: 10px 0px 0 5px;
 }
 
 .left-container {
-  width: 60%;
+  width: 68%;
   background-color: #f5f5f5;
-  padding: 10px 50px 0px 0px;
+  padding: 10px 0px 0px 0px;
   float: left;
 }
 
 .right-container {
   margin: auto;
-  width: 40%;
+  width: 32%;
   background-color: #f5f5f5;
   padding: 10px 50px 0px 40px;
-  margin-left: 60%;
+  margin-left: 68%;
 }
 
 .smaller-centered-container {
@@ -97,10 +97,12 @@
 .simulation-container {
     width: 100%;
     align: center;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 .logs {
-    width: 600px;
+    width: 500px;
     height: 250px;
     padding: 6px 10px;
     box-sizing: border-box;

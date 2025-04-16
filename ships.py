@@ -134,7 +134,7 @@ class Merchant(Ship):
     def initiate_model(self) -> None:
         attribute = settings.MERCHANT_INFO[self.model]
         self.dwt = attribute["DWT"]
-        self.set_speed(attribute["Speed (km/h)"])
+        self.set_speed(attribute["Speed"])
         self.ship_visibility = attribute["Visibility"]
         self.air_visibility = attribute["Visibility"]
         self.sub_visibility = attribute["Visibility"]
@@ -244,7 +244,7 @@ class Merchant(Ship):
 class ChineseShip(Ship):
     def __init__(self, manager, model: str, base: Base):
         super().__init__(manager, model, base)
-        self.aws_enabled = False
+        self.asw_enabled = False
         self.helicopter = False
         self.combat_type = "CN NAVY"
         self.initiate_model()
@@ -441,16 +441,10 @@ class Escort(Ship):
                 return
 
             if agent.agent_type == "ship":
-                # if self.ship_detection_skill is None:
-                #     continue
                 detected = self.surface_detection(agent)
             elif agent.agent_type == "air":
-                # if self.air_detection_skill is None:
-                #     continue
                 detected = self.air_detection(agent)
             elif agent.agent_type == "sub":
-                # if self.sub_detection_skill is None:
-                #     continue
                 detected = self.sub_detection(agent)
             else:
                 raise ValueError(f"Unknown Class {type(agent)} - unable to observe.")

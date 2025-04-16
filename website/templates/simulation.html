@@ -24,32 +24,31 @@
     <h4 align="center"> Simulation </h4>
 <!--  Left Div  -->
     <div class="left-container">
-        World Time:
-        <input
-            type="number"
-            id="world_time_select"
-            class="select-number"
-            name="world_time_select"
-            placeholder="0"
-            value="0"
-            min="0"
-            max="{{ end_time | safe }}"
-            step="{{ time_delta | safe }}"
-            onchange="requestTimestampUpdate()"
-        >
-        <br>
-        <br>
         <div class="simulation-container">
         </div>
-        <br>
-        <br>
-
     </div>
 <!--  Right Div  -->
     <div class="right-container">
-        <button type="submit" class="btn btn-primary" onclick="startSimulation()" id="start-button">
-        Start Simulation
-        </button>
+        <span>
+            <button type="submit" class="btn btn-primary" onclick="startSimulation()" id="start-button">
+            Start Simulation
+            </button>
+            <span style="padding-left: 30px; vertical-align:middle;">
+            World Time:
+                <input
+                type="number"
+                id="world_time_select"
+                class="select-number"
+                name="world_time_select"
+                placeholder="0"
+                value="0"
+                min="0"
+                max="{{ end_time | safe }}"
+                step="{{ time_delta | safe }}"
+                onchange="requestTimestampUpdate()">
+
+            </span>
+        </span>
 
         <br>
         <br>
@@ -63,25 +62,28 @@
         <div id="number-logs">
             <h6></h6>
 
-            <b>Merchants</b> <br>
-            <p id="merchant-log-seized" class="display-number">0</p> Seized<br>
-            <span id="merchant-log-destroyed" class="display-number">0</span> Destroyed<br>
-            <span id="merchant-log-damaged" class="display-number">0</span> Damaged<br>
-            <span id="merchant-log-arrived" class="display-number">0</span> Arrived<br>
-            <br>
+            <div style="margin-bottom:8px">
+                <b>Merchants</b> <br>
+                <span id="merchant-log-seized" class="display-number">0</span> Seized<br>
+                <span id="merchant-log-destroyed" class="display-number">0</span> Destroyed<br>
+                <span id="merchant-log-damaged" class="display-number">0</span> Damaged<br>
+                <span id="merchant-log-arrived" class="display-number">0</span> Arrived<br>
+            </div>
 
-            <b>Coalition</b> <br>
-            <span id="escorts-log-destroyed" class="display-number">0</span> Escorts Destroyed<br>
-            <span id="aircraft-log-destroyed" class="display-number">0</span> Aircraft Destroyed<br>
-            <span id="submarines-log-destroyed" class="display-number">0</span> Submarines Destroyed<br>
+            <div style="margin-bottom:8px">
+                <b>Coalition</b> <br>
+                <span id="escorts-log-destroyed" class="display-number">0</span> Escorts Destroyed<br>
+                <span id="aircraft-log-destroyed" class="display-number">0</span> Aircraft Destroyed<br>
+                <span id="submarines-log-destroyed" class="display-number">0</span> Subs Destroyed<br>
+                <span id="escorts-log-deterred" class="display-number">0</span> Hunters Deterred<br>
+            </div>
 
-            <span id="escorts-log-deterred" class="display-number">0</span> Hunters Deterred<br>
-            <br>
-
-            <b>China</b> <br>
-            <span id="hunters-log-destroyed" class="display-number">0</span> Hunters Destroyed<br>
-            <span id="cn-aircraft-log-destroyed" class="display-number">0</span> Aircraft Destroyed<br>
-            <span id="cn-submarines-log-destroyed" class="display-number">0</span> Submarines Destroyed<br>
+            <div style="margin-bottom:8px">
+                <b>China</b> <br>
+                <span id="hunters-log-destroyed" class="display-number">0</span> Hunters Destroyed<br>
+                <span id="cn-aircraft-log-destroyed" class="display-number">0</span> Aircraft Destroyed<br>
+                <span id="cn-submarines-log-destroyed" class="display-number">0</span> Subs Destroyed<br>
+            </div>
         </div>
 
     </div>
