@@ -190,10 +190,10 @@ class Manager:
 
         if settings.MULTITHREAD:
             with concurrent.futures.ThreadPoolExecutor() as executor:
-                futures = [executor.submit(agent.mission.execute, self.agents_to_detect) for agent in observing_agents]
+                futures = [executor.submit(agent.mission.execute) for agent in observing_agents]
                 concurrent.futures.wait(futures)
         else:
-            [agent.mission.execute(self.agents_to_detect) for agent in observing_agents]
+            [agent.mission.execute() for agent in observing_agents]
 
     def continue_other_missions(self) -> None:
         """
@@ -369,7 +369,7 @@ class CoalitionAirManager(Manager):
             raise ValueError(f"Invalid Country {country} for Coalition Aircraft base selection.")
 
     def calc_utilization_rate(self) -> float:
-        return 0.04
+        return 0.1
 
     def activate_agent(self, agents: list) -> None:
         agent = random.choice(agents)

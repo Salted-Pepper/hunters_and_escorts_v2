@@ -53,7 +53,7 @@
     "Defender Type": "COALITION AIRCRAFT",
     "Weapon Name": "PL-11",
     "Weapon Range": 25,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": "INF"
   },
   {
     "Attacker Type": "CN AIRCRAFT",
@@ -317,7 +317,7 @@
     "Defender Type": "CN NAVY",
     "Weapon Name": "JDAM",
     "Weapon Range": 5,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": "INF"
   },
   {
     "Attacker Type": "COALITION AIRCRAFT",

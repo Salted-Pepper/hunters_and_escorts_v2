@@ -70,6 +70,8 @@ class Aircraft(Agent):
         h = 10
         s = cs.sea_state_values.get(sea_state, 0.4)
         r = cs.rcs_dict[agent.air_visibility]
+        if distance < 1:
+            distance = 1
 
         detection_probability = (1 - math.exp(-(k * h * r * s) / distance ** 3))
         # print(f"Detection prob {self} - {agent} is {detection_probability}")
@@ -87,7 +89,7 @@ class Aircraft(Agent):
 
         if self.anti_sub_skill == cs.DET_BASIC:
             max_distance = 5
-        elif self.anti_ship_skill == cs.DET_ADV:
+        elif self.anti_sub_skill == cs.DET_ADV:
             max_distance = 18.5
         else:
             raise ValueError(f"Invalid anti-ship skill for {self.model}")
@@ -107,9 +109,14 @@ class Aircraft(Agent):
         if ((target.agent_type == "ship" and self.anti_ship_skill is not None) or
                 (target.agent_type == "air" and self.anti_air_skill is not None) or
                 (target.agent_type == "sub" and self.anti_sub_skill is not None)):
-            self.mission.change()
-            missions.Attack(self, target)
-            return
+
+            if self.team == 1 and target.combat_type == cs.MERCHANT:
+                self.request_support(target)
+                return
+            else:
+                self.mission.change()
+                missions.Attack(self, target)
+                return
         else:
             self.request_support(target)
 
@@ -144,12 +151,12 @@ class Aircraft(Agent):
             probabilities["nothing"] = 1 - (probabilities["sunk"] + probabilities["ctl"])
             self.anti_ship_ammo -= 1
         elif target.agent_type == "ship":
-            defense_skill = target.anti_air_skill
+            defense_skill = target.missile_defense
             probabilities = data_functions.get_attack_probabilities(self.combat_type, attacker_skill,
                                                                     target.combat_type, defense_skill)
             self.anti_ship_ammo -= 1
         elif target.agent_type == "air":
-            defense_skill = target.anti_air_skill
+            defense_skill = target.missile_defense
             probabilities = data_functions.get_attack_probabilities(self.combat_type, attacker_skill,
                                                                     target.combat_type, defense_skill)
             self.anti_air_ammo -= 1

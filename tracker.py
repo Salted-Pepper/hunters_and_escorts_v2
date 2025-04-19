@@ -24,10 +24,10 @@ class Event:
     def __init__(self, text: str, event_type: str):
         self.text = text
         self.event_type = event_type
-        self.time = cs.world.world_time
+        self.time = round(cs.world.world_time, 3)
         self.record_event()
 
     def record_event(self) -> None:
         app.save_event({'text': self.text,
-                      'event_type': self.event_type,
-                      'time': self.time})
+                        'event_type': self.event_type,
+                        'time': self.time})
