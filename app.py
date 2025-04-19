@@ -62,7 +62,7 @@ def take_time_step(world: World):
 
 def save_time_step(world) -> None:
     global agent_data
-    agent_data[world.world_time] = {"agents": [agent.to_dict() for agent in world.all_agents]}
+    agent_data[round(world.world_time, 2)] = {"agents": [agent.to_dict() for agent in world.all_agents]}
 
 
 def send_ready_signal():
@@ -75,6 +75,7 @@ def send_ready_signal():
 def get_time_info(timestamp) -> None:
     global agent_data
     global events
+    timestamp = round(timestamp, 3)
     # print(f"Requested data for {timestamp}")
     time_data = agent_data[timestamp]
     agents = time_data['agents']

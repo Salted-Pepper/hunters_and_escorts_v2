@@ -116,7 +116,6 @@ def set_attack_probabilities() -> pd.DataFrame:
 
     with open("data/attack_probabilities.json") as file:
         data = json.load(file)
-
     return pd.json_normalize(data)
 
 
@@ -135,7 +134,7 @@ def get_attack_probabilities(attack_type, attack_skill, target_type, target_size
         df = df[((df["Attacker Type"] == attack_type) &
                  (df["Attacker Skill"] == attack_skill) &
                  (df["Defender Type"] == target_type) &
-                 (df["Defender Skill"] == target_size))]
+                 (df["Defender Skill"].str.lower() == target_size))]
 
     if len(df) == 0:
         raise ValueError(f"{attack_type=}, "

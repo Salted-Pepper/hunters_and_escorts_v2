@@ -47,19 +47,22 @@ def settings_page():
         coalition_esc = data.get('coalition_esc')
         show_sim = data.get('show-sim')
         plot_type = data.get('receptor-type')
+        boarding_only = data.get('boarding-only')
         print(f"Updating Settings...")
         settings.simulation_period = float(iterations)
         settings.time_delta = float(time_delta)
         settings.CHINA_SELECTED_LEVEL = int(china_esc)
         settings.COALITION_SELECTED_LEVEL = int(coalition_esc)
-        settings.PLOTTING_MODE = bool(show_sim)
+        settings.PLOTTING_MODE = True if show_sim == 'on' else False
         settings.RECEPTOR_PLOT_PARAMETER = plot_type
+        settings.boarding_only = True if boarding_only == 'on' else False
 
         last_settings_update = time.time()
     current_settings = {"iter_time": settings.simulation_period,
                         "time_delta": settings.time_delta,
                         "china_esc": settings.CHINA_SELECTED_LEVEL,
                         "coa_esc": settings.COALITION_SELECTED_LEVEL,
+                        "boarding_only": settings.boarding_only,
                         "show_sim": settings.PLOTTING_MODE,
                         "receptor_type": settings.RECEPTOR_PLOT_PARAMETER,
                         "time_delta_set": True if settings.simulation_end_time > 0 else False

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from copy import copy
 
 from points import Point
@@ -336,8 +338,16 @@ OTHER_LAND = [KOREA, JEJUDO, PHILIPPINES]
 
 CHINA = Polygon(name="china", points=CHINA_POINTS, color=CHINA_COLOR)
 
+SHARED_ISLANDS = [PENGHU, WANGAN, QIMEI, GREEN_ISLAND, ORCHID, YONAGUNI, ISHIGAKE, MIYAKOJIMA]
 LAND_MASSES = TAIWAN_AND_ISLANDS + JAPAN_AND_ISLANDS + OTHER_LAND
 ALL_MASSES = LAND_MASSES + [CHINA]
+
+
+def check_if_point_in_shared_island(point) -> Polygon | None:
+    for island in SHARED_ISLANDS:
+        if island.contains_point(point):
+            return island
+    return None
 
 
 def set_points_to_bounds(polygon, margin=2) -> Polygon:

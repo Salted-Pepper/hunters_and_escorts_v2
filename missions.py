@@ -2,10 +2,20 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from typing import Type, TYPE_CHECKING
+import datetime
+import logging
+import os
 
 import time
 import tracker
 import constants as cs
+import constant_coords as ccs
+
+date = datetime.date.today()
+logging.basicConfig(level=logging.DEBUG, filename=os.path.join(os.getcwd(), 'logs/mission_log_' + str(date) + '.log'),
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt="%H:%M:%S")
+logger = logging.getLogger("MISSIONS")
+logger.setLevel(logging.DEBUG)
 
 if TYPE_CHECKING:
     from agents import Agent
@@ -23,7 +33,7 @@ class Mission:
         self.mission_type = None
         self.agent = agent
         self.target = target
-        # print(f"{cs.world.world_time} - Setting {agent} to {self} -  (previously {self.agent.previous_mission})")
+        logger.debug(f"{cs.world.world_time} - Setting {agent} to {self} -  (previously {self.agent.previous_mission})")
 
         self.set_mission()
 
@@ -125,20 +135,22 @@ class Track(Mission):
     def __init__(self, agent: Agent, target: Agent):
         super().__init__(agent, target)
         self.mission_type = "track"
+        self.support_requested = False
 
+        logger.debug(f"{agent}")
         if agent.team == target.team:
-            raise ValueError(f"Tracking same team")
+            raise ValueError(f"Tracking same team:\n {agent} tracking {target}")
 
         if target.destroyed:
             raise ValueError(f"{self.agent} tracking destroyed agent  {target}")
+        if target in self.agent.manager.agents_to_detect:
+            self.agent.manager.agents_to_detect.remove(target)
+        self.agent.speed_current = self.agent.speed_max
 
         try:
             self.agent.generate_route(target.location)
         except ValueError as e:
-            raise ValueError(f"{self} Failed to generate route to {target} -\n {e}")
-        self.agent.speed_current = self.agent.speed_max
-
-        self.support_requested = False
+            raise ValueError(f"{self.agent} Failed to generate route to {target} -\n {e}")
 
     def __repr__(self):
         return f"{self.mission_id} - Tracking {self.target.service}-{self.target.agent_id}"
@@ -197,7 +209,7 @@ class Attack(Mission):
         if not self.agent.check_if_valid_target(self.target):
             self.abort()
             return
-
+        logger.debug(f"{self.agent} is attacking {self.target}")
         try:
             self.agent.attempt_to_attack(self.target)
         except ValueError:
@@ -234,12 +246,10 @@ class Observe(Mission):
     def __repr__(self):
         return f"{self.mission_id} Observing {self.agent.assigned_zone}"
 
-    def execute(self, agents_to_observe: list[Agent] = None) -> None:
+    def execute(self) -> None:
         t_0 = time.time()
 
-        if agents_to_observe is None:
-            agents_to_observe = self.agent.manager.agents_to_detect
-        self.agent.observe(agents_to_observe)
+        self.agent.observe(self.agent.manager.agents_to_detect)
 
         tracker.USED_TIME["Observe"] += time.time() - t_0
 
@@ -263,6 +273,9 @@ class Guard(Mission):
     def __init__(self, agent: Agent, target: Agent):
         super().__init__(agent, target)
         self.mission_type = "guard"
+
+        if target in self.agent.manager.agents_to_detect:
+            self.agent.manager.agents_to_detect.remove(target)
 
     def __repr__(self):
         return f"{self.mission_id} Guarding {self.target}"
@@ -311,6 +324,15 @@ class Return(Mission):
 
     def execute(self) -> None:
         t_0 = time.time()
+
+        # Observe as we travel
+        if self.agent.combat_type != cs.MERCHANT:
+            detected_agent = self.agent.observe(self.agent.manager.agents_to_detect, traveling=True)
+
+            if detected_agent:
+                tracker.USED_TIME["Return"] += time.time() - t_0
+                return
+
         outcome = self.agent.move_through_route()
         if outcome == "Reached End Of Route":
             self.agent.enter_base()

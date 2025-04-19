@@ -55,8 +55,9 @@ class Submarine(Agent):
     def sub_detection(self, agent: Agent) -> bool:
         pass
 
-    def observe(self, agents: list[Agent]) -> None:
-        self.make_patrol_move()
+    def observe(self, agents: list[Agent], traveling=False) -> None:
+        if not traveling:
+            self.make_patrol_move()
         agents = self.remove_invalid_targets(agents)
 
         for agent in agents:

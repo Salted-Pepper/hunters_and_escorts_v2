@@ -2,6 +2,9 @@ from __future__ import annotations
 
 import random
 from abc import abstractmethod
+import logging
+import os
+import datetime
 
 import constants as cs
 import data_functions
@@ -12,6 +15,12 @@ from points import Point
 
 import missions
 import tracker
+
+date = datetime.date.today()
+logging.basicConfig(level=logging.DEBUG, filename=os.path.join(os.getcwd(), 'logs/mission_log_' + str(date) + '.log'),
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt="%H:%M:%S")
+logger = logging.getLogger("Ships")
+logger.setLevel(logging.DEBUG)
 
 
 class Ship(Agent):
@@ -56,6 +65,7 @@ class Ship(Agent):
         self.anti_sub_ammo = int(
             model_data.get("Anti-submarine Ammunition", 6)) if self.anti_sub_skill is not None else 0
 
+        self.missile_defense = data_functions.parse_string_input(model_data, "Defense against missiles", cs.ATT_BASIC)
         self.helicopter = True if model_data["helicopter"] == "Y" else False
 
     def attack(self, target, ammo, attacker_skill):
@@ -71,12 +81,12 @@ class Ship(Agent):
             probabilities["nothing"] = 1 - (probabilities["sunk"] + probabilities["ctl"])
             self.anti_ship_ammo -= 1
         elif target.agent_type == "ship":
-            defense_skill = target.anti_ship_skill
+            defense_skill = target.missile_defense
             probabilities = data_functions.get_attack_probabilities(self.combat_type, attacker_skill,
                                                                     target.combat_type, defense_skill)
             self.anti_ship_ammo -= 1
         elif target.agent_type == "air":
-            defense_skill = target.anti_ship_skill
+            defense_skill = target.missile_defense
             probabilities = data_functions.get_attack_probabilities(self.combat_type, attacker_skill,
                                                                     target.combat_type, defense_skill)
             self.anti_air_ammo -= 1
@@ -211,7 +221,7 @@ class Merchant(Ship):
         raise TypeError(f"{self} is unable to attack.")
 
     def is_boarded(self, boarder: Agent) -> None:
-        print(f"{self} got boarded.")
+        logger.debug(f"{self} got boarded.")
         self.mission.abort()
         self.remove_from_missions()
 
@@ -327,23 +337,24 @@ class ChineseShip(Ship):
             target.is_boarded(self)
             missions.Guard(self, target)
             return
-        elif self.armed:
-            outcome = random.choices(["ctl", "sunk", "damaged"], [0.2, 0.2, 0.6])[0]
-            if outcome == "ctl":
-                target.ctl = True
-            elif outcome == "sunk":
-                target.is_destroyed()
-                self.mission.complete()
-                self.return_to_base()
-            elif outcome == "damaged":
-                target.damage += 1
-            return
-        elif self.anti_ship_skill is not None:
-            self.mission.change()
-            missions.Attack(self, target)
-            return
-        else:
-            self.request_support(target)
+        elif not settings.boarding_only:
+            if self.armed:
+                outcome = random.choices(["ctl", "sunk", "damaged"], [0.2, 0.2, 0.6])[0]
+                if outcome == "ctl":
+                    target.ctl = True
+                elif outcome == "sunk":
+                    target.is_destroyed()
+                    self.mission.complete()
+                    self.return_to_base()
+                elif outcome == "damaged":
+                    target.damage += 1
+                return
+            elif self.anti_ship_skill is not None:
+                self.mission.change()
+                missions.Attack(self, target)
+                return
+            else:
+                self.request_support(target)
 
     def attempt_boarding(self, target: Merchant) -> bool:
         resistance_level = target.get_resistance_level()
@@ -426,8 +437,10 @@ class Escort(Ship):
         else:
             return False
 
-    def observe(self, agents: list[Agent]) -> None:
-        self.make_patrol_move()
+    def observe(self, agents: list[Agent], traveling=False) -> None:
+        if not traveling:
+            self.make_patrol_move()
+
         agents = self.remove_invalid_targets(agents)
 
         for agent in agents:

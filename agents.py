@@ -1,8 +1,10 @@
 from __future__ import annotations
 from abc import abstractmethod
 import copy
+import os
+import logging
+import datetime
 
-import constant_coords
 import settings
 import tracker
 from bases import Base
@@ -11,9 +13,16 @@ from points import Point
 import zones
 import routes
 import constants as cs
+import constant_coords as ccs
 
 import missions
-from  ammo import Ammunition
+from ammo import Ammunition
+
+date = datetime.date.today()
+logging.basicConfig(level=logging.DEBUG, filename=os.path.join(os.getcwd(), 'logs/mission_log_' + str(date) + '.log'),
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt="%H:%M:%S")
+logger = logging.getLogger("MISSIONS")
+logger.setLevel(logging.DEBUG)
 
 agent_id = 0
 
@@ -33,6 +42,7 @@ class Agent:
         self.agent_type = None
         self.combat_type = None
         self.dwt = None
+        self.manned = True
 
         # ---- Detection Parameters ----
         self.ship_visibility = None
@@ -46,6 +56,8 @@ class Agent:
         self.anti_ship_skill = None
         self.anti_air_skill = None
         self.anti_sub_skill = None
+
+        self.missile_defense = None
 
         self.anti_ship_ammo = None
         self.anti_air_ammo = None
@@ -134,9 +146,17 @@ class Agent:
             self.route = routes.create_route(start=self.location,
                                              end=destination, team=self.team, air=air)
         except ValueError as e:
+            if self.agent_type != "air":
+                island = ccs.check_if_point_in_shared_island(destination)
+                if island is not None:
+                    alternative_point = min([p for p in island.points], key=lambda x: x.distance_to_point(destination))
+                    self.route = routes.create_route(start=self.location, end=alternative_point, team=self.team)
+                    return
             print(f"Failed to create route for {self} to {destination}. "
                   f"Agent was assigned to {self.assigned_zone}. Team {self.team}")
             raise ValueError(e)
+
+
 
     def set_turn_movement(self) -> None:
         self.movement_left_in_turn = self.speed_current * settings.time_delta
@@ -189,7 +209,7 @@ class Agent:
 
     def can_continue(self) -> bool:
         dist_to_base = self.location.distance_to_point(self.base.location)
-        required_endurance_max = (1.5 * dist_to_base)
+        required_endurance_max = (2 * dist_to_base)
         if required_endurance_max < self.remaining_endurance:
             return True
 
@@ -255,6 +275,9 @@ class Agent:
         for mission in involved_missions:
             mission.remove_agent_from_mission(self)
 
+        if len(self.involved_missions) > 0:
+            raise ValueError(f"Did not clear all missions for {self}")
+
     def check_if_valid_target(self, target) -> bool:
         target_zone = target.get_current_zone()
 
@@ -282,7 +305,7 @@ class Agent:
                 else:
                     return False
             elif rule_value == 3:
-                if target.unmanned:
+                if not target.manned:
                     return True
                 else:
                     return False
@@ -383,12 +406,20 @@ class Agent:
     def sub_detection(self, agent: Agent) -> bool:
         pass
 
-    def observe(self, agents: list[Agent]) -> None:
-        self.make_patrol_move()
+    def observe(self, agents: list[Agent], traveling=False) -> bool:
+        if not traveling:
+            self.make_patrol_move()
+
         agents = self.remove_invalid_targets(agents)
 
         for agent in agents:
             if not agent.activated:
+                continue
+
+            if agent.team == self.team:
+                continue
+
+            if self.location.distance_to_point(agent.location) > 700:
                 continue
 
             if not self.check_if_valid_target(agent):
@@ -412,18 +443,19 @@ class Agent:
             if detected:
                 self.mission.complete()
                 missions.Track(self, agent)
-                return
+                return True
 
         self.spread_pheromones(self.location)
+        return False
 
     def remove_invalid_targets(self, agents: list) -> list:
         agents_to_remove = []
 
         if self.ship_detection_skill is None:
             agents_to_remove.extend([a for a in agents if a.agent_type == "ship" or a.agent_type == cs.MERCHANT])
-        elif self.air_detection_skill is None:
-            agents_to_remove.extend([a for a in agents if a.agent_type == "aircraft"])
-        elif self.sub_detection_skill is None:
+        if self.air_detection_skill is None:
+            agents_to_remove.extend([a for a in agents if a.agent_type == "air"])
+        if self.sub_detection_skill is None:
             agents_to_remove.extend([a for a in agents if a.agent_type == "sub"])
 
         if len(agents_to_remove) > 0:
@@ -435,19 +467,28 @@ class Agent:
     def track(self, target: Agent) -> None:
         pass
 
-    def request_support(self, target) -> None:
+    def request_support(self, target, boarding=False) -> None:
         if self.mission.support_requested:
             return
         # print(f"{self} is requesting support.")
 
         world = cs.world
         if self.team == 1:
-            managers = [world.tw_manager_escorts,
-                        world.jp_manager_escorts,
-                        world.us_manager_escorts]
+            if boarding:
+                managers = [world.tw_manager_escorts,
+                            world.jp_manager_escorts,
+                            world.us_manager_escorts,]
+            else:
+                managers = [world.tw_manager_escorts,
+                            world.jp_manager_escorts,
+                            world.us_manager_escorts,
+                            world.coalition_manager_air]
         elif self.team == 2:
-            managers = [world.china_manager_navy,
-                        world.china_manager_air,]
+            if boarding:
+                managers = [world.china_manager_navy]
+            else:
+                managers = [world.china_manager_navy,
+                            world.china_manager_air,]
         else:
             raise ValueError(f"Invalid team {self.team}")
 
@@ -560,6 +601,7 @@ class Agent:
             raise ValueError(f"Invalid Team {self.team}")
 
     def attempt_to_attack(self, target: Agent) -> None:
+        logger.debug(f"{self} is trying to attack {target}")
         if target.agent_type == "ship" or target.agent_type == cs.MERCHANT:
             if self.anti_ship_ammo == 0:
                 self.abort_attack()
@@ -594,6 +636,7 @@ class Agent:
         ammo = self.select_ammo(viable_ammunition, target, attacker_skill)
         max_distance = ammo.range
 
+        # Handle exception of plane being above island
         self.generate_route(target.location)
         self.move_through_route()
 
@@ -601,6 +644,7 @@ class Agent:
             self.attack(target, ammo, attacker_skill)
 
     def abort_attack(self):
+        logger.debug(f"{self} is aborting attack on {self.mission.target}")
         self.mission.abort()
 
     @staticmethod
@@ -610,8 +654,12 @@ class Agent:
             return options[0]
         else:
             if attacker_skill == cs.ATT_BASIC:
-                options = [a for a in options if a.attacker_skill.lower() == cs.ATT_BASIC]
-            return options[0]
+                filtered_options = [a for a in options if a.attacker_skill.lower() == cs.ATT_BASIC]
+            else:
+                filtered_options = options
+            if len(filtered_options) == 0:
+                raise ValueError(f"Failed to select ammo: {options} - {target} - {attacker_skill}")
+            return filtered_options[0]
 
     @abstractmethod
     def attack(self, target, ammo, attacker_skill) -> None:
