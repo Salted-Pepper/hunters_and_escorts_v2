@@ -61,7 +61,7 @@ class Submarine(Agent):
         agents = self.remove_invalid_targets(agents)
 
         for agent in agents:
-            if agent.destroyed:
+            if agent.world_data:
                 continue
 
             if agent.agent_type == "air":

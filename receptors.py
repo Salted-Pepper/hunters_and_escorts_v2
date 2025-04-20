@@ -16,9 +16,14 @@ from polygons import Polygon
 # logger = logging.getLogger("RECEPTORS")
 # logger.setLevel(logging.DEBUG)
 
+receptor_id = 0
+
 
 class Receptor:
     def __init__(self, point: Point, in_polygon=False):
+        global receptor_id
+        self.receptor_id = receptor_id
+        receptor_id += 1
         self.location = point
         self.visible = True
 
@@ -49,7 +54,13 @@ class Receptor:
     def __repr__(self):
         return (f"Receptor at: {self.location} - with alpha: {self.coalition_pheromones}, "
                 f"beta: {self.china_pheromones}, sea state: {self.sea_state}")
-    
+
+    def to_dict(self) -> dict:
+        return {"receptor_id": self.receptor_id,
+                "x": self.location.x,
+                "y": self.location.y,
+                "sea_state": self.sea_state, }
+
     def in_range_of_point(self, point: Point, radius: float) -> bool:
         if point.distance_to_point(self.location) <= radius:
             return True

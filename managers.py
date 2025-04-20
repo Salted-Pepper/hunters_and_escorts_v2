@@ -111,7 +111,7 @@ class Manager:
         while len(self.requests) > 0 and self.requests[0].action_time <= cs.world.world_time:
             request = self.requests.pop(0)
 
-            if request.target.destroyed:
+            if request.target.world_data:
                 return
 
             # Filter out edge case of ship being boarded in meantime
@@ -213,6 +213,18 @@ class Manager:
                                                    else 1 / len(self.bases)
                                                    for base in self.bases])[0]
 
+    def remove_agents_from_illegal_zones(self) -> None:
+        for agent in self.active_agents:
+            zone = agent.assigned_zone
+            if self.team == 1:
+                if settings.zone_assignment_coalition[agent.service][zone] == 0:
+                    agent.return_to_base()
+            elif self.team == 2:
+                if settings.zone_assignment_hunter[agent.service][zone] == 0:
+                    agent.return_to_base()
+            else:
+                pass
+
     @abstractmethod
     def select_zone_to_patrol(self, agent) -> None:
         pass
@@ -256,7 +268,7 @@ class EscortManager(Manager):
 
     def calc_utilization_rate(self) -> float:
         # TODO: Calculate Utilisation rate properly
-        return 0.02
+        return 0.04
 
     def activate_agent(self, agents: list) -> None:
         agent = random.choice(agents)
@@ -457,7 +469,7 @@ class CoalitionSubManager(Manager):
         self.bases = [Base(name="Okinawa", location=Point(127.737, 26.588), agent_share=1)]
 
     def calc_utilization_rate(self) -> float:
-        return 0.1
+        return 0.2
 
 
 class MerchantManager(Manager):
@@ -566,7 +578,7 @@ class ChinaNavyManager(Manager):
 
     def calc_utilization_rate(self) -> float:
         # TODO: Calculate Utilisation rate properly
-        return 0.1
+        return 0.3
 
     def activate_agent(self, agents: list) -> bool:
         agent = random.choice(agents)
@@ -637,7 +649,7 @@ class ChinaAirManager(Manager):
 
     def calc_utilization_rate(self) -> float:
         # TODO: Calculate Utilisation rate properly
-        return 0.02
+        return 0.04
 
     def activate_agent(self, agents: list) -> bool:
         agent = random.choice(agents)

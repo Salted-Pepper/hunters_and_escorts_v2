@@ -187,6 +187,21 @@ function updatePlot(agents) {
     });
 }
 
+let receptor_nodes = {};
+
+function updateWeather(receptors) {
+
+    if (receptor_nodes.length == 0) {
+        receptors.forEach(receptor => {
+            let
+
+        })
+    }
+
+
+
+}
+
 function updateLogs(events) {
     events = JSON.parse(events);
     console.log(events)
@@ -273,6 +288,7 @@ placeLandmasses(app, landmasses);
 placeBases(app, bases);
 
 socket.on("update_plot", (data) => updatePlot(data));
+socket.on("update_weather", (data) => updateWeather(data));
 socket.on("update_logs", (data) => updateLogs(data));
 socket.on("update_time", (data) => updateTime(data));
 socket.on("completed_simulation", (data) => completedSimulation(data));
