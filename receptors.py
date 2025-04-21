@@ -1,6 +1,8 @@
 # import datetime
 # import logging
 # import os
+from __future__ import annotations
+
 import math
 import numpy as np
 
@@ -59,6 +61,10 @@ class Receptor:
         return {"receptor_id": self.receptor_id,
                 "x": self.location.x,
                 "y": self.location.y,
+                "min_x": self.location.x - cs.GRID_WIDTH * 0.5,
+                "max_x": self.location.x + cs.GRID_WIDTH * 0.5,
+                "min_y": self.location.y - cs.GRID_HEIGHT * 0.5,
+                "max_y": self.location.y + cs.GRID_HEIGHT * 0.5,
                 "sea_state": self.sea_state, }
 
     def in_range_of_point(self, point: Point, radius: float) -> bool:

@@ -111,7 +111,7 @@ class Manager:
         while len(self.requests) > 0 and self.requests[0].action_time <= cs.world.world_time:
             request = self.requests.pop(0)
 
-            if request.target.world_data:
+            if request.target.destroyed:
                 return
 
             # Filter out edge case of ship being boarded in meantime

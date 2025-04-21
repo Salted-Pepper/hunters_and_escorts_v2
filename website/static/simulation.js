@@ -188,18 +188,48 @@ function updatePlot(agents) {
 }
 
 let receptor_nodes = {};
+let sea_state_colour = {0: "0xBCD2E8",
+                        1: "0x91BAD6",
+                        2: "0x73A5C6",
+                        3: "0x528AAE",
+                        4: "0x2E5984",
+                        5: "0x1E3F66",
+                        6: "0x183352",
+                        };
+const isEmpty = obj => !Object.keys(obj).length;
 
 function updateWeather(receptors) {
-
-    if (receptor_nodes.length == 0) {
+    console.log("Length is ", receptor_nodes.length)
+    console.log("receptors are ", receptors)
+    if (isEmpty(receptor_nodes)) {
+        console.log("Creating Initial Receptor Nodes")
         receptors.forEach(receptor => {
-            let
-
-        })
+            let [min_x, min_y] = lonLatToCanvas(receptor.min_x, receptor.min_y);
+            let [max_x, max_y] = lonLatToCanvas(receptor.max_x, receptor.max_y);
+            const width = max_x - min_x;
+            const height = min_y - max_y;
+            let rect = new PIXI.Graphics();
+            rect.beginFill(sea_state_colour[receptor.sea_state]);
+            rect.drawRect(min_x, min_y, width, height);
+            console.log("Creating rectangle at ", min_x, min_y, width, height)
+            rect.endFill();
+            receptor_nodes[receptor.receptor_id] = rect;
+            app.stage.addChild(rect)
+            app.stage.setChildIndex(rect, 0)
+        });
     }
-
-
-
+    else {
+        receptors.forEach(receptor => {
+            rect = receptor_nodes[receptor.receptor_id];
+            let [min_x, min_y] = lonLatToCanvas(receptor.min_x, receptor.min_y);
+            let [max_x, max_y] = lonLatToCanvas(receptor.max_x, receptor.max_y);
+            const width = max_x - min_x;
+            const height = min_y - max_y;
+            rect.beginFill(sea_state_colour[receptor.sea_state]);
+            rect.drawRect(min_x, min_y, width, height);
+            rect.endFill();
+        });
+    }
 }
 
 function updateLogs(events) {

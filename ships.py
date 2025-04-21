@@ -451,7 +451,7 @@ class Escort(Ship):
         agents = self.remove_invalid_targets(agents)
 
         for agent in agents:
-            if agent.world_data:
+            if agent.destroyed:
                 continue
 
             if self.location.distance_to_point(agent.location) > cs.COALITION_NAVY_MAX_DETECTION_RANGE:

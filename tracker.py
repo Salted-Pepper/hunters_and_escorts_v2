@@ -31,7 +31,7 @@ def log_event(service: str, event_type):
 
 def export_agent_data():
     global agent_data
-    pd.DataFrame(agent_data).to_csv('logs/event_output.csv', index=False)
+    pd.DataFrame(agent_data).to_csv('logs/event_output.csv')
 
 
 class Event:
