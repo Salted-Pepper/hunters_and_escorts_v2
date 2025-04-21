@@ -115,6 +115,7 @@ class World:
         self.jp_manager_escorts.ammunition = coalition_ship_ammo
         self.us_manager_escorts.ammunition = coalition_ship_ammo
         self.coalition_manager_air.ammunition = coalition_air_ammo
+        self.coalition_manager_sub.ammunition = coalition_sub_ammo
 
         self.china_manager_air.ammunition = data_functions.get_ammo_info("CN AIRCRAFT")
         self.china_manager_navy.ammunition = data_functions.get_ammo_info("CN NAVY")
@@ -128,6 +129,10 @@ class World:
             weather.update_sea_states(self.receptor_grid)
 
         tracker.USED_TIME["Weather"] += time.time() - t_0
+
+    def remove_agents_from_illegal_zones(self):
+        for manager in self.managers:
+            manager.remove_agents_from_illegal_zones()
 
     def simulate_step(self) -> None:
         self.update_weather_conditions()

@@ -129,11 +129,10 @@ JAPAN_POINTS = [Point(130.6680, 30.9984),
                 Point(145.8152, 43.3725),
                 Point(145.2201, 43.6191),
                 Point(145.3586, 44.3470),
+                Point(144.2777, 44.1120),
+                Point(141.9266, 45.5306),
 
-                Point(143, 60.000),
-                # Point(144.2777, 44.1120),
-                # Point(141.9266, 45.5306),
-                # Point(141.0040, 45.4560),
+                Point(141.0040, 50.0),
 
                 Point(141.6954, 44.3112),
                 Point(140.3330, 43.3142),
@@ -206,29 +205,39 @@ MEDIAN_ZONE = [Point(110.000, 40.000), Point(120.647, 40.000),
                Point(122.000, 27.000), Point(118.000, 23.000),
                Point(110.000, 19.949)]
 
-A_ALL_ZONES = [Point(cs.MIN_LAT, cs.MIN_LONG),
-               Point(cs.MIN_LAT, cs.MAX_LONG),
-               Point(cs.MAX_LAT, cs.MAX_LONG),
-               Point(cs.MAX_LAT, cs.MIN_LONG)]
+A_ALL_ZONES = [Point(110.000, 15.000),
+               Point(150.000, 15.000),
+               Point(150.000, 45.000),
+               Point(110.000, 45.000)]
 
-B_TAIWAN_CONT = [Point(121.492, 25.690),
-                 Point(122.466, 25.005),
-                 Point(121.316, 21.800),
-                 Point(120.610, 21.466),
-                 Point(119.532, 22.978),
-                 Point(119.663, 23.907),
-                 Point(120.539, 25.120)]
+B_TAIWAN_CONT = [Point(121, 25.15),
+                 Point(122.1, 25.7),
+                 Point(122.1, 25.005),
+                 Point(121.6, 23.45),
+                 Point(121.65, 21.9),
+                 Point(120.8150, 21.6575),
+                 Point(119.2, 23.4133)]
 
-C_TAIWAN_TERRITORIAL = [Point(121.564, 25.491),
-                        Point(122.263, 24.978),
-                        Point(121.140, 21.897),
-                        Point(120.617, 21.686),
-                        Point(119.814, 22.966),
-                        Point(119.885, 23.764),
-                        Point(120.715, 25.019)]
+C_TAIWAN_TERRITORIAL = [Point(122.0000, 25.0100),  # from https://2009-2017.state.gov/documents/organization/57674.pdf
+                        Point(122.0650, 25.6300),  #deleted several points to save computational time
+                        Point(121.5067, 25.2950),
+                        Point(121.0900, 25.0700),
+                        Point(119.3117, 23.4133),
+                        Point(120.3483, 22.3183),
+                        Point(120.8150, 21.7575),
+                        Point(121.6017, 21.9450),
+                        Point(121.5088, 23.4867),
+                        Point(121.8950, 24.5983),
+                        Point(121.9550, 24.8317)]
 
 D_JAPAN_CONT = [Point(140.000, 45.000),
                 Point(140.635, 45.000),
+
+                # Japan peak to stop routing
+                Point(141.602, 45.0),
+                Point(141, 50.0),
+                Point(142, 45.0),
+
                 Point(148.000, 45.000),
                 Point(140.221, 31.421),
                 Point(137.458, 33.581),
@@ -240,44 +249,55 @@ D_JAPAN_CONT = [Point(140.000, 45.000),
                 Point(129.153, 34.812),
                 Point(132.970, 36.676),
                 Point(137.879, 38.473),
-                Point(138.837, 42.099),]
+                Point(138.837, 42.099), ]
 
-E_JAPAN_TERRITORIAL = [Point(143, 60.000), Point(145.27, 44.99),
-                       Point(145.8152, 43.3725), Point(144.878, 41.632),
+E_JAPAN_TERRITORIAL = [Point(146.879, 45.000), Point(144.878, 41.632),
                        Point(139.942, 31.876), Point(138.191, 34.225),
                        Point(133.229, 32.386), Point(131.388, 30.395),
                        Point(128.040, 25.920), Point(126.500, 26.315),
                        Point(128.673, 27.954), Point(129.665, 30.897),
                        Point(128.401, 32.574), Point(129.220, 34.776),
                        Point(133.136, 36.475), Point(138.135, 38.341),
-                       Point(139.163, 42.120), Point(141.74, 45.0)]
+                       Point(139.163, 42.120), Point(140.920, 45.000),
+                       # Japan peak to stop routing
+                       Point(141.602, 45.0),
+                       Point(141, 50.0),
+                       Point(142, 45.0), ]
 
 F_FILIPINO_CONT = [Point(119.623, 15.000), Point(119.376, 16.507),
-                   Point(121.346, 20.987), Point(122.350, 20.841),
+                   Point(121.946, 21.125),  #from https://www.marineregions.org/documents/bulletin70e.pdf
                    Point(122.920, 17.135), Point(122.574, 15.000)]
 
 G_FILIPINO_TERRITORIAL = [Point(119.845, 15.000), Point(119.586, 16.420),
-                          Point(121.569, 20.907), Point(122.140, 20.837),
+                          Point(121.946, 21.125),
                           Point(122.730, 17.131), Point(122.368, 15.000)]
 
 H_OUTSIDE_10_DASH = [Point(124.152, 45.000), Point(124.152, 39.734),
                      Point(122.91, 34.89), Point(125.95, 30.62),
                      Point(125.02, 28.25), Point(125.55, 26.01),
-                     Point(122.87, 25.26), Point(122.61, 24.47),
-                     Point(122.48, 22.27), Point(116.41, 17.32),
+                     Point(122.87, 25.26), Point(122.7, 24.5),
+                     Point(122.48, 22.27), Point(121.946, 21.125),
+                     Point(116.41, 17.32),
                      Point(116.28, 15.00), Point(150.000, 15.000),
                      Point(150.000, 45.000)]
 
-I_INSIDE_10_DASH = [Point(120.393, 28.055), Point(122.87, 25.26),
-                    Point(122.61, 24.47), Point(122.48, 22.27),
+I_INSIDE_10_DASH = [Point(120.393, 28.055), Point(122.57, 26.91),
+                    Point(122.87, 25.26),
+                    Point(122.7, 24.5), Point(122.48, 22.27),
+                    Point(121.946, 21.125),
                     Point(120.437, 20.874), Point(116.561, 23.397)]
 
-J_TAIWAN_FILIPINO = [Point(121.326, 21.643), Point(121.606, 21.069),
-                     Point(120.966, 19.487), Point(120.422, 21.672)]
+J_TAIWAN_FILIPINO = [Point(121.6017, 21.9450), Point(121.946, 21.125),
+                     Point(120.966, 19.3), Point(120.8150, 21.7575)]
 
-K_TAIWAN_JAPAN = [Point(122.328, 25.218), Point(122.910, 25.200),
-                  Point(122.611, 24.464), Point(122.405, 23.334),
-                  Point(121.870, 23.334), Point(122.231, 24.503)]
+K_TAIWAN_JAPAN = [Point(122.87, 25.26),
+                  Point(122.7, 24.5),
+                  Point(122.6, 23.4867),
+                  Point(121.5088, 23.4867),
+                  Point(121.8950, 24.5983),
+                  Point(122.0000, 25.0100),
+                  Point(122.0650, 25.6300),
+                  Point(122.0650, 25.6300)]
 
 L_INSIDE_MEDIAN_LINE = [Point(110, 45), Point(120.647, 45), Point(123, 32), Point(122, 27),
                         Point(118, 23), Point(110, 19.949)]
@@ -290,17 +310,44 @@ N_HOLDING_ZONE = [Point(126.0800, 22.8486),
                   Point(124.4109, 21.9493)]
 
 P_PRIMARY_HUNTING_ZONE = [
-    Point(122.263, 24.978),
+    Point(122.0000, 25.0100),
+    Point(122.0650, 25.6300),
+    Point(122.57, 26.91),
     Point(122.87, 25.26),
-    Point(122.61, 24.47),
+    Point(122.7, 24.5),
     Point(122.48, 22.27),
+    Point(121.946, 21.125),
     Point(120.437, 20.874),
-    Point(121.140, 21.897)
+    Point(120.8150, 21.7575),
+    Point(121.6017, 21.9450),
+    Point(121.5088, 23.4867),
+    Point(121.8950, 24.5983),
 ]
 
-ALL_ZONES = [A_ALL_ZONES, B_TAIWAN_CONT, C_TAIWAN_TERRITORIAL, D_JAPAN_CONT, E_JAPAN_TERRITORIAL, F_FILIPINO_CONT,
-             G_FILIPINO_TERRITORIAL, H_OUTSIDE_10_DASH, I_INSIDE_10_DASH, J_TAIWAN_FILIPINO, K_TAIWAN_JAPAN,
-             L_INSIDE_MEDIAN_LINE, N_HOLDING_ZONE]
+Q_SECOND_JAPAN = [
+    Point(122.7, 24.5),
+    Point(123, 24.7),
+    Point(125.4, 25.2),
+    Point(125.7, 24.75),
+    Point(123.75, 23.85)
+]
+
+ALL_ZONES = [A_ALL_ZONES,
+             B_TAIWAN_CONT,
+             C_TAIWAN_TERRITORIAL,
+             D_JAPAN_CONT,
+             E_JAPAN_TERRITORIAL,
+             F_FILIPINO_CONT,
+             G_FILIPINO_TERRITORIAL,
+             H_OUTSIDE_10_DASH,
+             I_INSIDE_10_DASH,
+             J_TAIWAN_FILIPINO,
+             K_TAIWAN_JAPAN,
+             L_INSIDE_MEDIAN_LINE,
+             N_HOLDING_ZONE,
+             P_PRIMARY_HUNTING_ZONE,
+             Q_SECOND_JAPAN
+             ]
 
 # Landmasses
 TAIWAN_COLOR = "0x015417"
@@ -373,7 +420,3 @@ def fix_point_to_edge(point: Point, margin) -> None:
         point.y = cs.MIN_LONG + margin
     elif point.y > cs.MAX_LONG - margin:
         point.y = cs.MAX_LONG - margin
-
-# TODO: Check if this is needed (probably better to simplify manually
-# for landmass in ALL_MASSES:
-#     set_points_to_bounds(landmass, margin=2)

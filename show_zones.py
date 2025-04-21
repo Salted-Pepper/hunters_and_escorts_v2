@@ -19,7 +19,8 @@ TAIWAN_POINTS = [Point(120.71, 21.93), Point(120.86, 21.90),
                  Point(120.73, 24.60), Point(120.18, 23.80),
                  Point(120.04, 23.10), Point(120.32, 22.54)]
 
-ORCHID_ISLAND_POINTS = [Point(121.50, 22.08), Point(121.57, 22.09), #nudged to fit within the imprecise territorial waters
+ORCHID_ISLAND_POINTS = [Point(121.50, 22.08), Point(121.57, 22.09),
+                        #nudged to fit within the imprecise territorial waters
                         Point(121.57, 22.04),
                         Point(121.54, 22.03),
                         Point(121.50, 22.06)]
@@ -36,7 +37,7 @@ WANGAN_POINTS = [Point(119.49, 23.36), Point(119.49, 23.39),
                  Point(119.52, 23.37), Point(119.52, 23.37),
                  Point(119.51, 23.35)]
 
-QIMEI_POINTS = [Point(119.65, 23.22), Point(119.63, 23.19), #nudged to fit within the imprecise territorial waters
+QIMEI_POINTS = [Point(119.65, 23.22), Point(119.63, 23.19),  #nudged to fit within the imprecise territorial waters
                 Point(119.61, 23.21)]
 
 YONAGUNI_POINTS = [Point(122.93, 24.45), Point(122.96, 24.47),
@@ -97,7 +98,7 @@ KOREA_POINTS = [Point(126.1105936433172, 34.382635296628266),
                 Point(129.7479976860726, 40.85492641510266),
                 Point(129.6349151828484, 41.51024592280302),
                 Point(130.65265771186637, 42.30134275308864),
-                Point(129.97416269252105, 43.02478186744697),  # N Korea
+                Point(129.97416269252105, 50.0),  # N Korea
                 Point(124.12779727582893, 39.81192015777447),
                 Point(125.2925470590384, 39.50722297163861),
                 Point(124.68190154162761, 38.10617579665901),
@@ -135,7 +136,9 @@ JAPAN_POINTS = [Point(130.6680, 30.9984),
                 Point(145.3586, 44.3470),
                 Point(144.2777, 44.1120),
                 Point(141.9266, 45.5306),
-                Point(141.0040, 45.4560),
+
+                Point(141.0040, 50.0),
+
                 Point(141.6954, 44.3112),
                 Point(140.3330, 43.3142),
                 Point(139.4117, 42.1322),
@@ -187,9 +190,9 @@ CHINA_POINTS = [Point(108.6931, 18.5089),
                 Point(122.1853, 40.4663),
                 Point(121.3314, 39.7643),
                 Point(124.2560, 39.8955),
-                Point(129.9952, 42.9705),
-                Point(117.9813, 43.5329),
-                Point(108.6931, 41.8955)]
+                Point(129.9952, 45),
+                Point(117.9813, 45),
+                Point(108.6931, 45.0)]
 
 PHILIPPINES_POINTS = [Point(120.035, 15.000),
                       Point(119.709, 16.256),
@@ -202,7 +205,6 @@ PHILIPPINES_POINTS = [Point(120.035, 15.000),
                       Point(122.174, 18.597),
                       Point(122.455, 17.125),
                       Point(121.499, 15.000)]
-
 
 landmasses = [TAIWAN_POINTS, ORCHID_ISLAND_POINTS, GREEN_ISLAND_POINTS,
               PENGHU_COUNTRY_POINTS, WANGAN_POINTS, QIMEI_POINTS, YONAGUNI_POINTS, TAKETOMI_POINTS,
@@ -225,20 +227,26 @@ B_TAIWAN_CONT = [Point(121, 25.15),
                  Point(120.8150, 21.6575),
                  Point(119.2, 23.4133)]
 
-C_TAIWAN_TERRITORIAL = [Point(122.0000, 25.0100), # from https://2009-2017.state.gov/documents/organization/57674.pdf
-Point(122.0650, 25.6300), #deleted several points to save computational time
-Point(121.5067, 25.2950),
-Point(121.0900, 25.0700),
-Point(119.3117, 23.4133),
-Point(120.3483, 22.3183),
-Point(120.8150, 21.7575),
-Point(121.6017, 21.9450),
-Point(121.5088, 23.4867),
-Point(121.8950, 24.5983),
-Point(121.9550, 24.8317)]
+C_TAIWAN_TERRITORIAL = [Point(122.0000, 25.0100),  # from https://2009-2017.state.gov/documents/organization/57674.pdf
+                        Point(122.0650, 25.6300),  #deleted several points to save computational time
+                        Point(121.5067, 25.2950),
+                        Point(121.0900, 25.0700),
+                        Point(119.3117, 23.4133),
+                        Point(120.3483, 22.3183),
+                        Point(120.8150, 21.7575),
+                        Point(121.6017, 21.9450),
+                        Point(121.5088, 23.4867),
+                        Point(121.8950, 24.5983),
+                        Point(121.9550, 24.8317)]
 
 D_JAPAN_CONT = [Point(140.000, 45.000),
                 Point(140.635, 45.000),
+
+                # Japan peak to stop routing
+                Point(141.602, 45.0),
+                Point(141, 50.0),
+                Point(142, 45.0),
+
                 Point(148.000, 45.000),
                 Point(140.221, 31.421),
                 Point(137.458, 33.581),
@@ -250,7 +258,7 @@ D_JAPAN_CONT = [Point(140.000, 45.000),
                 Point(129.153, 34.812),
                 Point(132.970, 36.676),
                 Point(137.879, 38.473),
-                Point(138.837, 42.099),]
+                Point(138.837, 42.099), ]
 
 E_JAPAN_TERRITORIAL = [Point(146.879, 45.000), Point(144.878, 41.632),
                        Point(139.942, 31.876), Point(138.191, 34.225),
@@ -259,10 +267,14 @@ E_JAPAN_TERRITORIAL = [Point(146.879, 45.000), Point(144.878, 41.632),
                        Point(128.673, 27.954), Point(129.665, 30.897),
                        Point(128.401, 32.574), Point(129.220, 34.776),
                        Point(133.136, 36.475), Point(138.135, 38.341),
-                       Point(139.163, 42.120), Point(140.920, 45.000)]
+                       Point(139.163, 42.120), Point(140.920, 45.000),
+                       # Japan peak to stop routing
+                       Point(141.602, 45.0),
+                       Point(141, 50.0),
+                       Point(142, 45.0), ]
 
 F_FILIPINO_CONT = [Point(119.623, 15.000), Point(119.376, 16.507),
-                   Point(121.946, 21.125), #from https://www.marineregions.org/documents/bulletin70e.pdf
+                   Point(121.946, 21.125),  #from https://www.marineregions.org/documents/bulletin70e.pdf
                    Point(122.920, 17.135), Point(122.574, 15.000)]
 
 G_FILIPINO_TERRITORIAL = [Point(119.845, 15.000), Point(119.586, 16.420),
@@ -288,11 +300,15 @@ J_TAIWAN_FILIPINO = [Point(121.6017, 21.9450), Point(121.946, 21.125),
                      Point(120.966, 19.3), Point(120.8150, 21.7575)]
 
 K_TAIWAN_JAPAN = [Point(122.87, 25.26),
-                  Point(122.7, 24.5), Point(122.6, 23.4867),
-                  Point(121.5088, 23.4867), Point(121.9550, 24.8317),
+                  Point(122.7, 24.5),
+                  Point(122.6, 23.4867),
+                  Point(121.5088, 23.4867),
+                  Point(121.8950, 24.5983),
+                  Point(122.0000, 25.0100),
+                  Point(122.0650, 25.6300),
                   Point(122.0650, 25.6300)]
 
-L_INSIDE_MEDIAN_LINE = [Point(110, 45), Point(120.647, 45), Point(123, 32), Point(122, 27), 
+L_INSIDE_MEDIAN_LINE = [Point(110, 45), Point(120.647, 45), Point(123, 32), Point(122, 27),
                         Point(118, 23), Point(110, 19.949)]
 
 N_HOLDING_ZONE = [Point(126.0800, 22.8486),
@@ -303,7 +319,7 @@ N_HOLDING_ZONE = [Point(126.0800, 22.8486),
                   Point(124.4109, 21.9493)]
 
 P_PRIMARY_HUNTING_ZONE = [
-    Point(121.9550, 24.8317),
+    Point(122.0000, 25.0100),
     Point(122.0650, 25.6300),
     Point(122.57, 26.91),
     Point(122.87, 25.26),
@@ -313,15 +329,16 @@ P_PRIMARY_HUNTING_ZONE = [
     Point(120.437, 20.874),
     Point(120.8150, 21.7575),
     Point(121.6017, 21.9450),
-    Point(121.5088, 23.4867)
+    Point(121.5088, 23.4867),
+    Point(121.8950, 24.5983),
 ]
 
 Q_SECOND_JAPAN = [
     Point(122.7, 24.5),
     Point(123, 24.7),
-    Point(125.4,25.2),
-    Point(125.7,24.75),
-    Point(123.75,23.85)
+    Point(125.4, 25.2),
+    Point(125.7, 24.75),
+    Point(123.75, 23.85)
 ]
 
 zones = [A_ALL_ZONES,
@@ -349,9 +366,9 @@ fig, ax = plt.subplots(figsize=(8, 8))
 def add_polygon(ax, points, color, label='', is_zone: bool = False):
     p = [point.to_tuple() for point in points]
     if is_zone:
-        polygon = Polygon(p, closed=True, edgecolor=color, fill=False, linewidth=2, label=label, alpha=1, 
+        polygon = Polygon(p, closed=True, edgecolor=color, fill=False, linewidth=2, label=label, alpha=1,
                           linestyle="--")
-        surface = Polygon(p, closed=True, edgecolor=color, color=color, fill=True, linewidth=0, alpha=0.1,)
+        surface = Polygon(p, closed=True, edgecolor=color, color=color, fill=True, linewidth=0, alpha=0.1, )
         ax.add_patch(surface)
     else:
         polygon = Polygon(p, closed=True, edgecolor=color, color=color, fill=True, linewidth=2, label=label)
@@ -363,10 +380,9 @@ for landmass in landmasses:
     add_polygon(ax, landmass, 'grey')
 
 colors = list(plt.get_cmap('tab20').colors)
-names = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "N", "P","Q", "Q_SECOND"]
+names = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "N", "P", "Q", "Q_SECOND"]
 for zone in zones:
     add_polygon(ax, zone, colors.pop(0), is_zone=True, label=names.pop(0))
-
 
 # Set plot limits
 ax.set_xlim(105, 150)

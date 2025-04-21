@@ -12,7 +12,8 @@ from world import World
 app = create_app()
 socket = SocketIO(app)
 
-agent_data = {}
+world_data = {}
+weather_data = {}
 events = []
 
 
@@ -43,8 +44,15 @@ def handle_connect():
         cs.client_connected = True
 
 
+@socket.on('disconnect')
+def handle_disconnect():
+    from tracker import export_agent_data
+    export_agent_data()
+
+
 @socket.on('start')
 def start_simulation():
+    cs.world.remove_agents_from_illegal_zones()
     cs.simulation_running = True
     cs.world.time_delta = settings.time_delta
     settings.simulation_end_time += settings.simulation_period
@@ -61,8 +69,11 @@ def take_time_step(world: World):
 
 
 def save_time_step(world) -> None:
-    global agent_data
-    agent_data[round(world.world_time, 2)] = {"agents": [agent.to_dict() for agent in world.all_agents]}
+    global world_data
+    global weather_data
+    world_data[round(world.world_time, 2)] = {"agents": [agent.to_dict() for agent in world.all_agents],
+                                              "weather": [receptor.to_dict() for
+                                                          receptor in world.receptor_grid.receptors]}
 
 
 def send_ready_signal():
@@ -73,13 +84,14 @@ def send_ready_signal():
 
 @socket.on('request_timestamp_data')
 def get_time_info(timestamp) -> None:
-    global agent_data
+    global world_data
     global events
     timestamp = round(timestamp, 3)
-    # print(f"Requested data for {timestamp}")
-    time_data = agent_data[timestamp]
+    time_data = world_data[timestamp]
     agents = time_data['agents']
+    weather = time_data['weather']
     socket.emit('update_plot', agents)
+    socket.emit('update_weather', weather)
     socket.emit('update_time', timestamp)
     socket.emit('update_logs', json.dumps(events))
 

@@ -102,8 +102,11 @@ class Ship(Agent):
             self.return_to_base()
         elif outcome == "ctl":
             target.CTL = True
+            tracker.log_event(self.service, "CTL")
         elif outcome == "nothing":
             if target.combat_type == cs.MERCHANT:
+                if target.damage == 0:
+                    tracker.log_event(self.service, "damaged")
                 target.damage += 1
         else:
             raise ValueError(f"Unknown outcome {outcome}")
@@ -191,6 +194,7 @@ class Merchant(Ship):
             self.set_up_for_maintenance()
             tracker.Event(text=f"Merchant {self.agent_id} reached {self.base.name}",
                           event_type="Merchant Arrived")
+            tracker.log_event(self.service, "arrived")
         else:
             tracker.Event(text=f"Merchant {self.agent_id} has been seized.",
                           event_type="Merchant Seized")
@@ -208,7 +212,7 @@ class Merchant(Ship):
     def sub_detection(self, agent: Agent) -> bool:
         return False
 
-    def observe(self, agents: list[Agent]) -> None:
+    def observe(self, agents: list[Agent], traveling=False) -> None:
         pass
 
     def track(self, target: Agent) -> None:
@@ -342,11 +346,14 @@ class ChineseShip(Ship):
                 outcome = random.choices(["ctl", "sunk", "damaged"], [0.2, 0.2, 0.6])[0]
                 if outcome == "ctl":
                     target.ctl = True
+                    tracker.log_event(self.service, "CTL")
                 elif outcome == "sunk":
                     target.is_destroyed()
                     self.mission.complete()
                     self.return_to_base()
                 elif outcome == "damaged":
+                    if target.damage == 0:
+                        tracker.log_event(self.service, "damaged")
                     target.damage += 1
                 return
             elif self.anti_ship_skill is not None:

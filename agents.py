@@ -258,6 +258,7 @@ class Agent:
         else:
             identifier = "Merchant"
 
+        tracker.log_event(self.service, "destroyed")
         tracker.Event(text=f"{self.agent_id} - {self.service} has been {type_of_event}",
                       event_type=f"{identifier} {type_of_event}")
 
