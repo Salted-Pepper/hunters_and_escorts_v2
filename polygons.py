@@ -34,7 +34,7 @@ class Polygon:
                 "coords": self.coords}
 
     def contains_point(self, point: Point) -> bool:
-        if self.shapely.contains(point.shapely):
+        if self.shrunk.contains(point.shapely):
             return True
         else:
             return False

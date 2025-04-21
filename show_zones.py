@@ -227,6 +227,18 @@ B_TAIWAN_CONT = [Point(121, 25.15),
                  Point(120.8150, 21.6575),
                  Point(119.2, 23.4133)]
 
+# C_TAIWAN_TERRITORIAL = [Point(122.0000, 25.0100),  # from https://2009-2017.state.gov/documents/organization/57674.pdf
+#                         Point(122.0650, 25.6300),  #deleted several points to save computational time
+#                         Point(121.5067, 25.2950),
+#                         Point(121.0900, 25.0700),
+#                         Point(119.3117, 23.4133),
+#                         Point(120.3483, 22.3183),
+#                         Point(120.8150, 21.7575),
+#                         Point(121.6017, 21.9450),
+#                         Point(121.5088, 23.4867),
+#                         Point(121.8950, 24.5983),
+#                         Point(121.9550, 24.8317)]
+
 C_TAIWAN_TERRITORIAL = [Point(122.0000, 25.0100),  # from https://2009-2017.state.gov/documents/organization/57674.pdf
                         Point(122.0650, 25.6300),  #deleted several points to save computational time
                         Point(121.5067, 25.2950),
@@ -319,18 +331,18 @@ N_HOLDING_ZONE = [Point(126.0800, 22.8486),
                   Point(124.4109, 21.9493)]
 
 P_PRIMARY_HUNTING_ZONE = [
-    Point(122.0000, 25.0100),
-    Point(122.0650, 25.6300),
+    Point(122.1, 25.005),
+    Point(122.1, 25.700),
     Point(122.57, 26.91),
     Point(122.87, 25.26),
     Point(122.7, 24.5),
     Point(122.48, 22.27),
     Point(121.946, 21.125),
     Point(120.437, 20.874),
-    Point(120.8150, 21.7575),
-    Point(121.6017, 21.9450),
-    Point(121.5088, 23.4867),
-    Point(121.8950, 24.5983),
+    Point(120.8150, 21.6575),
+    Point(121.65, 21.9),
+    Point(121.6, 23.45),
+    # Point(121.8950, 24.5983),
 ]
 
 Q_SECOND_JAPAN = [
@@ -387,6 +399,7 @@ for zone in zones:
 # Set plot limits
 ax.set_xlim(105, 150)
 ax.set_ylim(10, 50)
+ax.scatter(122.06457447091597, 25.625941107198543, color="purple")
 
 # Labels and legend
 ax.set_xlabel('Longitude')

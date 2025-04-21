@@ -156,8 +156,6 @@ class Agent:
                   f"Agent was assigned to {self.assigned_zone}. Team {self.team}")
             raise ValueError(e)
 
-
-
     def set_turn_movement(self) -> None:
         self.movement_left_in_turn = self.speed_current * settings.time_delta
         if self.movement_left_in_turn is None:
@@ -282,11 +280,6 @@ class Agent:
     def check_if_valid_target(self, target) -> bool:
         target_zone = target.get_current_zone()
 
-        # if (self.agent_type == "ship" or self.agent_type == "sub") and target.agent_type == "air":
-        #     for mass in constant_coords.ALL_MASSES:
-        #         if mass.contains_point(target.location):
-        #             return False
-
         if self.team == 1:
             # if coalition, it depends on the r_o_e
             rules = settings.coalition_r_o_e_rules
@@ -298,6 +291,7 @@ class Agent:
             elif target_zone == zones.ZONE_N:
                 target_zone = zones.ZONE_H
             rule_value = rules[self.service][target_zone.name]
+            logger.debug(f"Service: {self.service} - Target: {target} in {target_zone} - rule value is {rule_value}")
             if rule_value == 1:
                 return True
             elif rule_value == 2:
@@ -322,6 +316,8 @@ class Agent:
                                   (zone_rules[self.service][zones.ZONE_A] > 0 and
                                    target_zone not in settings.HUNTER_ILLEGAL_ZONES)) else False
             valid_target = target_rules[self.service][target.service]
+            logger.debug(f"Service: {self.service} - {target} in {target_zone} - "
+                         f"Valid zone: {valid_zone}, Valid Target: {valid_target}")
 
             if valid_zone and valid_target:
                 return True
