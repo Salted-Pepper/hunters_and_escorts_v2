@@ -397,9 +397,8 @@ for zone in zones:
     add_polygon(ax, zone, colors.pop(0), is_zone=True, label=names.pop(0))
 
 # Set plot limits
-ax.set_xlim(105, 150)
-ax.set_ylim(10, 50)
-ax.scatter(122.06457447091597, 25.625941107198543, color="purple")
+ax.set_xlim(110, 140)
+ax.set_ylim(15, 42)
 
 # Labels and legend
 ax.set_xlabel('Longitude')

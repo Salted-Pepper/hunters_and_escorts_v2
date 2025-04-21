@@ -308,6 +308,8 @@ class Agent:
                 return False
 
         elif self.team == 2:
+            if target_zone in settings.HUNTER_ILLEGAL_ZONES:
+                return False
             # if china, it depends on assigned and legal zones and targeting
             zone_rules = settings.zone_assignment_hunter
             target_rules = settings.hunter_target_rules

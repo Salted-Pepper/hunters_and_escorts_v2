@@ -1,5 +1,5 @@
 function createCoalitionTable() {
-    let container = document.querySelector(".centered-container");
+    let container = document.querySelector(".right-shifted-centered-container");
     if (!container) {
         console.error("Centered container not found.");
         return;

@@ -8,6 +8,25 @@
   padding: 30px 100px 0 100px;
 }
 
+.right-shifted-centered-container {
+  float: center;
+  margin-left: 800px;
+  width: 1000px;
+  background-color: #f5f5f5;
+  padding: 30px 50px 0 100px;
+}
+
+.zone-map-container {
+  margin-left: 100px;
+  width: 800px;
+  background-color: #f5f5f5;
+  float: left;
+  padding-left: 30px;
+  padding-bottom: 120px;
+  padding-right: 30px;
+  padding-top: 20px;
+}
+
 .larger-centered-container {
   margin: auto;
   width: 1000px;

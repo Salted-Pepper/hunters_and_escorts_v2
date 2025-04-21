@@ -50,50 +50,61 @@
         }
     }
 </script>
+<div>
+    <div class="zone-map-container">
+        <br>
+        <br>
+        <br>
+        <img src="static/assets/zones.png" width="700" height="700">
+        <br>
+        <br>
+        <br>
+    </div>
 
-<div class="centered-container">
-    <h5 align="center">Agent Assignment</h5>
+    <div class="right-shifted-centered-container">
+        <h5 align="center">Agent Assignment</h5>
 
-    <form method="POST">
-        <h6 align="center">Chinese Agents</h6>
-        <h6 align="center">
-            Enter as a percentage of share in assigned zone. Rows have to add up to 1 or 0 if the agent type is inactive.
-        </h6>
-        <div class="table-container">
-        </div>
-        <script src="{{ url_for('static', filename='china_table.js') }}" defer>
+        <form method="POST">
+            <h6 align="center">Chinese Agents</h6>
+            <h6 align="center">
+                Enter as a percentage of share in assigned zone. Rows have to add up to 1 or 0 if the agent type is inactive.
+            </h6>
+            <div class="table-container">
+            </div>
+            <script src="{{ url_for('static', filename='china_table.js') }}" defer>
+            </script>
+
+            <br>
+            <h6 align="center">Coalition Agents</h6>
+
+            <div class="table-container">
+            </div>
+            <script src="{{ url_for('static', filename='coalition_table.js') }}" defer>
+            </script>
+
+            <br>
+            <br>
+
+            <button type="submit" class="btn btn-primary" id="save-assignment">
+                Save
+            </button>
+            <div id="success-popup" class="success-popup">Saved Settings</div>
+        </form>
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <script>
+            var update = {{update | tojson}}
+            if (update) {
+                confirmUpdate();
+            }
         </script>
 
-        <br>
-        <h6 align="center">Coalition Agents</h6>
-
-        <div class="table-container">
-        </div>
-        <script src="{{ url_for('static', filename='coalition_table.js') }}" defer>
-        </script>
-
-        <br>
-        <br>
-
-        <button type="submit" class="btn btn-primary" id="save-assignment">
-            Save
-        </button>
-        <div id="success-popup" class="success-popup">Saved Settings</div>
-    </form>
-
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-
-    <script>
-        var update = {{update | tojson}}
-        if (update) {
-            confirmUpdate();
-        }
-    </script>
-
+    </div>
 </div>
 
 {% endblock %}

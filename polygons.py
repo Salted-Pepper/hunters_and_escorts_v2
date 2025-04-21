@@ -11,7 +11,7 @@ class Polygon:
         self.points = points
         self.coords = [p for point in points for p in point.get_tuple()]  # Coords in JS notation
         self.shapely = shapely.Polygon([p.get_tuple() for p in self.points])
-        self.shrunk = self.shapely.buffer(-0.01)
+        self.shrunk = self.shapely.buffer(-0.005)
 
         self.min_x = None
         self.max_x = None
