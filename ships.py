@@ -97,7 +97,7 @@ class Ship(Agent):
         ammo.stock -= 1
 
         if outcome == "sunk":
-            target.is_destroyed()
+            target.is_destroyed(self)
             self.mission.complete()
             self.return_to_base()
         elif outcome == "ctl":
@@ -207,17 +207,24 @@ class Merchant(Ship):
         if not self.boarded:
             self.base.receive_agent(self)
             self.set_up_for_maintenance()
-            tracker.Event(text=f"Merchant {self.agent_id} reached {self.base.name}",
+            tracker.Event(text=f"{self.service} ({self.agent_id}) reached {self.base.name}",
                           event_type="Merchant Arrived")
             tracker.log_event(self.service, "arrived")
         else:
+            seizing_agent = self.get_seizing_agent()
             tracker.log_event(self.service, "seized")
-            tracker.Event(text=f"Merchant {self.agent_id} has been seized.",
+            tracker.Event(text=f"{self.service} ({self.agent_id}) has been seized by "
+                               f"{seizing_agent.service} ({seizing_agent.agent_id}) - {seizing_agent.model}.",
                           event_type="Merchant Seized")
 
         self.mission.complete()
         self.activated = False
         self.remove_from_missions()
+
+    def get_seizing_agent(self) -> Agent:
+        for mission in self.involved_missions:
+            if mission.mission_type == "guard":
+                return mission.agent
 
     def surface_detection(self, agent: Agent) -> bool:
         pass
@@ -364,7 +371,7 @@ class ChineseShip(Ship):
                     target.ctl = True
                     tracker.log_event(self.service, "CTL")
                 elif outcome == "sunk":
-                    target.is_destroyed()
+                    target.is_destroyed(self)
                     self.mission.complete()
                     self.return_to_base()
                 elif outcome == "damaged":

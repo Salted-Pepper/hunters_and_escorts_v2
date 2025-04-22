@@ -128,7 +128,7 @@ class Submarine(Agent):
         ammo.stock -= 1
 
         if outcome == "sunk":
-            target.is_destroyed()
+            target.is_destroyed(self)
             self.mission.complete()
             self.return_to_base()
         elif outcome == "ctl":
@@ -161,7 +161,7 @@ class Submarine(Agent):
                 prob_sink = 1
 
         if random.uniform(0, 1) <= prob_sink:
-            target.is_destroyed()
+            target.is_destroyed(self)
             self.mission.complete()
             self.return_to_base()
         else:

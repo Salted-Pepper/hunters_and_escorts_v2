@@ -256,8 +256,8 @@ class Agent:
         else:
             identifier = "Merchant"
 
-        tracker.log_event(self.service, "destroyed")
-        tracker.Event(text=f"{self.agent_id} - {self.service} has been {type_of_event}",
+        tracker.log_event(self.service, type_of_event)
+        tracker.Event(text=f"{self.service} ({self.agent_id}) has been {type_of_event}",
                       event_type=f"{identifier} {type_of_event}")
 
     def set_up_for_maintenance(self) -> None:
@@ -353,13 +353,14 @@ class Agent:
     def allowed_to_attack(self) -> None:
         pass
 
-    def is_destroyed(self) -> None:
+    def is_destroyed(self, destroyer) -> None:
+        destroyed_by_str = f"{destroyer.service} - {destroyer.model}"
         self.mission.abort()
         self.remove_from_missions()
         self.destroyed = True
         self.activated = False
         self.manager.agent_was_destroyed(self)
-        print(f"{cs.world.world_time}-{self} was destroyed.")
+        print(f"{cs.world.world_time}-{self} was destroyed by {destroyed_by_str}.")
         self.create_event(type_of_event="Destroyed")
 
     def check_if_in_zone(self, zone: zones.Zone) -> bool:
