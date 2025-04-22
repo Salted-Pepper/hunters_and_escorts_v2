@@ -196,6 +196,7 @@ class Merchant(Ship):
                           event_type="Merchant Arrived")
             tracker.log_event(self.service, "arrived")
         else:
+            tracker.log_event(self.service, "seized")
             tracker.Event(text=f"Merchant {self.agent_id} has been seized.",
                           event_type="Merchant Seized")
 

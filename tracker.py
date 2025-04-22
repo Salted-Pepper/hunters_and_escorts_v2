@@ -1,6 +1,6 @@
 import app
 import constants as cs
-import pandas as pd
+import json
 
 USED_TIME = {"Weather": 0,
              "Travel": 0,
@@ -25,13 +25,17 @@ def display_times() -> None:
 
 def log_event(service: str, event_type):
     global agent_data
-    service = service + " " + event_type
-    agent_data[service] = agent_data.get(service, 0)
+    if cs.world.world_time < 0:
+        return
+    service = f"{service} {event_type}"
+    agent_data[service] = agent_data.get(service, 0) + 1
 
 
 def export_agent_data():
     global agent_data
-    pd.DataFrame(agent_data).to_csv('logs/event_output.csv')
+    print(agent_data)
+    with open('logs/event_output.txt', 'w') as file:
+        file.write(json.dumps(agent_data))
 
 
 class Event:

@@ -16,6 +16,7 @@ WEATHER_RESAMPLING_TIME_SPLIT = 1
 simulation_period = 24 * 7
 time_delta = 0.25
 simulation_end_time = 0
+warm_up_period = -simulation_period / 2
 
 SAFETY_ENDURANCE = 0.1
 COMMUNICATION_DELAY = 0.25
@@ -270,12 +271,12 @@ zone_assignment_hunter = {agent_type: {zone: 0 for zone in ZONES
                                        if zone not in HUNTER_ILLEGAL_ZONES}
                           for agent_type in cs.HUNTER_TYPES}
 zone_assignment_hunter[cs.HUNTER_CCG][ZONE_P] = 1
-zone_assignment_hunter[cs.HUNTER_PAFMM][ZONE_A] = 1
-zone_assignment_hunter[cs.HUNTER_MSA][ZONE_H] = 1
+zone_assignment_hunter[cs.HUNTER_PAFMM][ZONE_P] = 1
+zone_assignment_hunter[cs.HUNTER_MSA][ZONE_P] = 1
 zone_assignment_hunter[cs.HUNTER_PLAN][ZONE_P] = 1
-zone_assignment_hunter[cs.HUNTER_UAV][ZONE_A] = 1
-zone_assignment_hunter[cs.HUNTER_AIRCRAFT][ZONE_A] = 1
-zone_assignment_hunter[cs.HUNTER_SUBMARINE][ZONE_A] = 1
+# zone_assignment_hunter[cs.HUNTER_UAV][ZONE_A] = 1
+# zone_assignment_hunter[cs.HUNTER_AIRCRAFT][ZONE_A] = 1
+# zone_assignment_hunter[cs.HUNTER_SUBMARINE][ZONE_A] = 1
 
 zone_assignment_coalition = {agent_type: {zone: 0 for zone in ZONES}
                              for agent_type in cs.COALITION_TYPES
@@ -283,11 +284,11 @@ zone_assignment_coalition = {agent_type: {zone: 0 for zone in ZONES}
                                                    cs.COALITION_JP_MERCHANT,
                                                    cs.COALITION_US_MERCHANT,
                                                    cs.COALITION_MK_MERCHANT]}
-zone_assignment_coalition[cs.COALITION_TW_ESCORT][ZONE_B] = 1
-zone_assignment_coalition[cs.COALITION_JP_ESCORT][ZONE_D] = 1
-zone_assignment_coalition[cs.COALITION_US_ESCORT][ZONE_H] = 1
-zone_assignment_coalition[cs.COALITION_US_AIRCRAFT][ZONE_H] = 1
-zone_assignment_coalition[cs.COALITION_JP_AIRCRAFT][ZONE_D] = 1
-zone_assignment_coalition[cs.COALITION_TW_AIRCRAFT][ZONE_B] = 1
-zone_assignment_coalition[cs.COALITION_US_SUB][ZONE_H] = 1
-zone_assignment_coalition[cs.COALITION_JP_SUB][ZONE_D] = 1
+# zone_assignment_coalition[cs.COALITION_TW_ESCORT][ZONE_B] = 1
+# zone_assignment_coalition[cs.COALITION_JP_ESCORT][ZONE_D] = 1
+# zone_assignment_coalition[cs.COALITION_US_ESCORT][ZONE_H] = 1
+# zone_assignment_coalition[cs.COALITION_US_AIRCRAFT][ZONE_H] = 1
+# zone_assignment_coalition[cs.COALITION_JP_AIRCRAFT][ZONE_D] = 1
+zone_assignment_coalition[cs.COALITION_TW_AIRCRAFT][ZONE_C] = 1
+# zone_assignment_coalition[cs.COALITION_US_SUB][ZONE_H] = 1
+# zone_assignment_coalition[cs.COALITION_JP_SUB][ZONE_D] = 1

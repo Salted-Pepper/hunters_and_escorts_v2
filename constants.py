@@ -21,7 +21,7 @@ GRID_HEIGHT = GRID_WIDTH
 
 # ---- Movement ----
 
-SAFETY_ENDURANCE = 1.1
+SAFETY_ENDURANCE = 1.2
 
 # ----  Receptors  ----
 DEPRECIATION_PER_TIME_DELTA = 0.99

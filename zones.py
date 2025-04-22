@@ -5,6 +5,7 @@ from scipy.stats import qmc
 from points import Point
 from polygons import Polygon
 import constant_coords as ccs
+import copy
 
 
 def create_poisson_disk_sample(polygon: Polygon, obstacles: list) -> list:
@@ -30,6 +31,7 @@ class Zone:
             self.polygon = polygon
         else:
             self.polygon = ccs.set_points_to_bounds(polygon)
+
         self.obstacles = [landmass for landmass in (ccs.LAND_MASSES + [ccs.CHINA])
                           if any([self.polygon.contains_point(point) for point in landmass.points])]
         self.patrol_locations = create_poisson_disk_sample(self.polygon, self.obstacles)
@@ -39,7 +41,16 @@ class Zone:
         return self.name
 
     def check_if_agent_in_zone(self, agent) -> bool:
-        return self.polygon.contains_point(agent.location)
+        if self.polygon.contains_point(agent.location):
+            return True
+        else:
+            return False
+
+    def extended_polygon_copy(self) -> Polygon:
+        extended_polygon = copy.copy(self.polygon)
+        extended_polygon.shapely.buffer(0.01)
+        extended_polygon.shrunk = extended_polygon.shapely.buffer(-0.005)
+        return extended_polygon
 
     def sample_patrol_location(self):
         return random.choice(self.patrol_locations)

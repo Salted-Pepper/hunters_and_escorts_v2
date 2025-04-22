@@ -22,7 +22,7 @@ class World:
         # Time Management
         self.time_delta = settings.time_delta
 
-        self.world_time = 0
+        self.world_time = settings.warm_up_period
         self.last_weather_update = 0
 
         # Geography
@@ -68,6 +68,7 @@ class World:
         china_avoid_zones = [landmass for landmass in self.landmasses
                              if landmass != ccs.TAIWAN_LAND and landmass not in ccs.JAPAN_AND_ISLANDS]
         for zone in zones.HUNTER_ILLEGAL_ZONES:
+            # china_avoid_zones.append(zone.extended_polygon_copy())
             china_avoid_zones.append(zone.polygon)
             china_avoid_zones.append(ccs.KOREA)
 

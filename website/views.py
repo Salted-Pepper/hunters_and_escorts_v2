@@ -50,9 +50,11 @@ def settings_page():
         boarding_only = data.get('boarding-only')
         print(f"Updating Settings...")
         settings.simulation_period = float(iterations)
+        settings.warm_up_period = -float(iterations)
         settings.time_delta = float(time_delta)
         settings.CHINA_SELECTED_LEVEL = int(china_esc)
         settings.COALITION_SELECTED_LEVEL = int(coalition_esc)
+        check_coalition_escalation_r_o_e()
         settings.PLOTTING_MODE = True if show_sim == 'on' else False
         settings.RECEPTOR_PLOT_PARAMETER = plot_type
         settings.boarding_only = True if boarding_only == 'on' else False
@@ -71,6 +73,10 @@ def settings_page():
     check_if_updated(current_settings, last_settings_update)
 
     return render_template("settings.html", **current_settings)
+
+
+def check_coalition_escalation_r_o_e():
+    settings.coalition_r_o_e_rules = settings.min_r_o_e[settings.COALITION_SELECTED_LEVEL]
 
 
 @views.route('/assignment', methods=['GET', 'POST'])
