@@ -418,7 +418,7 @@ class Agent:
             if agent.team == self.team:
                 continue
 
-            if self.location.distance_to_point(agent.location) > 700:
+            if self.location.distance_to_point(agent.location) > 650:
                 continue
 
             if not self.check_if_valid_target(agent):
@@ -560,14 +560,6 @@ class Agent:
         self.movement_left_in_turn = 0
 
     def spread_pheromones(self, location) -> None:
-        # TODO: Consider set up for pheromone spread (based on radius or just closest - and if so what radius)
-        # radius: float
-        # receptors = cs.world.receptor_grid.select_receptors_in_radius(self.location, radius)
-        # receptors = [receptor for receptor in receptors if receptor.decay]
-        #
-        # for receptor in receptors:
-        #     assigned_pheromones = (distance/radius) * cs.PHEROMONE_SPREAD
-
         receptor = cs.world.receptor_grid.get_receptor_at_location(location)
         assigned_pheromones = cs.PHEROMONE_SPREAD
 

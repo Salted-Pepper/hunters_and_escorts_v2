@@ -16,7 +16,7 @@ WEATHER_RESAMPLING_TIME_SPLIT = 1
 simulation_period = 24 * 7
 time_delta = 0.25
 simulation_end_time = 0
-warm_up_period = -simulation_period / 2
+warm_up_period = -simulation_period
 
 SAFETY_ENDURANCE = 0.1
 COMMUNICATION_DELAY = 0.25

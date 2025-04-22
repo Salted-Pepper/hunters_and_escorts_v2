@@ -75,6 +75,7 @@ function startSimulation(){
 }
 
 sprite_dict = {"Merchant Manager": "static/assets/merchant_24x16.png",
+               "Merchant Manager Boarded": "static/assets/merchant_boarded_24x16.png",
                "China Navy Manager": "static/assets/hunter_24x16.png",
                "China Air Manager": "static/assets/cn_aircraft_24x16.png",
                "TW Escort Manager": "static/assets/escort_tw_24x16.png",

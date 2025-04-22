@@ -562,10 +562,10 @@ class ChinaNavyManager(Manager):
                 self.inactive_agents.append(new_ship)
 
     def initiate_bases(self) -> None:
-        self.bases = [Base(name="Shanghai", location=Point(122.70, 31.306), agent_share=0.25),
-                      Base(name="Taizhou", location=Point(122.03, 28.231), agent_share=0.25),
+        self.bases = [Base(name="Shanghai", location=Point(122.0, 31.306), agent_share=0.25),
+                      Base(name="Taizhou", location=Point(121.7, 28.231), agent_share=0.25),
                       Base(name="Quanzhou", location=Point(119.04, 24.684), agent_share=0.25),
-                      Base(name="Fuzhou", location=Point(119.99, 26.061), agent_share=0.25),]
+                      Base(name="Fuzhou", location=Point(119.8, 26.061), agent_share=0.25),]
 
     def pre_turn_actions(self) -> None:
         for agent in self.active_agents:

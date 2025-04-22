@@ -135,6 +135,21 @@ class Merchant(Ship):
     def __str__(self):
         return f"Merchant {self.agent_id} at {self.location} - on {self.mission} - {self.activated}"
 
+    def to_dict(self) -> dict:
+        if self.boarded:
+            manager = str(self.manager) + " Boarded"
+        else:
+            manager = str(self.manager)
+        return {"x": self.location.x,
+                "y": self.location.y,
+                "model": self.model,
+                "agent_id": self.agent_id,
+                "activated": self.activated,
+                "mission": str(self.mission),
+                "type": manager,
+                "service": self.service,
+                "rem_endurance": self.remaining_endurance}
+
     def sample_entry_point(self) -> None:
         x = cs.MAX_LAT - 0.01
         y = random.uniform(cs.MIN_LONG, 34)
@@ -445,7 +460,7 @@ class Escort(Ship):
         else:
             return False
 
-    def observe(self, agents: list[Agent], traveling=False) -> None:
+    def observe(self, agents: list[Agent], traveling=False) -> bool:
         if not traveling:
             self.make_patrol_move()
 
@@ -459,13 +474,19 @@ class Escort(Ship):
                 continue
 
             if not self.check_if_valid_target(agent):
-                return
+                return False
 
             if agent.agent_type == "ship":
+                if self.ship_detection_skill is None:
+                    continue
                 detected = self.surface_detection(agent)
             elif agent.agent_type == "air":
+                if self.air_detection_skill is None:
+                    continue
                 detected = self.air_detection(agent)
             elif agent.agent_type == "sub":
+                if self.sub_detection_skill is None:
+                    continue
                 detected = self.sub_detection(agent)
             else:
                 raise ValueError(f"Unknown Class {type(agent)} - unable to observe.")
@@ -473,9 +494,10 @@ class Escort(Ship):
             if detected:
                 self.mission.complete()
                 missions.Track(self, agent)
-                return
+                return True
 
         self.spread_pheromones(self.location)
+        return False
 
     def track(self, target: Agent) -> None:
         if cs.world.world_time - self.route.creation_time > 1 or self.route.next_point() is None:
