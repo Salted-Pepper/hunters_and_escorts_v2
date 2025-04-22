@@ -247,9 +247,13 @@ class EscortManager(Manager):
         eligible_agents = [agent for agent in self.inactive_agents if agent.remaining_maintenance_time == 0
                            and sum(settings.zone_assignment_coalition[agent.service].values()) > 0]
 
+        i = 0
         while utilisation < self.calc_utilization_rate() and len(eligible_agents) > 0:
             self.activate_agent(eligible_agents)
             utilisation = self.get_current_utilisation()
+            i += 1
+            if i > settings.ITERATION_LIMIT:
+                return
 
     def initiate_agents(self) -> None:
         coalition_data = data_functions.get_coalition_navy_data()
@@ -350,10 +354,13 @@ class CoalitionAirManager(Manager):
         utilisation = self.get_current_utilisation()
         eligible_agents = [agent for agent in self.inactive_agents if agent.remaining_maintenance_time == 0
                            and sum(settings.zone_assignment_coalition[agent.service].values()) > 0]
-
+        i = 0
         while utilisation < self.calc_utilization_rate() and len(eligible_agents) > 0:
             self.activate_agent(eligible_agents)
             utilisation = self.get_current_utilisation()
+            i += 1
+            if i > settings.ITERATION_LIMIT:
+                return
 
     def initiate_agents(self) -> None:
         coalition_data = data_functions.get_coalition_aircraft_data()

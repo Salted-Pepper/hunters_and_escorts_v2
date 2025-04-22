@@ -207,7 +207,7 @@ class Agent:
 
     def can_continue(self) -> bool:
         dist_to_base = self.location.distance_to_point(self.base.location)
-        required_endurance_max = (2 * dist_to_base)
+        required_endurance_max = (3 * dist_to_base)
         if required_endurance_max < self.remaining_endurance:
             return True
 

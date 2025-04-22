@@ -22,7 +22,7 @@ class World:
         # Time Management
         self.time_delta = settings.time_delta
 
-        self.world_time = 0
+        self.world_time = settings.warm_up_period
         self.last_weather_update = 0
 
         # Geography

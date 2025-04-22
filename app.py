@@ -87,6 +87,8 @@ def get_time_info(timestamp) -> None:
     global world_data
     global events
     timestamp = round(timestamp, 3)
+    if timestamp < 0:
+        return
     time_data = world_data[timestamp]
     agents = time_data['agents']
     weather = time_data['weather']
@@ -98,6 +100,9 @@ def get_time_info(timestamp) -> None:
 
 def save_event(event: dict):
     global events
+    if cs.world.world_time < 0:
+        return
+
     events.append(event)
 
 

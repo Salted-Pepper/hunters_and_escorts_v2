@@ -50,6 +50,7 @@ def settings_page():
         boarding_only = data.get('boarding-only')
         print(f"Updating Settings...")
         settings.simulation_period = float(iterations)
+        settings.warm_up_period = -float(iterations)
         settings.time_delta = float(time_delta)
         settings.CHINA_SELECTED_LEVEL = int(china_esc)
         settings.COALITION_SELECTED_LEVEL = int(coalition_esc)
