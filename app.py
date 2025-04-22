@@ -87,15 +87,19 @@ def get_time_info(timestamp) -> None:
     global world_data
     global events
     timestamp = round(timestamp, 3)
-    if timestamp < 0:
+
+    if timestamp not in world_data.keys():
         return
+
     time_data = world_data[timestamp]
     agents = time_data['agents']
     weather = time_data['weather']
-    socket.emit('update_plot', agents)
-    socket.emit('update_weather', weather)
     socket.emit('update_time', timestamp)
-    socket.emit('update_logs', json.dumps(events))
+    if timestamp >= 0:
+        socket.emit('update_plot', agents)
+        socket.emit('update_weather', weather)
+        socket.emit('update_logs', json.dumps(events))
+        return
 
 
 def save_event(event: dict):
