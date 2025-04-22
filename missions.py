@@ -248,6 +248,8 @@ class Observe(Mission):
 
     def execute(self) -> None:
         t_0 = time.time()
+        if cs.world.world_time < 0:
+            return
 
         self.agent.observe(self.agent.manager.agents_to_detect)
 
