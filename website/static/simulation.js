@@ -173,7 +173,7 @@ function updatePlot(agents) {
 
             } else if(agent.activated == true) {
 
-                if (agent.type == "Merchant Manager Boarded"){
+                if (agent.type == "Merchant Manager Boarded" || agent.type == "Merchant Manager"){
                     sprite = sprites[agent.agent_id];
                     message = sprite.message;
                     app.stage.removeChild(sprite);
