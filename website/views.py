@@ -54,8 +54,8 @@ def settings_page():
         settings.time_delta = float(time_delta)
 
         if china_esc != settings.CHINA_SELECTED_LEVEL or coalition_esc != settings.COALITION_SELECTED_LEVEL:
-            check_coalition_escalation_r_o_e()
-            update_agent_assignments()
+            check_coalition_escalation_r_o_e(coalition_esc)
+            update_agent_assignments(china_esc, coalition_esc)
 
         settings.CHINA_SELECTED_LEVEL = china_esc
         settings.COALITION_SELECTED_LEVEL = coalition_esc
@@ -79,13 +79,13 @@ def settings_page():
     return render_template("settings.html", **current_settings)
 
 
-def check_coalition_escalation_r_o_e():
-    settings.coalition_r_o_e_rules = settings.min_r_o_e[settings.COALITION_SELECTED_LEVEL]
+def check_coalition_escalation_r_o_e(new_level):
+    settings.coalition_r_o_e_rules = settings.min_r_o_e[new_level]
 
 
-def update_agent_assignments():
-    level_setting_china = settings.DEFAULT_CHINA_ASSIGNMENT[settings.CHINA_SELECTED_LEVEL]
-    level_setting_coa = settings.DEFAULT_COALITION_ASSIGNMENT[settings.COALITION_SELECTED_LEVEL]
+def update_agent_assignments(china_level: int, coa_level: int):
+    level_setting_china = settings.DEFAULT_CHINA_ASSIGNMENT[china_level]
+    level_setting_coa = settings.DEFAULT_COALITION_ASSIGNMENT[coa_level]
 
     for key, value in level_setting_china.items():
         settings.zone_assignment_hunter[key] = value

@@ -52,11 +52,26 @@
 <div>
     <div class="zone-map-container">
         <br>
-        <br>
-        <br>
         <img src="static/assets/zones.png" width="700" height="700">
         <br>
         <br>
+        <div style="margin-left: 200px">
+            (A) All Zones <br>
+            (B) Taiwanese Contiguous Zone <br>
+            (C) Taiwanese Territorial Waters <br>
+            (D) Japanese Contiguous Zone <br>
+            (E) Japanese Territorial Waters <br>
+            (F) Filipino Contiguous Zone <br>
+            (G) Filipino Territorial Waters <br>
+            (H) Outside Chinese 10 Dash, not in B-G <br>
+            (I) Inside Chinese 10 Dash, outside B-G <br>
+            (J) Between Philippines and Taiwan <br>
+            (K) Between Japan and Taiwan <br>
+            (L) Within median line <br>
+            (N) Holding Area <br>
+            (P) Primary Hunting Grounds <br>
+            (Q) Outer Japan <br>
+        </div>
         <br>
     </div>
 
@@ -90,13 +105,7 @@
             </button>
             <div id="success-popup" class="success-popup">Saved Settings</div>
         </form>
-
         <br>
-        <br>
-        <br>
-        <br>
-        <br>
-
         <script>
             var update = {{update | tojson}}
             if (update) {

@@ -95,6 +95,12 @@ ZONE_A.clear_patrol_in_zone(ZONE_C)
 ZONE_A.clear_patrol_in_zone(ZONE_E)
 ZONE_A.clear_patrol_in_zone(ZONE_G)
 ZONE_A.clear_patrol_in_zone(ZONE_Q)
+ZONE_H.clear_patrol_in_zone(ZONE_B)
+ZONE_H.clear_patrol_in_zone(ZONE_C)
+ZONE_H.clear_patrol_in_zone(ZONE_D)
+ZONE_H.clear_patrol_in_zone(ZONE_E)
+ZONE_H.clear_patrol_in_zone(ZONE_F)
+ZONE_H.clear_patrol_in_zone(ZONE_G)
 
 # Sort zones from top zones to lower zones and establish overarching zones
 ZONES = [ZONE_P, ZONE_K, ZONE_Q, ZONE_J, ZONE_C, ZONE_B, ZONE_E, ZONE_D,
