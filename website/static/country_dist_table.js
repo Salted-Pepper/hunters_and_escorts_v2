@@ -1,9 +1,5 @@
 function createCountryDistTable() {
     let container = document.querySelector(".centered-container");
-    if (!container) {
-        console.error("Centered container not found.");
-        return;
-    }
 
     let table = document.createElement("table");
     table.border = "1";

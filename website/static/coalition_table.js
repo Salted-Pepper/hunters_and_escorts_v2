@@ -1,10 +1,5 @@
 function createCoalitionTable() {
     let container = document.querySelector(".right-shifted-centered-container");
-    if (!container) {
-        console.error("Centered container not found.");
-        return;
-    }
-
     let table = document.createElement("table");
     table.border = "1";
     table.classList.add("standard-table");

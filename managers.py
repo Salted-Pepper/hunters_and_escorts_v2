@@ -36,6 +36,7 @@ class Manager:
         self.active_agents = []
         self.inactive_agents = []
         self.destroyed_agents = []
+        self.reserved_agents = []
 
         self.requests = []
 
@@ -224,6 +225,53 @@ class Manager:
                     agent.return_to_base()
             else:
                 pass
+
+    def reserve_agents(self) -> None:
+        agent_types = set([a.service for a in self.active_agents] + [a.service for a in self.inactive_agents])
+        for service in agent_types:
+            current_share = 0
+            required_share = 1
+            error_margin = 0.05
+
+            while current_share > required_share + error_margin or current_share < required_share - error_margin:
+                active_agents = [a for a in self.active_agents if a.service == service]
+                inactive_agents = [a for a in self.inactive_agents if a.service == service]
+                reserved_agents = [a for a in self.reserved_agents if a.service == service]
+                total_agents = len(active_agents) + len(inactive_agents) + len(reserved_agents)
+                current_share = (len(active_agents) + len(inactive_agents)) / total_agents
+
+                # Accept when unable to fix
+                if len(reserved_agents) == 0 and current_share < required_share - error_margin:
+                    return
+                if len(inactive_agents) == 0 and current_share > required_share + error_margin:
+                    return
+
+                if self.team == 1:
+                    required_share = sum(settings.zone_assignment_coalition[service].values())
+                elif self.team == 2:
+                    required_share = sum(settings.zone_assignment_hunter[service].values())
+
+                # Move the agent to obtain desired share - we select an agent of the service and adjust
+                #   the manager's original lists and update the local copies to match
+                if current_share < required_share - error_margin:
+                    moved_agent = reserved_agents.pop()
+                    self.reserved_agents.remove(moved_agent)
+                    self.inactive_agents.append(moved_agent)
+                    inactive_agents.append(moved_agent)
+
+                elif current_share > required_share + error_margin:
+                    moved_agent = inactive_agents.pop()
+                    self.inactive_agents.remove(moved_agent)
+                    self.reserved_agents.append(moved_agent)
+                    reserved_agents.append(moved_agent)
+
+                # Recalculate statistic after update
+                total_agents = len(active_agents) + len(inactive_agents) + len(reserved_agents)
+                current_share = (len(active_agents) + len(inactive_agents)) / total_agents
+
+    def adjust_to_setting_change(self) -> None:
+        self.remove_agents_from_illegal_zones()
+        self.reserve_agents()
 
     @abstractmethod
     def select_zone_to_patrol(self, agent) -> None:

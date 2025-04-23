@@ -131,9 +131,9 @@ class World:
 
         tracker.USED_TIME["Weather"] += time.time() - t_0
 
-    def remove_agents_from_illegal_zones(self):
+    def update_to_simulation_settings(self):
         for manager in self.managers:
-            manager.remove_agents_from_illegal_zones()
+            manager.adjust_to_setting_change()
 
     def simulate_step(self) -> None:
         self.update_weather_conditions()

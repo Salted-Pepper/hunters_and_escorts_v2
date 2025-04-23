@@ -52,7 +52,7 @@ def handle_disconnect():
 
 @socket.on('start')
 def start_simulation():
-    cs.world.remove_agents_from_illegal_zones()
+    cs.world.update_to_simulation_settings()
     cs.simulation_running = True
     cs.world.time_delta = settings.time_delta
     settings.simulation_end_time += settings.simulation_period

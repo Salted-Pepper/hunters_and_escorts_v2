@@ -23,10 +23,9 @@
             }
 
 
-            if (row_sum != 1 & row_sum != 0) {
+            if (row_sum > 1) {
                 row_correct = false;
                 all_rows_correct = false;
-                console.log("Row is", row, " - Sum is ", row_sum, " - length: ", row.cells.length);
             }
 
             if (!row_correct){
@@ -67,7 +66,8 @@
         <form method="POST">
             <h6 align="center">Chinese Agents</h6>
             <h6 align="center">
-                Enter as a percentage of share in assigned zone. Rows have to add up to 1 or 0 if the agent type is inactive.
+                Enter as a percentage of share in assigned zone. Rows have to be less than 1 in total. <br>
+                Rows less than 1 will have reduced utilisation for the agent corresponding to the total percentage.
             </h6>
             <div class="table-container">
             </div>
