@@ -240,7 +240,7 @@ class Agent:
         self.set_up_for_maintenance()
         self.remove_from_missions()
 
-    def create_event(self, type_of_event):
+    def create_event(self, type_of_event, extra_text=None):
         if self.combat_type == "COALITION ESCORT":
             identifier = "Escort"
         elif self.combat_type == "COALITION AIRCRAFT":
@@ -257,8 +257,12 @@ class Agent:
             identifier = "Merchant"
 
         tracker.log_event(self.service, type_of_event)
-        tracker.Event(text=f"{self.service} ({self.agent_id}) has been {type_of_event}",
-                      event_type=f"{identifier} {type_of_event}")
+        if extra_text is None:
+            tracker.Event(text=f"{self.service} ({self.agent_id}) has been {type_of_event}",
+                          event_type=f"{identifier} {type_of_event}")
+        else:
+            tracker.Event(text=f"{self.service} ({self.agent_id}) has been {type_of_event} {extra_text}",
+                          event_type=f"{identifier} {type_of_event}")
 
     def set_up_for_maintenance(self) -> None:
         self.remaining_maintenance_time = self.maintenance_time
@@ -354,14 +358,17 @@ class Agent:
         pass
 
     def is_destroyed(self, destroyer) -> None:
-        destroyed_by_str = f"{destroyer.service} - {destroyer.model}"
+        if destroyer.service.startswith("Ship "):
+            service = destroyer.service[5:]
+        else:
+            service = destroyer.service
+        destroyed_by_str = f" by {service} - {destroyer.model}"
         self.mission.abort()
         self.remove_from_missions()
         self.destroyed = True
         self.activated = False
         self.manager.agent_was_destroyed(self)
-        print(f"{cs.world.world_time}-{self} was destroyed by {destroyed_by_str}.")
-        self.create_event(type_of_event="Destroyed")
+        self.create_event(type_of_event="Destroyed", extra_text=destroyed_by_str)
 
     def check_if_in_zone(self, zone: zones.Zone) -> bool:
         """

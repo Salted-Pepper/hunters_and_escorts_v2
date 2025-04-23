@@ -172,6 +172,23 @@ function updatePlot(agents) {
                 delete sprites[agent.agent_id];
 
             } else if(agent.activated == true) {
+
+                if (agent.type == "Merchant Manager Boarded"){
+                    sprite = sprites[agent.agent_id];
+                    message = sprite.message;
+                    app.stage.removeChild(sprite);
+                    delete sprites[agent.agent_id];
+
+                    sprite = createSprite(agent.type);
+                    var text = agent.service + ' - ' + agent.model + '\n'  + agent.agent_id + ' on ' + agent.mission + '\nEndurance ' + agent.rem_endurance.toFixed(0);
+                    var message = new PIXI.Text(text, {fontSize: 14, fill: 0x6C3BAA, stroke:0x000000, fontWeight: "bolder"});
+                    sprite.message = message
+                    sprite.x = agent.x;
+                    sprite.y = agent.y;
+                    sprites[agent.agent_id] = sprite;
+                    app.stage.addChild(sprite);
+                }
+
                 sprite = sprites[agent.agent_id];
                 sprite.x = agent.x;
                 sprite.y = agent.y;
@@ -324,3 +341,4 @@ socket.on("update_logs", (data) => updateLogs(data));
 socket.on("update_time", (data) => updateTime(data));
 socket.on("completed_simulation", (data) => completedSimulation(data));
 
+socket.emit('request_timestamp_data', -1);
