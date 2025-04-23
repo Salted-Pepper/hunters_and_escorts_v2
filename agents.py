@@ -294,6 +294,10 @@ class Agent:
                 target_zone = zones.ZONE_B
             elif target_zone == zones.ZONE_N:
                 target_zone = zones.ZONE_H
+            elif target_zone == zones.ZONE_K:
+                target_zone = zones.ZONE_B
+            elif target_zone == zones.ZONE_J:
+                target_zone = target.get_underlying_zone()
             rule_value = rules[self.service][target_zone.name]
             logger.debug(f"Service: {self.service} - Target: {target} in {target_zone} - rule value is {rule_value}")
             if rule_value == 1:
@@ -362,7 +366,7 @@ class Agent:
             service = destroyer.service[5:]
         else:
             service = destroyer.service
-        destroyed_by_str = f" by {service} - {destroyer.model}"
+        destroyed_by_str = f"by {service} - {destroyer.model}"
         self.mission.abort()
         self.remove_from_missions()
         self.destroyed = True
@@ -389,6 +393,14 @@ class Agent:
         :return:
         """
         for zone in zones.ZONES:
+            if zone.check_if_agent_in_zone(self):
+                return zone
+        raise ValueError(f"No zone found for {self} at {self.location}")
+
+    def get_underlying_zone(self) -> zones.Zone:
+        possible_zones = [zone for zone in zones.ZONES
+                          if zone not in [zones.ZONE_A, zones.ZONE_N, zones.ZONE_Q, zones.ZONE_J, zones.ZONE_K]]
+        for zone in possible_zones:
             if zone.check_if_agent_in_zone(self):
                 return zone
         raise ValueError(f"No zone found for {self} at {self.location}")

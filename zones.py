@@ -74,10 +74,12 @@ ZONE_F = Zone(name="F", polygon=Polygon(ccs.F_FILIPINO_CONT, name="F"))
 ZONE_G = Zone(name="G", polygon=Polygon(ccs.G_FILIPINO_TERRITORIAL, name="G"))
 ZONE_H = Zone(name="H", polygon=Polygon(ccs.H_OUTSIDE_10_DASH, name="H"))
 ZONE_I = Zone(name="I", polygon=Polygon(ccs.I_INSIDE_10_DASH, name="I"))
+ZONE_J = Zone(name="J", polygon=Polygon(ccs.J_TAIWAN_FILIPINO, name="J"))
+ZONE_K = Zone(name="K", polygon=Polygon(ccs.K_TAIWAN_JAPAN, name="K"))
 ZONE_L = Zone(name="L", polygon=Polygon(ccs.L_INSIDE_MEDIAN_LINE, name="L"))
 ZONE_N = Zone(name="N", polygon=Polygon(ccs.N_HOLDING_ZONE, name="N"))
 ZONE_P = Zone(name="P", polygon=Polygon(ccs.P_PRIMARY_HUNTING_ZONE, name="P"))
-# ZONE_Q = Zone(name="Q", polygon=Polygon(ccs.Q_, name="Q"))
+ZONE_Q = Zone(name="Q", polygon=Polygon(ccs.Q_SECOND_JAPAN, name="Q"))
 
 # Clear patrol locations in sub-zones for these to prevent Chinese agents from crossing into these zones
 ZONE_B.clear_patrol_in_zone(ZONE_C)
@@ -85,17 +87,18 @@ ZONE_D.clear_patrol_in_zone(ZONE_E)
 ZONE_H.clear_patrol_in_zone(ZONE_C)
 ZONE_H.clear_patrol_in_zone(ZONE_E)
 ZONE_H.clear_patrol_in_zone(ZONE_G)
-# ZONE_H.clear_patrol_in_zone(ZONE_Q)
+ZONE_H.clear_patrol_in_zone(ZONE_Q)
 ZONE_I.clear_patrol_in_zone(ZONE_C)
 ZONE_F.clear_patrol_in_zone(ZONE_G)
-# ZONE_F.clear_patrol_in_zone(ZONE_Q)
+ZONE_F.clear_patrol_in_zone(ZONE_Q)
 ZONE_A.clear_patrol_in_zone(ZONE_C)
 ZONE_A.clear_patrol_in_zone(ZONE_E)
 ZONE_A.clear_patrol_in_zone(ZONE_G)
-# ZONE_A.clear_patrol_in_zone(ZONE_Q)
+ZONE_A.clear_patrol_in_zone(ZONE_Q)
 
 # Sort zones from top zones to lower zones and establish overarching zones
-ZONES = [ZONE_P, ZONE_C, ZONE_B, ZONE_E, ZONE_D, ZONE_G, ZONE_F, ZONE_I, ZONE_L, ZONE_N, ZONE_H, ZONE_A]
+ZONES = [ZONE_P, ZONE_K, ZONE_Q, ZONE_J, ZONE_C, ZONE_B, ZONE_E, ZONE_D,
+         ZONE_G, ZONE_F, ZONE_I, ZONE_L, ZONE_N, ZONE_H, ZONE_A]
 ZONES_DISPLAY_ORDER = [ZONE_A, ZONE_B, ZONE_C, ZONE_D, ZONE_E, ZONE_F, ZONE_G, ZONE_H, ZONE_I, ZONE_L, ZONE_N, ZONE_P]
 HUNTER_ILLEGAL_ZONES = [ZONE_C, ZONE_E, ZONE_G]
 COALITION_ILLEGAL_ZONES = [ccs.CHINA]

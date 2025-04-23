@@ -14,7 +14,7 @@ function createChinaTable() {
     let headerRow = document.createElement("tr");
 
     let agentHeader = document.createElement("th");
-    agentHeader.style.width = "200px";
+    agentHeader.style.width = "300px";
     agentHeader.textContent = "Agent";
     headerRow.appendChild(agentHeader);
 

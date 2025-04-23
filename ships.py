@@ -119,6 +119,7 @@ class Merchant(Ship):
         self.set_service()
         self.team = 1
         self.boarded = False
+        self.seizing_agent = None
         self.damage = 0
 
         self.entry_point = None
@@ -211,10 +212,9 @@ class Merchant(Ship):
                           event_type="Merchant Arrived")
             tracker.log_event(self.service, "arrived")
         else:
-            seizing_agent = self.get_seizing_agent()
             tracker.log_event(self.service, "seized")
             tracker.Event(text=f"{self.service} ({self.agent_id}) has been seized by "
-                               f"{seizing_agent.service} ({seizing_agent.agent_id}) - {seizing_agent.model}.",
+                               f"{self.seizing_agent.service} ({self.seizing_agent.agent_id}) - {self.seizing_agent.model}.",
                           event_type="Merchant Seized")
 
         self.mission.complete()
@@ -248,7 +248,8 @@ class Merchant(Ship):
         raise TypeError(f"{self} is unable to attack.")
 
     def is_boarded(self, boarder: Agent) -> None:
-        logger.debug(f"{self} got boarded.")
+        logger.debug(f"{self} got boarded by {boarder}.")
+        self.seizing_agent = boarder
         self.mission.abort()
         self.remove_from_missions()
 

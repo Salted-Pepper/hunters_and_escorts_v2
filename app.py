@@ -89,7 +89,9 @@ def get_time_info(timestamp) -> None:
     timestamp = round(timestamp, 3)
 
     if timestamp < 0:
-        timestamp = max(world_data.keys())
+        timestamps = world_data.keys()
+        if len(timestamps) > 0:
+            timestamp = max(timestamps)
 
     if timestamp not in world_data.keys():
         return
