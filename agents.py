@@ -296,6 +296,8 @@ class Agent:
                 target_zone = zones.ZONE_H
             elif target_zone == zones.ZONE_K:
                 target_zone = zones.ZONE_B
+            elif target_zone == zones.ZONE_Q:
+                target_zone = zones.ZONE_H
             elif target_zone == zones.ZONE_J:
                 target_zone = target.get_underlying_zone()
             rule_value = rules[self.service][target_zone.name]
