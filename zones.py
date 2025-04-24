@@ -13,13 +13,13 @@ def create_poisson_disk_sample(polygon: Polygon, obstacles: list) -> list:
     rng = np.random.default_rng()
     radius = 0.5
     engine = qmc.PoissonDisk(d=2, radius=radius, rng=rng,
-                             l_bounds=[polygon.min_x + 0.01, polygon.min_y + 0.01],
-                             u_bounds=[polygon.max_x - 0.01, polygon.max_y - 0.01])
+                             l_bounds=[polygon.min_x + 0.05, polygon.min_y + 0.05],
+                             u_bounds=[polygon.max_x - 0.05, polygon.max_y - 0.05])
     sample = engine.fill_space()
     points = []
     for p in sample:
         point = Point(p[0], p[1])
-        if polygon.contains_point(point) and not any([obstacle.contains_point(point) for obstacle in obstacles]):
+        if polygon.shrunk.contains(point.shapely) and not any([obstacle.contains_point(point) for obstacle in obstacles]):
             points.append(point)
     return points
 

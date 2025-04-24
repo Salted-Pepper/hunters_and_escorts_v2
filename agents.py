@@ -21,7 +21,7 @@ from ammo import Ammunition
 date = datetime.date.today()
 logging.basicConfig(level=logging.DEBUG, filename=os.path.join(os.getcwd(), 'logs/mission_log_' + str(date) + '.log'),
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt="%H:%M:%S")
-logger = logging.getLogger("MISSIONS")
+logger = logging.getLogger("AGENTS")
 logger.setLevel(logging.DEBUG)
 
 agent_id = 0

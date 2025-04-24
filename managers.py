@@ -320,7 +320,7 @@ class EscortManager(Manager):
 
     def calc_utilization_rate(self) -> float:
         # TODO: Calculate Utilisation rate properly
-        return 0.04
+        return 0.12
 
     def activate_agent(self, agents: list) -> None:
         agent = random.choice(agents)
@@ -436,7 +436,7 @@ class CoalitionAirManager(Manager):
             raise ValueError(f"Invalid Country {country} for Coalition Aircraft base selection.")
 
     def calc_utilization_rate(self) -> float:
-        return 0.1
+        return 0.2
 
     def activate_agent(self, agents: list) -> None:
         agent = random.choice(agents)
@@ -524,7 +524,7 @@ class CoalitionSubManager(Manager):
         self.bases = [Base(name="Okinawa", location=Point(127.737, 26.588), agent_share=1)]
 
     def calc_utilization_rate(self) -> float:
-        return 0.2
+        return 0.3
 
 
 class MerchantManager(Manager):
@@ -704,7 +704,7 @@ class ChinaAirManager(Manager):
 
     def calc_utilization_rate(self) -> float:
         # TODO: Calculate Utilisation rate properly
-        return 0.04
+        return 0.2
 
     def activate_agent(self, agents: list) -> bool:
         agent = random.choice(agents)
@@ -775,7 +775,7 @@ class ChinaSubManager(Manager):
                       Base(name="Fuzhou", location=Point(119.8, 26.061), agent_share=0.25),]
 
     def calc_utilization_rate(self) -> float:
-        return 0.1
+        return 0.4
 
     def activate_agent(self, agents: list) -> bool:
         agent = random.choice(agents)
