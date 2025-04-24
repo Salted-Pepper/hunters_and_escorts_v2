@@ -75,6 +75,7 @@ function startSimulation(){
 }
 
 sprite_dict = {"Merchant Manager": "static/assets/merchant_24x16.png",
+               "Merchant Manager Boarded": "static/assets/merchant_boarded_24x16.png",
                "China Navy Manager": "static/assets/hunter_24x16.png",
                "China Air Manager": "static/assets/cn_aircraft_24x16.png",
                "TW Escort Manager": "static/assets/escort_tw_24x16.png",
@@ -171,16 +172,61 @@ function updatePlot(agents) {
                 delete sprites[agent.agent_id];
 
             } else if(agent.activated == true) {
-                sprite = sprites[agent.agent_id];
-                sprite.x = agent.x;
-                sprite.y = agent.y;
-                sprite.message.x = sprite.x - 30;
-                sprite.message.y = sprite.y + 15;
 
-                app.stage.removeChild(sprite.message);
-                var text = agent.service + ' - ' + agent.model + '\n'  + agent.agent_id + ' on ' + agent.mission + '\nEndurance ' + agent.rem_endurance.toFixed(0);
-                var message = new PIXI.Text(text, {fontSize: 14, fill: 0x6C3BAA, stroke:0x000000, fontWeight: "bolder"});
-                sprite.message = message
+                if (agent.type == "Merchant Manager Boarded" || agent.type == "Merchant Manager"){
+//                TODO: Create a general sprite texture and overwrite that + update texture instead of recreating the sprite
+                    old_sprite = sprites[agent.agent_id];
+                    app.stage.removeChild(old_sprite);
+                    app.stage.removeChild(old_sprite.message)
+                    delete sprites[agent.agent_id];
+
+                    let new_sprite = createSprite(agent.type);
+                    new_sprite.x = agent.x;
+                    new_sprite.y = agent.y;
+                    app.stage.addChild(new_sprite);
+                    sprites[agent.agent_id] = new_sprite;
+
+                    if (agent.type == "Merchant Manager Boarded"){
+                        var text = agent.service + ' - ' + agent.model + '\n'  + agent.agent_id + ' - Boarded';
+                    } else {
+                        var text = agent.service + ' - ' + agent.model + '\n'  + agent.agent_id + ' - Traveling';
+                    }
+                    var message = new PIXI.Text(text, {fontSize: 14, fill: 0x6C3BAA, stroke:0x000000, fontWeight: "bolder"});
+                    new_sprite.message = message
+                    new_sprite.message.x = sprite.x - 30;
+                    new_sprite.message.y = sprite.y + 15;
+
+                    new_sprite.on('mouseover', function(event){
+                        new_sprite.message.x = event.data.global.x + 10;
+                        new_sprite.message.y = event.data.global.y;
+                        app.stage.addChild(new_sprite.message)
+                    });
+
+                    new_sprite.on('mousemove',function (event) {
+                        if (!new_sprite.message) {
+                            return;
+                        }
+
+                        new_sprite.message.x = event.data.global.x - 30;
+                        new_sprite.message.y = event.data.global.y + 15;
+                    });
+
+                    new_sprite.on('mouseout', function(event){
+                        app.stage.removeChild(new_sprite.message);
+                    });
+
+                } else{
+                    app.stage.removeChild(sprite.message);
+                    var text = agent.service + ' - ' + agent.model + '\n'  + agent.agent_id + ' on ' + agent.mission + '\nEndurance ' + agent.rem_endurance.toFixed(0);
+                    var message = new PIXI.Text(text, {fontSize: 14, fill: 0x6C3BAA, stroke:0x000000, fontWeight: "bolder"});
+                    sprite.message = message
+
+                    sprite = sprites[agent.agent_id];
+                    sprite.x = agent.x;
+                    sprite.y = agent.y;
+                    sprite.message.x = sprite.x - 30;
+                    sprite.message.y = sprite.y + 15;
+                }
 
             }
         }
@@ -199,10 +245,7 @@ let sea_state_colour = {0: "0xBCD2E8",
 const isEmpty = obj => !Object.keys(obj).length;
 
 function updateWeather(receptors) {
-    console.log("Length is ", receptor_nodes.length)
-    console.log("receptors are ", receptors)
     if (isEmpty(receptor_nodes)) {
-        console.log("Creating Initial Receptor Nodes")
         receptors.forEach(receptor => {
             let [min_x, min_y] = lonLatToCanvas(receptor.min_x, receptor.min_y);
             let [max_x, max_y] = lonLatToCanvas(receptor.max_x, receptor.max_y);
@@ -211,7 +254,6 @@ function updateWeather(receptors) {
             let rect = new PIXI.Graphics();
             rect.beginFill(sea_state_colour[receptor.sea_state]);
             rect.drawRect(min_x, min_y, width, height);
-            console.log("Creating rectangle at ", min_x, min_y, width, height)
             rect.endFill();
             receptor_nodes[receptor.receptor_id] = rect;
             app.stage.addChild(rect)
@@ -323,3 +365,4 @@ socket.on("update_logs", (data) => updateLogs(data));
 socket.on("update_time", (data) => updateTime(data));
 socket.on("completed_simulation", (data) => completedSimulation(data));
 
+socket.emit('request_timestamp_data', -1);

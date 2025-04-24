@@ -55,13 +55,13 @@ class Submarine(Agent):
     def sub_detection(self, agent: Agent) -> bool:
         pass
 
-    def observe(self, agents: list[Agent], traveling=False) -> None:
+    def observe(self, agents: list[Agent], traveling=False) -> bool:
         if not traveling:
             self.make_patrol_move()
         agents = self.remove_invalid_targets(agents)
 
         for agent in agents:
-            if agent.destroyed:
+            if agent.activated:
                 continue
 
             if agent.agent_type == "air":
@@ -71,7 +71,7 @@ class Submarine(Agent):
                 continue
 
             if not self.check_if_valid_target(agent):
-                return
+                return False
 
             if agent.agent_type == "ship":
                 detected = self.surface_detection(agent)
@@ -83,9 +83,10 @@ class Submarine(Agent):
             if detected:
                 self.mission.complete()
                 missions.Track(self, agent)
-                return
+                return True
 
         self.spread_pheromones(self.location)
+        return False
 
     def track(self, target: Agent) -> None:
         if cs.world.world_time - self.route.creation_time > 1 or self.route.next_point() is None:
@@ -127,7 +128,7 @@ class Submarine(Agent):
         ammo.stock -= 1
 
         if outcome == "sunk":
-            target.is_destroyed()
+            target.is_destroyed(self)
             self.mission.complete()
             self.return_to_base()
         elif outcome == "ctl":
@@ -160,7 +161,7 @@ class Submarine(Agent):
                 prob_sink = 1
 
         if random.uniform(0, 1) <= prob_sink:
-            target.is_destroyed()
+            target.is_destroyed(self)
             self.mission.complete()
             self.return_to_base()
         else:

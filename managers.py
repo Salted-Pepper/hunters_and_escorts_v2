@@ -36,6 +36,7 @@ class Manager:
         self.active_agents = []
         self.inactive_agents = []
         self.destroyed_agents = []
+        self.reserved_agents = []
 
         self.requests = []
 
@@ -225,6 +226,53 @@ class Manager:
             else:
                 pass
 
+    def reserve_agents(self) -> None:
+        agent_types = set([a.service for a in self.active_agents] + [a.service for a in self.inactive_agents])
+        for service in agent_types:
+            current_share = 0
+            required_share = 1
+            error_margin = 0.05
+
+            while current_share > required_share + error_margin or current_share < required_share - error_margin:
+                active_agents = [a for a in self.active_agents if a.service == service]
+                inactive_agents = [a for a in self.inactive_agents if a.service == service]
+                reserved_agents = [a for a in self.reserved_agents if a.service == service]
+                total_agents = len(active_agents) + len(inactive_agents) + len(reserved_agents)
+                current_share = (len(active_agents) + len(inactive_agents)) / total_agents
+
+                # Accept when unable to fix
+                if len(reserved_agents) == 0 and current_share < required_share - error_margin:
+                    return
+                if len(inactive_agents) == 0 and current_share > required_share + error_margin:
+                    return
+
+                if self.team == 1:
+                    required_share = sum(settings.zone_assignment_coalition[service].values())
+                elif self.team == 2:
+                    required_share = sum(settings.zone_assignment_hunter[service].values())
+
+                # Move the agent to obtain desired share - we select an agent of the service and adjust
+                #   the manager's original lists and update the local copies to match
+                if current_share < required_share - error_margin:
+                    moved_agent = reserved_agents.pop()
+                    self.reserved_agents.remove(moved_agent)
+                    self.inactive_agents.append(moved_agent)
+                    inactive_agents.append(moved_agent)
+
+                elif current_share > required_share + error_margin:
+                    moved_agent = inactive_agents.pop()
+                    self.inactive_agents.remove(moved_agent)
+                    self.reserved_agents.append(moved_agent)
+                    reserved_agents.append(moved_agent)
+
+                # Recalculate statistic after update
+                total_agents = len(active_agents) + len(inactive_agents) + len(reserved_agents)
+                current_share = (len(active_agents) + len(inactive_agents)) / total_agents
+
+    def adjust_to_setting_change(self) -> None:
+        self.remove_agents_from_illegal_zones()
+        self.reserve_agents()
+
     @abstractmethod
     def select_zone_to_patrol(self, agent) -> None:
         pass
@@ -272,7 +320,7 @@ class EscortManager(Manager):
 
     def calc_utilization_rate(self) -> float:
         # TODO: Calculate Utilisation rate properly
-        return 0.04
+        return 0.12
 
     def activate_agent(self, agents: list) -> None:
         agent = random.choice(agents)
@@ -388,7 +436,7 @@ class CoalitionAirManager(Manager):
             raise ValueError(f"Invalid Country {country} for Coalition Aircraft base selection.")
 
     def calc_utilization_rate(self) -> float:
-        return 0.1
+        return 0.2
 
     def activate_agent(self, agents: list) -> None:
         agent = random.choice(agents)
@@ -476,7 +524,7 @@ class CoalitionSubManager(Manager):
         self.bases = [Base(name="Okinawa", location=Point(127.737, 26.588), agent_share=1)]
 
     def calc_utilization_rate(self) -> float:
-        return 0.2
+        return 0.3
 
 
 class MerchantManager(Manager):
@@ -562,10 +610,10 @@ class ChinaNavyManager(Manager):
                 self.inactive_agents.append(new_ship)
 
     def initiate_bases(self) -> None:
-        self.bases = [Base(name="Shanghai", location=Point(122.70, 31.306), agent_share=0.25),
-                      Base(name="Taizhou", location=Point(122.03, 28.231), agent_share=0.25),
+        self.bases = [Base(name="Shanghai", location=Point(122.0, 31.306), agent_share=0.25),
+                      Base(name="Taizhou", location=Point(121.7, 28.231), agent_share=0.25),
                       Base(name="Quanzhou", location=Point(119.04, 24.684), agent_share=0.25),
-                      Base(name="Fuzhou", location=Point(119.99, 26.061), agent_share=0.25),]
+                      Base(name="Fuzhou", location=Point(119.8, 26.061), agent_share=0.25),]
 
     def pre_turn_actions(self) -> None:
         for agent in self.active_agents:
@@ -656,7 +704,7 @@ class ChinaAirManager(Manager):
 
     def calc_utilization_rate(self) -> float:
         # TODO: Calculate Utilisation rate properly
-        return 0.04
+        return 0.2
 
     def activate_agent(self, agents: list) -> bool:
         agent = random.choice(agents)
@@ -721,13 +769,13 @@ class ChinaSubManager(Manager):
                 self.inactive_agents.append(new_sub)
 
     def initiate_bases(self) -> None:
-        self.bases = [Base(name="Shanghai", location=Point(122.70, 31.306), agent_share=0.25),
-                      Base(name="Taizhou", location=Point(122.03, 28.231), agent_share=0.25),
+        self.bases = [Base(name="Shanghai", location=Point(122.0, 31.306), agent_share=0.25),
+                      Base(name="Taizhou", location=Point(121.7, 28.231), agent_share=0.25),
                       Base(name="Quanzhou", location=Point(119.04, 24.684), agent_share=0.25),
-                      Base(name="Fuzhou", location=Point(119.99, 26.061), agent_share=0.25),]
+                      Base(name="Fuzhou", location=Point(119.8, 26.061), agent_share=0.25),]
 
     def calc_utilization_rate(self) -> float:
-        return 0.1
+        return 0.4
 
     def activate_agent(self, agents: list) -> bool:
         agent = random.choice(agents)

@@ -52,7 +52,7 @@ def handle_disconnect():
 
 @socket.on('start')
 def start_simulation():
-    cs.world.remove_agents_from_illegal_zones()
+    cs.world.update_to_simulation_settings()
     cs.simulation_running = True
     cs.world.time_delta = settings.time_delta
     settings.simulation_end_time += settings.simulation_period
@@ -87,6 +87,11 @@ def get_time_info(timestamp) -> None:
     global world_data
     global events
     timestamp = round(timestamp, 3)
+
+    if timestamp < 0:
+        timestamps = world_data.keys()
+        if len(timestamps) > 0:
+            timestamp = max(timestamps)
 
     if timestamp not in world_data.keys():
         return

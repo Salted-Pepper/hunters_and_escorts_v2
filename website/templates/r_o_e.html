@@ -7,45 +7,76 @@
     let current_roe = {{current_roe | tojson}}
     let min_roe = {{min_roe_values | tojson}}
 </script>
-
-<div class="centered-container">
-    <form method="POST">
-        <h5 align="center">Rules of Engagement</h5>
-        1: <b>Anytime</b>: Any hunter found in the specified zone can be attacked at any time<br>
-        2: <b>Retaliatory</b>: Only attack hunters that have attacked a merchant<br>
-        3: <b>Unmanned</b>: Escorts can attack UAVs in the zone, but no other type of hunter<br>
-        4: <b>Forbidden</b>: Hunters in that zone may not be engaged<br>
+<div>
+    <div class="zone-map-container">
         <br>
-        Current Coalition Escalation Level: <b>{{ escalation_level }}</b>
+        <img src="static/assets/zones.png" width="700" height="700">
         <br>
-        <h6 align="center">Settings</h6>
-        <div class="table-container">
-
+        <br>
+        <div style="margin-left: 200px">
+            (A) All Zones <br>
+            (B) Taiwanese Contiguous Zone <br>
+            (C) Taiwanese Territorial Waters <br>
+            (D) Japanese Contiguous Zone <br>
+            (E) Japanese Territorial Waters <br>
+            (F) Filipino Contiguous Zone <br>
+            (G) Filipino Territorial Waters <br>
+            (H) Outside Chinese 10 Dash, not in B-G <br>
+            (I) Inside Chinese 10 Dash, outside B-G <br>
+            (J) Between Philippines and Taiwan <br>
+            (K) Between Japan and Taiwan <br>
+            (L) Within median line <br>
+            (N) Holding Area <br>
+            (P) Primary Hunting Grounds <br>
+            (Q) Outer Japan <br>
         </div>
-        <script src="{{ url_for('static', filename='r_o_e_table.js') }}" defer>
-        </script>
+    </div>
 
-        <br>
-        <br>
+    <div class="right-shifted-centered-container">
+        <form method="POST">
+            <h5 align="center">Rules of Engagement</h5>
+            1: <b>Anytime</b>: Any hunter found in the specified zone can be attacked at any time<br>
+            2: <b>Retaliatory</b>: Only attack hunters that have attacked a merchant<br>
+            3: <b>Unmanned</b>: Escorts can attack UAVs in the zone, but no other type of hunter<br>
+            4: <b>Forbidden</b>: Hunters in that zone may not be engaged<br>
+            <br>
+            Current Coalition Escalation Level: <b>{{ escalation_level }}</b>
+            <br>
+            <h6 align="center">Settings</h6>
+            <div class="table-container">
 
-        <button type="submit" class="btn btn-primary">
-            Save
-        </button>
-        <div id="success-popup" class="success-popup">Saved Settings</div>
+            </div>
+            <script src="{{ url_for('static', filename='r_o_e_table.js') }}" defer>
+            </script>
 
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
+            <br>
+            <br>
 
-        <script>
-            var update = {{update | tojson}}
-            if (update) {
-                confirmUpdate();
-            }
-        </script>
-    </form>
+            <button type="submit" class="btn btn-primary">
+                Save
+            </button>
+            <div id="success-popup" class="success-popup">Saved Settings</div>
+<!--        Lazy way of spacing out the fill -->
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+
+            <script>
+                var update = {{update | tojson}}
+                if (update) {
+                    confirmUpdate();
+                }
+            </script>
+        </form>
+    </div>
+
 </div>
-
 {% endblock %}

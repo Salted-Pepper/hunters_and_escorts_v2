@@ -97,7 +97,7 @@ class Ship(Agent):
         ammo.stock -= 1
 
         if outcome == "sunk":
-            target.is_destroyed()
+            target.is_destroyed(self)
             self.mission.complete()
             self.return_to_base()
         elif outcome == "ctl":
@@ -119,6 +119,7 @@ class Merchant(Ship):
         self.set_service()
         self.team = 1
         self.boarded = False
+        self.seizing_agent = None
         self.damage = 0
 
         self.entry_point = None
@@ -134,6 +135,21 @@ class Merchant(Ship):
 
     def __str__(self):
         return f"Merchant {self.agent_id} at {self.location} - on {self.mission} - {self.activated}"
+
+    def to_dict(self) -> dict:
+        if self.boarded:
+            manager = str(self.manager) + " Boarded"
+        else:
+            manager = str(self.manager)
+        return {"x": self.location.x,
+                "y": self.location.y,
+                "model": self.model,
+                "agent_id": self.agent_id,
+                "activated": self.activated,
+                "mission": str(self.mission),
+                "type": manager,
+                "service": self.service,
+                "rem_endurance": self.remaining_endurance}
 
     def sample_entry_point(self) -> None:
         x = cs.MAX_LAT - 0.01
@@ -192,17 +208,23 @@ class Merchant(Ship):
         if not self.boarded:
             self.base.receive_agent(self)
             self.set_up_for_maintenance()
-            tracker.Event(text=f"Merchant {self.agent_id} reached {self.base.name}",
+            tracker.Event(text=f"{self.service} ({self.agent_id}) reached {self.base.name}",
                           event_type="Merchant Arrived")
             tracker.log_event(self.service, "arrived")
         else:
             tracker.log_event(self.service, "seized")
-            tracker.Event(text=f"Merchant {self.agent_id} has been seized.",
+            tracker.Event(text=f"{self.service} ({self.agent_id}) has been seized by "
+                               f"{self.seizing_agent.service} ({self.seizing_agent.agent_id}) - {self.seizing_agent.model}.",
                           event_type="Merchant Seized")
 
         self.mission.complete()
         self.activated = False
         self.remove_from_missions()
+
+    def get_seizing_agent(self) -> Agent:
+        for mission in self.involved_missions:
+            if mission.mission_type == "guard":
+                return mission.agent
 
     def surface_detection(self, agent: Agent) -> bool:
         pass
@@ -226,7 +248,8 @@ class Merchant(Ship):
         raise TypeError(f"{self} is unable to attack.")
 
     def is_boarded(self, boarder: Agent) -> None:
-        logger.debug(f"{self} got boarded.")
+        logger.debug(f"{self} got boarded by {boarder}.")
+        self.seizing_agent = boarder
         self.mission.abort()
         self.remove_from_missions()
 
@@ -349,7 +372,7 @@ class ChineseShip(Ship):
                     target.ctl = True
                     tracker.log_event(self.service, "CTL")
                 elif outcome == "sunk":
-                    target.is_destroyed()
+                    target.is_destroyed(self)
                     self.mission.complete()
                     self.return_to_base()
                 elif outcome == "damaged":
@@ -445,7 +468,7 @@ class Escort(Ship):
         else:
             return False
 
-    def observe(self, agents: list[Agent], traveling=False) -> None:
+    def observe(self, agents: list[Agent], traveling=False) -> bool:
         if not traveling:
             self.make_patrol_move()
 
@@ -459,13 +482,19 @@ class Escort(Ship):
                 continue
 
             if not self.check_if_valid_target(agent):
-                return
+                return False
 
             if agent.agent_type == "ship":
+                if self.ship_detection_skill is None:
+                    continue
                 detected = self.surface_detection(agent)
             elif agent.agent_type == "air":
+                if self.air_detection_skill is None:
+                    continue
                 detected = self.air_detection(agent)
             elif agent.agent_type == "sub":
+                if self.sub_detection_skill is None:
+                    continue
                 detected = self.sub_detection(agent)
             else:
                 raise ValueError(f"Unknown Class {type(agent)} - unable to observe.")
@@ -473,9 +502,10 @@ class Escort(Ship):
             if detected:
                 self.mission.complete()
                 missions.Track(self, agent)
-                return
+                return True
 
         self.spread_pheromones(self.location)
+        return False
 
     def track(self, target: Agent) -> None:
         if cs.world.world_time - self.route.creation_time > 1 or self.route.next_point() is None:

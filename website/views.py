@@ -43,8 +43,8 @@ def settings_page():
         data = request.form
         iterations = data.get('iter_time')
         time_delta = data.get('time_delta')
-        china_esc = data.get('china_esc')
-        coalition_esc = data.get('coalition_esc')
+        china_esc = int(data.get('china_esc'))
+        coalition_esc = int(data.get('coalition_esc'))
         show_sim = data.get('show-sim')
         plot_type = data.get('receptor-type')
         boarding_only = data.get('boarding-only')
@@ -52,9 +52,13 @@ def settings_page():
         settings.simulation_period = float(iterations)
         settings.warm_up_period = -float(iterations)
         settings.time_delta = float(time_delta)
-        settings.CHINA_SELECTED_LEVEL = int(china_esc)
-        settings.COALITION_SELECTED_LEVEL = int(coalition_esc)
-        check_coalition_escalation_r_o_e()
+
+        if china_esc != settings.CHINA_SELECTED_LEVEL or coalition_esc != settings.COALITION_SELECTED_LEVEL:
+            check_coalition_escalation_r_o_e(coalition_esc)
+            update_agent_assignments(china_esc, coalition_esc)
+
+        settings.CHINA_SELECTED_LEVEL = china_esc
+        settings.COALITION_SELECTED_LEVEL = coalition_esc
         settings.PLOTTING_MODE = True if show_sim == 'on' else False
         settings.RECEPTOR_PLOT_PARAMETER = plot_type
         settings.boarding_only = True if boarding_only == 'on' else False
@@ -75,8 +79,19 @@ def settings_page():
     return render_template("settings.html", **current_settings)
 
 
-def check_coalition_escalation_r_o_e():
-    settings.coalition_r_o_e_rules = settings.min_r_o_e[settings.COALITION_SELECTED_LEVEL]
+def check_coalition_escalation_r_o_e(new_level):
+    settings.coalition_r_o_e_rules = settings.min_r_o_e[new_level]
+
+
+def update_agent_assignments(china_level: int, coa_level: int):
+    level_setting_china = settings.DEFAULT_CHINA_ASSIGNMENT[china_level]
+    level_setting_coa = settings.DEFAULT_COALITION_ASSIGNMENT[coa_level]
+
+    for key, value in level_setting_china.items():
+        settings.zone_assignment_hunter[key] = value
+
+    for key, value in level_setting_coa.items():
+        settings.zone_assignment_coalition[key] = value
 
 
 @views.route('/assignment', methods=['GET', 'POST'])

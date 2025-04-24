@@ -21,7 +21,7 @@ from ammo import Ammunition
 date = datetime.date.today()
 logging.basicConfig(level=logging.DEBUG, filename=os.path.join(os.getcwd(), 'logs/mission_log_' + str(date) + '.log'),
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt="%H:%M:%S")
-logger = logging.getLogger("MISSIONS")
+logger = logging.getLogger("AGENTS")
 logger.setLevel(logging.DEBUG)
 
 agent_id = 0
@@ -240,7 +240,7 @@ class Agent:
         self.set_up_for_maintenance()
         self.remove_from_missions()
 
-    def create_event(self, type_of_event):
+    def create_event(self, type_of_event, extra_text=None):
         if self.combat_type == "COALITION ESCORT":
             identifier = "Escort"
         elif self.combat_type == "COALITION AIRCRAFT":
@@ -256,9 +256,13 @@ class Agent:
         else:
             identifier = "Merchant"
 
-        tracker.log_event(self.service, "destroyed")
-        tracker.Event(text=f"{self.agent_id} - {self.service} has been {type_of_event}",
-                      event_type=f"{identifier} {type_of_event}")
+        tracker.log_event(self.service, type_of_event)
+        if extra_text is None:
+            tracker.Event(text=f"{self.service} ({self.agent_id}) has been {type_of_event}",
+                          event_type=f"{identifier} {type_of_event}")
+        else:
+            tracker.Event(text=f"{self.service} ({self.agent_id}) has been {type_of_event} {extra_text}",
+                          event_type=f"{identifier} {type_of_event}")
 
     def set_up_for_maintenance(self) -> None:
         self.remaining_maintenance_time = self.maintenance_time
@@ -290,6 +294,12 @@ class Agent:
                 target_zone = zones.ZONE_B
             elif target_zone == zones.ZONE_N:
                 target_zone = zones.ZONE_H
+            elif target_zone == zones.ZONE_K:
+                target_zone = zones.ZONE_B
+            elif target_zone == zones.ZONE_Q:
+                target_zone = zones.ZONE_H
+            elif target_zone == zones.ZONE_J:
+                target_zone = target.get_underlying_zone()
             rule_value = rules[self.service][target_zone.name]
             logger.debug(f"Service: {self.service} - Target: {target} in {target_zone} - rule value is {rule_value}")
             if rule_value == 1:
@@ -353,14 +363,18 @@ class Agent:
     def allowed_to_attack(self) -> None:
         pass
 
-    def is_destroyed(self) -> None:
+    def is_destroyed(self, destroyer) -> None:
+        if destroyer.service.startswith("Ship "):
+            service = destroyer.service[5:]
+        else:
+            service = destroyer.service
+        destroyed_by_str = f"by {service} - {destroyer.model}"
         self.mission.abort()
         self.remove_from_missions()
         self.destroyed = True
         self.activated = False
         self.manager.agent_was_destroyed(self)
-        print(f"{cs.world.world_time}-{self} was destroyed.")
-        self.create_event(type_of_event="Destroyed")
+        self.create_event(type_of_event="Destroyed", extra_text=destroyed_by_str)
 
     def check_if_in_zone(self, zone: zones.Zone) -> bool:
         """
@@ -381,6 +395,14 @@ class Agent:
         :return:
         """
         for zone in zones.ZONES:
+            if zone.check_if_agent_in_zone(self):
+                return zone
+        raise ValueError(f"No zone found for {self} at {self.location}")
+
+    def get_underlying_zone(self) -> zones.Zone:
+        possible_zones = [zone for zone in zones.ZONES
+                          if zone not in [zones.ZONE_A, zones.ZONE_N, zones.ZONE_Q, zones.ZONE_J, zones.ZONE_K]]
+        for zone in possible_zones:
             if zone.check_if_agent_in_zone(self):
                 return zone
         raise ValueError(f"No zone found for {self} at {self.location}")
@@ -418,7 +440,7 @@ class Agent:
             if agent.team == self.team:
                 continue
 
-            if self.location.distance_to_point(agent.location) > 700:
+            if self.location.distance_to_point(agent.location) > 650:
                 continue
 
             if not self.check_if_valid_target(agent):
@@ -560,14 +582,6 @@ class Agent:
         self.movement_left_in_turn = 0
 
     def spread_pheromones(self, location) -> None:
-        # TODO: Consider set up for pheromone spread (based on radius or just closest - and if so what radius)
-        # radius: float
-        # receptors = cs.world.receptor_grid.select_receptors_in_radius(self.location, radius)
-        # receptors = [receptor for receptor in receptors if receptor.decay]
-        #
-        # for receptor in receptors:
-        #     assigned_pheromones = (distance/radius) * cs.PHEROMONE_SPREAD
-
         receptor = cs.world.receptor_grid.get_receptor_at_location(location)
         assigned_pheromones = cs.PHEROMONE_SPREAD
 

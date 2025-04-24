@@ -167,7 +167,7 @@ class Aircraft(Agent):
         ammo.stock -= 1
 
         if outcome == "sunk":
-            target.is_destroyed()
+            target.is_destroyed(self)
             self.mission.complete()
             self.return_to_base()
         elif outcome == "ctl":
