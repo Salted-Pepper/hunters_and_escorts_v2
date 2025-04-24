@@ -324,17 +324,18 @@ class Agent:
             zone_rules = settings.zone_assignment_hunter
             target_rules = settings.hunter_target_rules
 
+            valid_target = target_rules[self.service][target.service]
+            if not valid_target:
+                return False
+
             valid_zone = True if (zone_rules[self.service].get(target_zone, 0) > 0 or
                                   (zone_rules[self.service][zones.ZONE_A] > 0 and
                                    target_zone not in settings.HUNTER_ILLEGAL_ZONES)) else False
-            valid_target = target_rules[self.service][target.service]
             logger.debug(f"Service: {self.service} - {target} in {target_zone} - "
                          f"Valid zone: {valid_zone}, Valid Target: {valid_target}")
-
-            if valid_zone and valid_target:
-                return True
-            else:
+            if not valid_zone:
                 return False
+            return True
         else:
             raise ValueError(f"Undefined team {self.team}")
 

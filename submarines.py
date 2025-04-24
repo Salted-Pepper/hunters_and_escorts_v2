@@ -1,5 +1,8 @@
 from abc import abstractmethod
 import random
+import logging
+import os
+import datetime
 
 import data_functions
 import constants as cs
@@ -8,6 +11,12 @@ from agents import Agent
 from bases import Base
 
 import missions
+
+date = datetime.date.today()
+logging.basicConfig(level=logging.DEBUG, filename=os.path.join(os.getcwd(), 'logs/mission_log_' + str(date) + '.log'),
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt="%H:%M:%S")
+logger = logging.getLogger("SUBS")
+logger.setLevel(logging.DEBUG)
 
 
 class Submarine(Agent):
@@ -67,7 +76,8 @@ class Submarine(Agent):
             if agent.agent_type == "air":
                 continue
 
-            if self.location.distance_to_point(agent.location) > cs.COALITION_NAVY_MAX_DETECTION_RANGE:
+            if self.location.distance_to_point(agent.location) > cs.SUB_MAX_DETECTION_RANGE:
+                logger.debug(f"{self} too far from {agent} to observe.")
                 continue
 
             if not self.check_if_valid_target(agent):
@@ -83,8 +93,10 @@ class Submarine(Agent):
             if detected:
                 self.mission.complete()
                 missions.Track(self, agent)
+                logger.debug(f"{self} detected {agent}")
                 return True
 
+        logger.debug(f"{self} failed to detect any of {agents}")
         self.spread_pheromones(self.location)
         return False
 

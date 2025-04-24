@@ -9,7 +9,6 @@ import os
 import time
 import tracker
 import constants as cs
-import constant_coords as ccs
 
 date = datetime.date.today()
 logging.basicConfig(level=logging.DEBUG, filename=os.path.join(os.getcwd(), 'logs/mission_log_' + str(date) + '.log'),
@@ -152,6 +151,8 @@ class Track(Mission):
         except ValueError as e:
             raise ValueError(f"{self.agent} Failed to generate route to {target} -\n {e}")
 
+        self.execute()
+
     def __repr__(self):
         return f"{self.mission_id} - Tracking {self.target.service}-{self.target.agent_id}"
 
@@ -199,6 +200,7 @@ class Attack(Mission):
         self.mission_type = "attack"
         self.agent.generate_route(target.location)
         self.agent.speed_current = self.agent.speed_max
+        self.execute()
 
     def __repr__(self):
         return f"{self.mission_id} - Attacking {self.target.service}-{self.target.agent_id}"
