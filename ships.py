@@ -12,6 +12,7 @@ import settings
 from agents import Agent
 from bases import Base
 from points import Point
+import zones
 
 import missions
 import tracker
@@ -534,7 +535,7 @@ class Escort(Ship):
         else:
             successful = self.attempt_boarding(target)
 
-        if successful and not cs.world.zones.ZONE_L.contains_point(target.location):
+        if successful and not zones.ZONE_L.contains_point(target.location):
             self.mission.complete()
             target.is_boarded(self)
             missions.Guard(self, target)

@@ -163,7 +163,7 @@ class Agent:
 
     def move_through_route(self) -> str:
         if not zones.ZONE_A.polygon.contains_point(self.location):
-            raise ValueError(f"{self} left zone of interest.")
+            logger.warning(f"{self} left zone of interest. - route was: {self.route.original}")
         iterations = 0
         while self.movement_left_in_turn > 0:
             iterations += 1
