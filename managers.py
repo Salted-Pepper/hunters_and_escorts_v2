@@ -633,7 +633,7 @@ class ChinaNavyManager(Manager):
 
     def calc_utilization_rate(self) -> float:
         # TODO: Calculate Utilisation rate properly
-        return 0.3
+        return 0.25
 
     def activate_agent(self, agents: list) -> bool:
         agent = random.choice(agents)
@@ -704,7 +704,7 @@ class ChinaAirManager(Manager):
 
     def calc_utilization_rate(self) -> float:
         # TODO: Calculate Utilisation rate properly
-        return 0.2
+        return 0.15
 
     def activate_agent(self, agents: list) -> bool:
         agent = random.choice(agents)
