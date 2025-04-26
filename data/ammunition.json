@@ -13,7 +13,7 @@
     "Defender Type": "COALITION ESCORT",
     "Weapon Name": "Glide Bomb",
     "Weapon Range": 40,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": 1725
   },
   {
     "Attacker Type": "CN AIRCRAFT",
@@ -29,7 +29,7 @@
     "Defender Type": "COALITION ESCORT",
     "Weapon Name": "Glide Bomb",
     "Weapon Range": 40,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": 1725
   },
   {
     "Attacker Type": "CN AIRCRAFT",
@@ -37,7 +37,7 @@
     "Defender Type": "COALITION ESCORT",
     "Weapon Name": "YJ-12",
     "Weapon Range": 500,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": 125
   },
   {
     "Attacker Type": "CN AIRCRAFT",
@@ -45,7 +45,7 @@
     "Defender Type": "COALITION ESCORT",
     "Weapon Name": "YJ-100",
     "Weapon Range": 1500,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": 225
   },
   {
     "Attacker Type": "CN AIRCRAFT",
@@ -61,7 +61,7 @@
     "Defender Type": "COALITION AIRCRAFT",
     "Weapon Name": "PL-11",
     "Weapon Range": 25,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": "INF"
   },
   {
     "Attacker Type": "CN AIRCRAFT",
@@ -85,7 +85,7 @@
     "Defender Type": "COALITION SUB",
     "Weapon Name": "Torpedo",
     "Weapon Range": 11,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": "INF"
   },
   {
     "Attacker Type": "CN AIRCRAFT",
@@ -93,7 +93,7 @@
     "Defender Type": "COALITION SUB",
     "Weapon Name": "Torpedo",
     "Weapon Range": 11,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": "INF"
   },
   {
     "Attacker Type": "CN AIRCRAFT",
@@ -101,7 +101,7 @@
     "Defender Type": "MERCHANT",
     "Weapon Name": "Range bombs",
     "Weapon Range": 5,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": "INF"
   },
   {
     "Attacker Type": "CN AIRCRAFT",
@@ -109,7 +109,7 @@
     "Defender Type": "MERCHANT",
     "Weapon Name": "Range bombs",
     "Weapon Range": 5,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": "INF"
   },
   {
     "Attacker Type": "CN NAVY",
@@ -117,7 +117,7 @@
     "Defender Type": "COALITION ESCORT",
     "Weapon Name": "YJ-83",
     "Weapon Range": 180,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": 900
   },
   {
     "Attacker Type": "CN NAVY",
@@ -125,7 +125,7 @@
     "Defender Type": "COALITION ESCORT",
     "Weapon Name": "YJ-83",
     "Weapon Range": 180,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": 900
   },
   {
     "Attacker Type": "CN NAVY",
@@ -133,7 +133,7 @@
     "Defender Type": "COALITION ESCORT",
     "Weapon Name": "YJ-18B",
     "Weapon Range": 306,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": 100
   },
   {
     "Attacker Type": "CN NAVY",
@@ -141,7 +141,7 @@
     "Defender Type": "COALITION ESCORT",
     "Weapon Name": "YJ-21",
     "Weapon Range": 1500,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": 50
   },
   {
     "Attacker Type": "CN NAVY",
@@ -149,7 +149,7 @@
     "Defender Type": "COALITION AIRCRAFT",
     "Weapon Name": "Guns",
     "Weapon Range": 4,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": "INF"
   },
   {
     "Attacker Type": "CN NAVY",
@@ -157,7 +157,7 @@
     "Defender Type": "COALITION AIRCRAFT",
     "Weapon Name": "HQ-16B",
     "Weapon Range": 70,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": 400
   },
   {
     "Attacker Type": "CN NAVY",
@@ -165,7 +165,7 @@
     "Defender Type": "COALITION AIRCRAFT",
     "Weapon Name": "HQ-9B",
     "Weapon Range": 300,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": 200
   },
   {
     "Attacker Type": "CN NAVY",
@@ -173,7 +173,7 @@
     "Defender Type": "COALITION AIRCRAFT",
     "Weapon Name": "Guns",
     "Weapon Range": 4,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": "INF"
   },
   {
     "Attacker Type": "CN NAVY",
@@ -181,7 +181,7 @@
     "Defender Type": "COALITION AIRCRAFT",
     "Weapon Name": "HQ-16B",
     "Weapon Range": 70,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": 400
   },
   {
     "Attacker Type": "CN NAVY",
@@ -189,7 +189,7 @@
     "Defender Type": "COALITION AIRCRAFT",
     "Weapon Name": "HQ-9B",
     "Weapon Range": 300,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": 200
   },
   {
     "Attacker Type": "CN NAVY",
@@ -197,7 +197,7 @@
     "Defender Type": "COALITION SUB",
     "Weapon Name": "Yu-7",
     "Weapon Range": 9,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": "INF"
   },
   {
     "Attacker Type": "CN NAVY",
@@ -205,7 +205,7 @@
     "Defender Type": "COALITION SUB",
     "Weapon Name": "Yu-7",
     "Weapon Range": 9,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": "INF"
   },
   {
     "Attacker Type": "CN NAVY",
@@ -213,7 +213,7 @@
     "Defender Type": "COALITION SUB",
     "Weapon Name": "Yu-8",
     "Weapon Range": 30,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": "INF"
   },
   {
     "Attacker Type": "CN NAVY",
@@ -221,7 +221,7 @@
     "Defender Type": "MERCHANT",
     "Weapon Name": "Deckgun",
     "Weapon Range": 5,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": "INF"
   },
   {
     "Attacker Type": "CN NAVY",
@@ -229,7 +229,7 @@
     "Defender Type": "MERCHANT",
     "Weapon Name": "Deckgun",
     "Weapon Range": 5,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": "INF"
   },
   {
     "Attacker Type": "CN NAVY",
@@ -237,7 +237,7 @@
     "Defender Type": "MERCHANT",
     "Weapon Name": "C-802 et al",
     "Weapon Range": "40",
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": 400
   },
   {
     "Attacker Type": "CN SUB",
@@ -245,7 +245,7 @@
     "Defender Type": "COALITION SUB",
     "Weapon Name": "Yu-10 -> Yu-12",
     "Weapon Range": 20,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": "INF"
   },
   {
     "Attacker Type": "CN SUB",
@@ -253,7 +253,7 @@
     "Defender Type": "COALITION SUB",
     "Weapon Name": "YJ-82",
     "Weapon Range": 31,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": 100
   },
   {
     "Attacker Type": "CN SUB",
@@ -261,7 +261,7 @@
     "Defender Type": "COALITION SUB",
     "Weapon Name": "Yu-10 -> Yu-12",
     "Weapon Range": 20,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": "INF"
   },
   {
     "Attacker Type": "CN SUB",
@@ -269,7 +269,7 @@
     "Defender Type": "COALITION SUB",
     "Weapon Name": "YJ-82",
     "Weapon Range": 31,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": 100
   },
   {
     "Attacker Type": "CN SUB",
@@ -277,7 +277,7 @@
     "Defender Type": "COALITION SUB",
     "Weapon Name": "YJ018B",
     "Weapon Range": 306,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": 50
   },
   {
     "Attacker Type": "CN SUB",
@@ -285,7 +285,7 @@
     "Defender Type": "COALITION SUB",
     "Weapon Name": "Torpedo",
     "Weapon Range": 11,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": "INF"
   },
   {
     "Attacker Type": "CN SUB",
@@ -293,7 +293,7 @@
     "Defender Type": "COALITION SUB",
     "Weapon Name": "Torpedo",
     "Weapon Range": 11,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": "INF"
   },
   {
     "Attacker Type": "CN SUB",
@@ -301,7 +301,7 @@
     "Defender Type": "MERCHANT",
     "Weapon Name": "Torpedo",
     "Weapon Range": 11,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": "INF"
   },
   {
     "Attacker Type": "CN SUB",
@@ -309,7 +309,7 @@
     "Defender Type": "MERCHANT",
     "Weapon Name": "Torpedo",
     "Weapon Range": 11,
-    "World Weapon Ammunition": 444
+    "World Weapon Ammunition": "INF"
   },
   {
     "Attacker Type": "COALITION AIRCRAFT",
