@@ -1,3 +1,5 @@
 /logs
 /.venv
 *.xml
+/__pycache__
+/.idea
