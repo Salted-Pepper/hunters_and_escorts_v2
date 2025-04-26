@@ -6,6 +6,10 @@ import concurrent.futures
 import numpy as np
 import random
 
+import datetime
+import logging
+import os
+
 import settings
 import missions
 from bases import Base
@@ -17,6 +21,12 @@ import data_functions
 from ships import Merchant, ChineseShip, Escort
 from aircraft import ChineseAircraft, CoalitionAircraft
 from submarines import ChineseSub, CoalitionSub
+
+date = datetime.date.today()
+logging.basicConfig(level=logging.DEBUG, filename=os.path.join(os.getcwd(), 'logs/mission_log_' + str(date) + '.log'),
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt="%H:%M:%S")
+logger = logging.getLogger("MANAGERS")
+logger.setLevel(logging.DEBUG)
 
 
 class Request:
@@ -127,6 +137,8 @@ class Manager:
     def select_agent_for_request(self, request) -> bool:
         # Try assigning an agent in holding
         for agent in self.active_agents:
+            if agent.mission is None:
+                logger.warning(f"Fount active agent with mission none: {agent}")
             if agent.mission.mission_type != "hold":
                 continue
             elif not agent.check_if_valid_target(request.target):
