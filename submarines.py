@@ -48,6 +48,11 @@ class Submarine(Agent):
         self.air_detection_skill = data_functions.parse_string_input(model_data, "Air Detection Skill", None)
         self.sub_detection_skill = data_functions.parse_string_input(model_data, "Submarine Detection Skill",
                                                                      cs.DET_BASIC)
+
+        self.anti_ship_skill = data_functions.parse_string_input(model_data, "Anti-ship Skill", cs.ATT_BASIC)
+        self.anti_air_skill = data_functions.parse_string_input(model_data, "Anti-air Skill", cs.ATT_BASIC)
+        self.anti_sub_skill = data_functions.parse_string_input(model_data, "Anti-submarine Skill", cs.ATT_BASIC)
+
         self.anti_ship_ammo = int(model_data.get("Anti-Ship Ammunition", 6)) if self.anti_ship_skill is not None else 0
         self.anti_air_ammo = int(model_data.get("Anti-air Ammunition", 6)) if self.anti_air_skill is not None else 0
         self.anti_sub_ammo = int(
@@ -77,7 +82,9 @@ class Submarine(Agent):
                 continue
 
             if self.location.distance_to_point(agent.location) > cs.SUB_MAX_DETECTION_RANGE:
-                logger.debug(f"{self} too far from {agent} to observe.")
+                logger.debug(f"{self} too far from {agent.agent_id} to observe "
+                             f"(distance is {self.location.distance_to_point(agent.location)}, "
+                             f"max radius is {cs.SUB_MAX_DETECTION_RANGE}).")
                 continue
 
             if not self.check_if_valid_target(agent):
@@ -101,14 +108,12 @@ class Submarine(Agent):
         return False
 
     def track(self, target: Agent) -> None:
+        logger.debug(f"{self} started tracking {target}")
         if cs.world.world_time - self.route.creation_time > 1 or self.route.next_point() is None:
             self.generate_route(target.location)
 
         if self.location.distance_to_point(target.location) > 12:
             self.move_through_route()
-
-        if self.location.distance_to_point(target.location) > 12:
-            return
 
         if ((target.agent_type == "ship" and self.anti_ship_skill is not None) or
                 (target.agent_type == "sub" and self.anti_sub_skill is not None)):
