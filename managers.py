@@ -139,6 +139,7 @@ class Manager:
         for agent in self.active_agents:
             if agent.mission is None:
                 logger.warning(f"Fount active agent with mission none: {agent} - previously: {agent.previous_mission}")
+                continue
             if agent.mission.mission_type != "hold":
                 continue
             elif not agent.check_if_valid_target(request.target):
