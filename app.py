@@ -8,6 +8,7 @@ import webbrowser
 
 import constants as cs
 from world import World
+from tracker import export_agent_data
 
 app = create_app()
 socket = SocketIO(app)
@@ -46,7 +47,6 @@ def handle_connect():
 
 @socket.on('disconnect')
 def handle_disconnect():
-    from tracker import export_agent_data
     export_agent_data()
 
 
@@ -78,6 +78,7 @@ def save_time_step(world) -> None:
 
 def send_ready_signal():
     global socket
+    export_agent_data()
     print("Finished computing simulation period.")
     socket.emit('completed_simulation', settings.simulation_end_time)
 

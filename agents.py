@@ -262,7 +262,7 @@ class Agent:
         else:
             identifier = "Merchant"
 
-        tracker.log_event(self.service, type_of_event)
+        tracker.log_event(self.service, self.model, type_of_event)
         if extra_text is None:
             tracker.Event(text=f"{self.service} ({self.agent_id}) has been {type_of_event}",
                           event_type=f"{identifier} {type_of_event}")

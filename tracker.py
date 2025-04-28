@@ -1,6 +1,7 @@
 import app
 import constants as cs
 import json
+import pandas as pd
 
 USED_TIME = {"Weather": 0,
              "Travel": 0,
@@ -33,19 +34,35 @@ def display_times() -> None:
         USED_TIME[key] = 0
 
 
-def log_event(service: str, event_type):
+def log_event(service: str, model: str, event_type):
     global agent_data
     if cs.world.world_time < 0:
         return
-    service = f"{service} {event_type}"
+    service = f"{service} - {model} - {event_type}"
     agent_data[service] = agent_data.get(service, 0) + 1
 
 
 def export_agent_data():
     global agent_data
-    print(agent_data)
-    with open('logs/event_output.txt', 'w') as file:
-        file.write(json.dumps(agent_data))
+    if len(agent_data) == 0:
+        return
+
+    records = []
+    for key, value in agent_data.items():
+        service, model, event = key.split(' - ')
+        records.append({'service': service,
+                        'model': model,
+                        'event': event,
+                        'count': value})
+
+    df = pd.DataFrame.from_records(records)
+    df = df.sort_values(['service', 'event', 'model'])
+    try:
+        df.to_csv('logs/event_output.csv', index=False)
+    except PermissionError:
+        print(f"Unable to write the output CSV as the file is already open.")
+    # with open('logs/event_output.txt', 'w') as file:
+    #     file.write(json.dumps(agent_data))
 
 
 class Event:

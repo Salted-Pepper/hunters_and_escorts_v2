@@ -104,11 +104,11 @@ class Ship(Agent):
             self.return_to_base()
         elif outcome == "ctl":
             target.CTL = True
-            tracker.log_event(self.service, "CTL")
+            tracker.log_event(self.service, self.model,"CTL")
         elif outcome == "nothing":
             if target.combat_type == cs.MERCHANT:
                 if target.damage == 0:
-                    tracker.log_event(self.service, "damaged")
+                    tracker.log_event(self.service, self.model, "damaged")
                 target.damage += 1
         else:
             raise ValueError(f"Unknown outcome {outcome}")
@@ -212,9 +212,9 @@ class Merchant(Ship):
             self.set_up_for_maintenance()
             tracker.Event(text=f"{self.service} ({self.agent_id}) reached {self.base.name}",
                           event_type="Merchant Arrived")
-            tracker.log_event(self.service, "arrived")
+            tracker.log_event(self.service, self.model, "arrived")
         else:
-            tracker.log_event(self.service, "seized")
+            tracker.log_event(self.service, self.model, "seized")
             tracker.Event(text=f"{self.service} ({self.agent_id}) has been seized by "
                                f"{self.seizing_agent.service} ({self.seizing_agent.agent_id}) - {self.seizing_agent.model}.",
                           event_type="Merchant Seized")
@@ -372,14 +372,14 @@ class ChineseShip(Ship):
                 outcome = random.choices(["ctl", "sunk", "damaged"], [0.2, 0.2, 0.6])[0]
                 if outcome == "ctl":
                     target.ctl = True
-                    tracker.log_event(self.service, "CTL")
+                    tracker.log_event(self.service, self.model, "CTL")
                 elif outcome == "sunk":
                     target.is_destroyed(self)
                     self.mission.complete()
                     self.return_to_base()
                 elif outcome == "damaged":
                     if target.damage == 0:
-                        tracker.log_event(self.service, "damaged")
+                        tracker.log_event(self.service, self.model, "damaged")
                     target.damage += 1
                 return
             elif self.anti_ship_skill is not None:
