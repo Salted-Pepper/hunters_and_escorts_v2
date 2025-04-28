@@ -268,12 +268,16 @@ class Manager:
                 # Move the agent to obtain desired share - we select an agent of the service and adjust
                 #   the manager's original lists and update the local copies to match
                 if current_share < required_share - error_margin:
+                    if len(reserved_agents) == 0:
+                        return
                     moved_agent = reserved_agents.pop()
                     self.reserved_agents.remove(moved_agent)
                     self.inactive_agents.append(moved_agent)
                     inactive_agents.append(moved_agent)
 
                 elif current_share > required_share + error_margin:
+                    if len(inactive_agents) == 0:
+                        return
                     moved_agent = inactive_agents.pop()
                     self.inactive_agents.remove(moved_agent)
                     self.reserved_agents.append(moved_agent)
