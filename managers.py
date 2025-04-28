@@ -138,7 +138,7 @@ class Manager:
         # Try assigning an agent in holding
         for agent in self.active_agents:
             if agent.mission is None:
-                logger.warning(f"Fount active agent with mission none: {agent}")
+                logger.warning(f"Fount active agent with mission none: {agent} - previously: {agent.previous_mission}")
             if agent.mission.mission_type != "hold":
                 continue
             elif not agent.check_if_valid_target(request.target):
@@ -167,7 +167,7 @@ class Manager:
                 agent.activate()
                 agent.assigned_zone = request.target.get_current_zone()
                 missions.Track(agent, request.target)
-                print(f"Sending {agent} to {request}")
+                logger.debug(f"Sending {agent} to {request}")
                 return True
         return False
 
@@ -183,7 +183,7 @@ class Manager:
         relevant_agents = [agent for agent in self.active_agents if not isinstance(agent.mission, missions.Return)]
 
         if settings.MULTITHREAD:
-            with concurrent.futures.ThreadPoolExecutor() as executor:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=cpu_count() - 1) as executor:
                 futures = [executor.submit(agent.can_continue) for agent in relevant_agents]
                 concurrent.futures.wait(futures)
         else:
@@ -202,7 +202,7 @@ class Manager:
                                      if agent.team != self.team)
 
         if settings.MULTITHREAD:
-            with concurrent.futures.ThreadPoolExecutor() as executor:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=cpu_count() - 1) as executor:
                 futures = [executor.submit(agent.mission.execute) for agent in observing_agents]
                 concurrent.futures.wait(futures)
         else:

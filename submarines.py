@@ -3,6 +3,7 @@ import random
 import logging
 import os
 import datetime
+import time
 
 import data_functions
 import constants as cs
@@ -11,6 +12,7 @@ from agents import Agent
 from bases import Base
 
 import missions
+import tracker
 
 date = datetime.date.today()
 logging.basicConfig(level=logging.DEBUG, filename=os.path.join(os.getcwd(), 'logs/mission_log_' + str(date) + '.log'),
@@ -71,31 +73,38 @@ class Submarine(Agent):
 
     def observe(self, agents: list[Agent], traveling=False) -> bool:
         if not traveling:
+            t_0 = time.time()
             self.make_patrol_move()
+            tracker.USED_TIME["Observe-Moving"] += time.time() - t_0
+
+        t_0 = time.time()
         agents = self.remove_invalid_targets(agents)
+        tracker.USED_TIME["Observe-Filtering"] += time.time() - t_0
 
         for agent in agents:
-            if not agent.activated:
-                continue
-
             if agent.agent_type == "air":
                 continue
 
+            t_0 = time.time()
             if self.location.distance_to_point(agent.location) > cs.SUB_MAX_DETECTION_RANGE:
-                logger.debug(f"{self} too far from {agent.agent_id} to observe "
-                             f"(distance is {self.location.distance_to_point(agent.location)}, "
-                             f"max radius is {cs.SUB_MAX_DETECTION_RANGE}).")
+                tracker.USED_TIME["Observe-Distance"] += time.time() - t_0
                 continue
+            tracker.USED_TIME["Observe-Distance"] += time.time() - t_0
 
+            t_0 = time.time()
             if not self.check_if_valid_target(agent):
+                tracker.USED_TIME["Observe-Validation"] += time.time() - t_0
                 return False
+            tracker.USED_TIME["Observe-Validation"] += time.time() - t_0
 
+            t_0 = time.time()
             if agent.agent_type == "ship":
                 detected = self.surface_detection(agent)
             elif agent.agent_type == "sub":
                 detected = self.sub_detection(agent)
             else:
                 raise ValueError(f"Unknown Class {type(agent)} - unable to observe.")
+            tracker.USED_TIME["Observe-Detecting"] += time.time() - t_0
 
             if detected:
                 self.mission.complete()

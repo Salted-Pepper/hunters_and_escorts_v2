@@ -5,6 +5,7 @@ from abc import abstractmethod
 import logging
 import os
 import datetime
+import time
 
 import constants as cs
 import data_functions
@@ -258,7 +259,7 @@ class Merchant(Ship):
 
         if self.team == 1:
             self.boarded = False
-            location = self.base
+            location = self.base.location
         elif self.team == 2:
             self.boarded = True
             location = boarder.base.location
@@ -471,20 +472,28 @@ class Escort(Ship):
 
     def observe(self, agents: list[Agent], traveling=False) -> bool:
         if not traveling:
+            t_0 = time.time()
             self.make_patrol_move()
+            tracker.USED_TIME["Observe-Moving"] += time.time() - t_0
 
+        t_0 = time.time()
         agents = self.remove_invalid_targets(agents)
+        tracker.USED_TIME["Observe-Filtering"] += time.time() - t_0
 
         for agent in agents:
-            if agent.destroyed:
-                continue
-
+            t_0 = time.time()
             if self.location.distance_to_point(agent.location) > cs.COALITION_NAVY_MAX_DETECTION_RANGE:
+                tracker.USED_TIME["Observe-Distance"] += time.time() - t_0
                 continue
+            tracker.USED_TIME["Observe-Distance"] += time.time() - t_0
 
+            t_0 = time.time()
             if not self.check_if_valid_target(agent):
+                tracker.USED_TIME["Observe-Validation"] += time.time() - t_0
                 return False
+            tracker.USED_TIME["Observe-Validation"] += time.time() - t_0
 
+            t_0 = time.time()
             if agent.agent_type == "ship":
                 if self.ship_detection_skill is None:
                     continue
@@ -499,6 +508,7 @@ class Escort(Ship):
                 detected = self.sub_detection(agent)
             else:
                 raise ValueError(f"Unknown Class {type(agent)} - unable to observe.")
+            tracker.USED_TIME["Observe-Detecting"] += time.time() - t_0
 
             if detected:
                 self.mission.complete()
@@ -535,7 +545,7 @@ class Escort(Ship):
         else:
             successful = self.attempt_boarding(target)
 
-        if successful and not zones.ZONE_L.contains_point(target.location):
+        if successful and not zones.ZONE_L.polygon.contains_point(target.location):
             self.mission.complete()
             target.is_boarded(self)
             missions.Guard(self, target)

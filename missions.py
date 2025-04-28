@@ -151,8 +151,6 @@ class Track(Mission):
         except ValueError as e:
             raise ValueError(f"{self.agent} Failed to generate route to {target} -\n {e}")
 
-        self.execute()
-
     def __repr__(self):
         return f"{self.mission_id} - Tracking {self.target.service}-{self.target.agent_id}"
 
@@ -249,12 +247,11 @@ class Observe(Mission):
         return f"{self.mission_id} Observing {self.agent.assigned_zone}"
 
     def execute(self) -> None:
-        t_0 = time.time()
         if cs.world.world_time < 0:
             return
 
+        t_0 = time.time()
         self.agent.observe(self.agent.manager.agents_to_detect)
-
         tracker.USED_TIME["Observe"] += time.time() - t_0
 
     def change(self) -> None:

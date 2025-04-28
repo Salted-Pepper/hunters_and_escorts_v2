@@ -6,7 +6,7 @@ CHINA_ESCALATION_LEVELS = [1, 2, 3, 4, 5]
 COALITION_ESCALATION_LEVELS = [1, 2, 3, 4, 5]
 
 CHINA_SELECTED_LEVEL = 1
-COALITION_SELECTED_LEVEL = 1 #Matt changed 4/27
+COALITION_SELECTED_LEVEL = 1
 
 # ---- Simulation Settings ----
 MULTITHREAD = True
@@ -58,7 +58,7 @@ MERCHANT_INFO = {
     "T6": {"Type": "Tanker", "Class": "Handy", "DWT": 37, "Cargo Size": 33, "Cargo Value": 20,
            "Speed": 27.8, "Visibility": cs.MEDIUM, "arrivals": 2},
     "T7": {"Type": "Tanker", "Class": "Small", "DWT": 25, "Cargo Size": 22, "Cargo Value": 10,
-           "Speed": 27.8, "Visibility": cs.SMALL, "arrivals": 20}, #Matt changed 4/27 this and others
+           "Speed": 27.8, "Visibility": cs.SMALL, "arrivals": 20},
 
     "B1": {"Type": "Bulk Carriers", "Class": "Capesize", "DWT": 180, "Cargo Size": 180, "Cargo Value": 23.4,
            "Speed": 26.9, "Visibility": cs.LARGE, "arrivals": 2},
@@ -269,12 +269,12 @@ DEFAULT_COALITION_ASSIGNMENT = {
                                  ZONE_I: 0, ZONE_J: 0, ZONE_K: 0, ZONE_L: 0, ZONE_N: 0, ZONE_P: 0, ZONE_Q: 0},
         cs.COALITION_JP_SUB: {ZONE_A: 0, ZONE_B: 0, ZONE_C: 0, ZONE_D: 0, ZONE_E: 0, ZONE_F: 0, ZONE_G: 0, ZONE_H: 0,
                               ZONE_I: 0, ZONE_J: 0, ZONE_K: 0, ZONE_L: 0, ZONE_N: 0, ZONE_P: 0, ZONE_Q: 0},
-        cs.COALITION_TW_AIRCRAFT: {ZONE_A: 0, ZONE_B: 0, ZONE_C: 1, ZONE_D: 0, ZONE_E: 0, ZONE_F: 0, ZONE_G: 0,
+        cs.COALITION_TW_AIRCRAFT: {ZONE_A: 0, ZONE_B: 0, ZONE_C: 0.5, ZONE_D: 0, ZONE_E: 0, ZONE_F: 0, ZONE_G: 0,
                                    ZONE_H: 0, ZONE_I: 0, ZONE_J: 0, ZONE_K: 0, ZONE_L: 0, ZONE_N: 0, ZONE_P: 0,
                                    ZONE_Q: 0},
-        cs.COALITION_TW_ESCORT: {ZONE_A: 0, ZONE_B: 0, ZONE_C: 1, ZONE_D: 0, ZONE_E: 0, ZONE_F: 0, ZONE_G: 0, ZONE_H: 0,
+        cs.COALITION_TW_ESCORT: {ZONE_A: 0, ZONE_B: 0, ZONE_C: 0.5, ZONE_D: 0, ZONE_E: 0, ZONE_F: 0, ZONE_G: 0, ZONE_H: 0,
                                  ZONE_I: 0, ZONE_J: 0, ZONE_K: 0, ZONE_L: 0, ZONE_N: 0, ZONE_P: 0, ZONE_Q: 0},
-        cs.COALITION_TW_SUB: {ZONE_A: 0, ZONE_B: 0, ZONE_C: 1, ZONE_D: 0, ZONE_E: 0, ZONE_F: 0, ZONE_G: 0, ZONE_H: 0,
+        cs.COALITION_TW_SUB: {ZONE_A: 0, ZONE_B: 0, ZONE_C: 0.5, ZONE_D: 0, ZONE_E: 0, ZONE_F: 0, ZONE_G: 0, ZONE_H: 0,
                               ZONE_I: 0, ZONE_J: 0, ZONE_K: 0, ZONE_L: 0, ZONE_N: 0, ZONE_P: 0, ZONE_Q: 0},
         cs.COALITION_US_AIRCRAFT: {ZONE_A: 0, ZONE_B: 0, ZONE_C: 0, ZONE_D: 0, ZONE_E: 0, ZONE_F: 0, ZONE_G: 0,
                                    ZONE_H: 0, ZONE_I: 0, ZONE_J: 0, ZONE_K: 0, ZONE_L: 0, ZONE_N: 0, ZONE_P: 0,
@@ -475,7 +475,7 @@ coalition_r_o_e_rules = min_r_o_e[COALITION_SELECTED_LEVEL]
 hunter_target_rules = {hunter_agent: {coalition_agent: True for coalition_agent in cs.COALITION_TYPES}
                        for hunter_agent in cs.HUNTER_TYPES}
 
-boarding_only = True #Matt changed 4/27
+boarding_only = True
 
 # ---- Zone Assignment Rules ----
 zone_assignment_hunter = {agent_type: {zone: 0 for zone in ZONES

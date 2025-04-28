@@ -321,7 +321,6 @@ P_PRIMARY_HUNTING_ZONE = [
     Point(120.8150, 21.6575),
     Point(121.65, 21.9),
     Point(121.6, 23.45),
-    # Point(121.8950, 24.5983),
 ]
 
 Q_SECOND_JAPAN = [

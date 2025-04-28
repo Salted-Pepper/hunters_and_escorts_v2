@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+import time
 from abc import abstractmethod
 import copy
 import os
@@ -65,6 +67,7 @@ class Agent:
 
         # ---- Movement ----
         self.assigned_zone = None
+        self.current_zone = None
         self.legal_zones = []
 
         if base is None:
@@ -175,6 +178,7 @@ class Agent:
 
             next_point = self.route.next_point()
             if next_point is None:
+                self.update_current_zone()
                 return "Reached End Of Route"
 
             dist_to_next_point = self.location.distance_to_point(next_point)
@@ -193,6 +197,8 @@ class Agent:
                 self.location = Point(new_x, new_y)
                 self.remaining_endurance -= dist_travelled
                 self.movement_left_in_turn = 0
+
+        self.update_current_zone()
         return "Spent Turn Movement"
 
     def reach_and_return(self, location: Point) -> bool:
@@ -284,13 +290,10 @@ class Agent:
     def check_if_valid_target(self, target) -> bool:
         target_zone = target.get_current_zone()
 
+        # if coalition, it depends on the r_o_e
         if self.team == 1:
-            # if coalition, it depends on the r_o_e
-            rules = settings.coalition_r_o_e_rules
-            if zones.ZONE_L.polygon.contains_point(target.location):
-                # Filters out all Chinese aircraft returning to land
-                return False
-            elif target_zone == zones.ZONE_P:
+            t_0 = time.time()
+            if target_zone == zones.ZONE_P:
                 target_zone = zones.ZONE_B
             elif target_zone == zones.ZONE_N:
                 target_zone = zones.ZONE_H
@@ -300,39 +303,56 @@ class Agent:
                 target_zone = zones.ZONE_H
             elif target_zone == zones.ZONE_J:
                 target_zone = target.get_underlying_zone()
-            rule_value = rules[self.service][target_zone.name]
+
+            # Filter out all Chinese aircraft returning to land
+            elif target_zone == zones.ZONE_L:
+                return False
+            elif target_zone == zones.ZONE_I:
+                if zones.ZONE_L.polygon.contains_point(target.location):
+                    return False
+
+            rule_value = settings.coalition_r_o_e_rules[self.service][target_zone.name]
             logger.debug(f"Service: {self.service} - Target: {target} in {target_zone} - rule value is {rule_value}")
             if rule_value == 1:
+                tracker.USED_TIME["Validation-Coalition"] += time.time() - t_0
                 return True
             elif rule_value == 2:
                 if target.in_combat:
+                    tracker.USED_TIME["Validation-Coalition"] += time.time() - t_0
                     return True
                 else:
+                    tracker.USED_TIME["Validation-Coalition"] += time.time() - t_0
                     return False
             elif rule_value == 3:
                 if not target.manned:
+                    tracker.USED_TIME["Validation-Coalition"] += time.time() - t_0
                     return True
                 else:
+                    tracker.USED_TIME["Validation-Coalition"] += time.time() - t_0
                     return False
             else:
+                tracker.USED_TIME["Validation-Coalition"] += time.time() - t_0
                 return False
 
+        # if china, it depends on assigned and legal zones and targeting
         elif self.team == 2:
+            t_0 = time.time()
+
             if target_zone in settings.HUNTER_ILLEGAL_ZONES:
                 return False
-            # if china, it depends on assigned and legal zones and targeting
             zone_rules = settings.zone_assignment_hunter
-            target_rules = settings.hunter_target_rules
 
-            valid_target = target_rules[self.service][target.service]
+            valid_target = settings.hunter_target_rules[self.service][target.service]
             if not valid_target:
+                tracker.USED_TIME["Validation-China"] += time.time() - t_0
                 return False
 
             valid_zone = True if (zone_rules[self.service].get(target_zone, 0) > 0 or
-                                  (zone_rules[self.service][zones.ZONE_A] > 0 and
-                                   target_zone not in settings.HUNTER_ILLEGAL_ZONES)) else False
+                                  (zone_rules[self.service][zones.ZONE_A] > 0)) else False
             logger.debug(f"Service: {self.service} - {target} in {target_zone} - "
                          f"Valid zone: {valid_zone}, Valid Target: {valid_target}")
+
+            tracker.USED_TIME["Validation-China"] += time.time() - t_0
             if not valid_zone:
                 return False
             return True
@@ -389,6 +409,12 @@ class Agent:
             return False
 
     def get_current_zone(self) -> zones.Zone:
+        if self.current_zone is None:
+            raise ValueError(f"No zone found for {self} at {self.location}")
+
+        return self.current_zone
+
+    def update_current_zone(self) -> None:
         """
         Checks if agent is in a zone going from the highest zone to the lowest zone.
         Only returning the highest zone.
@@ -397,13 +423,29 @@ class Agent:
         """
         for zone in zones.ZONES:
             if zone.check_if_agent_in_zone(self):
-                return zone
+                self.current_zone = zone
+                return
         raise ValueError(f"No zone found for {self} at {self.location}")
 
+# ---- OLD ZONE GRABBING METHOD
+#     def get_current_zone(self) -> zones.Zone:
+#         """
+#         Checks if agent is in a zone going from the highest zone to the lowest zone.
+#         Only returning the highest zone.
+#         (highest as in smallest, that overrules, lowest as in no zone rule)
+#         :return:
+#         """
+#         for zone in zones.ZONES:
+#             if zone.check_if_agent_in_zone(self):
+#                 return zone
+#         return self.current_zone
+#
+#     def update_current_zone(self) -> None:
+#         pass
+# ------------------------------------------------
+
     def get_underlying_zone(self) -> zones.Zone:
-        possible_zones = [zone for zone in zones.ZONES
-                          if zone not in [zones.ZONE_A, zones.ZONE_N, zones.ZONE_Q, zones.ZONE_J, zones.ZONE_K]]
-        for zone in possible_zones:
+        for zone in zones.UNDERLYING_ZONES:
             if zone.check_if_agent_in_zone(self):
                 return zone
         raise ValueError(f"No zone found for {self} at {self.location}")
@@ -430,41 +472,43 @@ class Agent:
 
     def observe(self, agents: list[Agent], traveling=False) -> bool:
         if not traveling:
+            t_0 = time.time()
             self.make_patrol_move()
+            tracker.USED_TIME["Observe-Moving"] += time.time() - t_0
 
+        t_0 = time.time()
         agents = self.remove_invalid_targets(agents)
+        tracker.USED_TIME["Observe-Filtering"] += time.time() - t_0
 
         for agent in agents:
-            if not agent.activated:
-                continue
-
-            if agent.team == self.team:
-                continue
-
+            t_0 = time.time()
             if self.location.distance_to_point(agent.location) > 650:
+                tracker.USED_TIME["Observe-Distance"] += time.time() - t_0
                 continue
+            tracker.USED_TIME["Observe-Distance"] += time.time() - t_0
 
+            t_0 = time.time()
             if not self.check_if_valid_target(agent):
+                tracker.USED_TIME["Observe-Validation"] += time.time() - t_0
                 continue
+            tracker.USED_TIME["Observe-Validation"] += time.time() - t_0
 
+            t_0 = time.time()
             if agent.agent_type == "ship" or agent.agent_type == cs.MERCHANT:
-                if self.ship_detection_skill is None:
-                    continue
                 detected = self.surface_detection(agent)
             elif agent.agent_type == "air":
-                if self.air_detection_skill is None:
-                    continue
                 detected = self.air_detection(agent)
             elif agent.agent_type == "sub":
-                if self.sub_detection_skill is None:
-                    continue
                 detected = self.sub_detection(agent)
             else:
                 raise ValueError(f"Unknown Class {type(agent)} - unable to observe.")
+            tracker.USED_TIME["Observe-Detecting"] += time.time() - t_0
 
             if detected:
                 self.mission.complete()
+                t_0 = time.time()
                 missions.Track(self, agent)
+                tracker.USED_TIME["Observe-Tracking"] += time.time() - t_0
                 return True
 
         self.spread_pheromones(self.location)
@@ -480,7 +524,11 @@ class Agent:
         if self.sub_detection_skill is None:
             agents_to_remove.extend([a for a in agents if a.agent_type == "sub"])
 
+        agents_to_remove.extend([a for a in agents if not a.activated])
+        agents_to_remove.extend([a for a in agents if a.team == self.team])
+
         if len(agents_to_remove) > 0:
+            logger.debug(f"Removed {len(agents_to_remove)} invalid targets out of {len(agents)}")
             return [a for a in agents if a not in agents_to_remove]
         else:
             return agents
@@ -543,16 +591,16 @@ class Agent:
         self.assigned_zone = zone
 
     def make_patrol_move(self) -> None:
-        iterations = 0
-        while self.movement_left_in_turn > 0:
-            iterations += 1
-            if iterations > settings.ITERATION_LIMIT:
-                raise TimeoutError(f"Exceeded Iteration limit in Patrol Move")
-            outcome = self.move_through_route()
+        # iterations = 0
+        # while self.movement_left_in_turn > 0:
+        #     iterations += 1
+        #     if iterations > settings.ITERATION_LIMIT:
+        #         raise TimeoutError(f"Exceeded Iteration limit in Patrol Move")
+        outcome = self.move_through_route()
 
-            if outcome == "Reached End Of Route":
-                selected_location = self.select_next_patrol_location()
-                self.generate_route(destination=selected_location)
+        if outcome == "Reached End Of Route":
+            selected_location = self.select_next_patrol_location()
+            self.generate_route(destination=selected_location)
 
     def select_next_patrol_location(self) -> Point:
         locations = [self.assigned_zone.sample_patrol_location() for _ in range(3)]
@@ -583,6 +631,7 @@ class Agent:
         self.movement_left_in_turn = 0
 
     def spread_pheromones(self, location) -> None:
+        t_0 = time.time()
         receptor = cs.world.receptor_grid.get_receptor_at_location(location)
         assigned_pheromones = cs.PHEROMONE_SPREAD
 
@@ -592,6 +641,7 @@ class Agent:
             receptor.china_pheromones += assigned_pheromones
         else:
             raise ValueError(f"{self} - Invalid Team {self.team}")
+        tracker.USED_TIME["Observe-Pheromones"] += time.time() - t_0
 
     def set_combat_type(self) -> None:
         """

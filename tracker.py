@@ -6,11 +6,21 @@ USED_TIME = {"Weather": 0,
              "Travel": 0,
              "Track": 0,
              "Observe": 0,
+             "Observe-Moving": 0,
+             "Observe-Filtering": 0,
+             "Observe-Distance": 0,
+             "Observe-Validation": 0,
+             "Validation-Coalition": 0,
+             "Validation-China": 0,
+             "Observe-Detecting": 0,
+             "Observe-Tracking": 0,
+             "Observe-Pheromones": 0,
              "Guard": 0,
              "Return": 0,
              "Holding": 0,
              "Attack": 0,
-             "Depart": 0}
+             "Depart": 0,
+             }
 
 agent_data = {}
 
