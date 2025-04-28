@@ -38,6 +38,8 @@ def simulation():
 @views.route('/settings', methods=['GET', 'POST'])
 def settings_page():
     global last_settings_update
+    check_coalition_escalation_r_o_e(settings.COALITION_SELECTED_LEVEL)
+    update_agent_assignments(settings.CHINA_SELECTED_LEVEL, settings.COALITION_SELECTED_LEVEL)
 
     if request.method == "POST":
         data = request.form
