@@ -217,7 +217,8 @@ class Manager:
                         if not isinstance(agent.mission, missions.Observe)]
         for agent in other_agents:
             if agent.mission is None:
-                raise ValueError(f"No Mission for {agent}")
+                missions.Return(agent, agent.base.location)
+                logger.warning(f"{agent} was not on a mission - Previously: {agent.previous_mission}")
         [agent.mission.execute() for agent in other_agents]
 
     def sample_random_base(self) -> Base:
