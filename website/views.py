@@ -22,6 +22,7 @@ last_oob_update = None
 def simulation():
     landmass_to_plot = [poly.output_dict() for poly in cs.world.landmasses] + [ccs.CHINA.output_dict()]
     bases_to_plot = [base.output_dict() for manager in cs.world.managers for base in manager.bases]
+    running = True if cs.simulation_running else False
     data = {"plot_polygons": landmass_to_plot,
             "plot_bases": bases_to_plot,
             "min_lon": cs.MIN_LONG,
@@ -30,7 +31,8 @@ def simulation():
             "max_lat": cs.MAX_LAT,
             "agents": [agent.to_dict() for agent in cs.world.all_agents],
             "time_delta": settings.time_delta,
-            "max_time": settings.simulation_end_time
+            "max_time": settings.simulation_end_time,
+            "running": running,
             }
     return render_template("simulation.html", **data)
 

@@ -56,7 +56,7 @@ function placeLandmasses(app, landmasses) {
 
 simulation_started = false;
 
-function startSimulation(){
+function startSimulation(refresh=false){
     let start_button = document.getElementById("start-button");
     start_button.innerHTML = "Running Simulation...";
     start_button.style.backgroundColor = "red";
@@ -71,7 +71,12 @@ function startSimulation(){
         var txt = document.getElementById('sim-logs');
         txt.value += "Starting Simulation...\n" + txt.value
     }
+    if (!refresh)
     socket.emit("start");
+}
+
+if (running){
+    startSimulation(true);
 }
 
 sprite_dict = {"Merchant Manager": "static/assets/merchant_24x16.png",

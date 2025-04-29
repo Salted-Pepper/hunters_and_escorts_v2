@@ -14,6 +14,7 @@
     let agent_data = {{ agents | tojson }};
     let time_delta  = {{ time_delta }};
     let end_time = {{ max_time }};
+    let running = {{ running | tojson}};
 </script>
 
 <script src="{{ url_for('static', filename='simulation.js') }}" defer>
