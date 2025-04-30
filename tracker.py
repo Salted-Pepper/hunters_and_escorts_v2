@@ -1,6 +1,5 @@
 import app
 import constants as cs
-import json
 import pandas as pd
 
 USED_TIME = {"Weather": 0,
@@ -61,12 +60,12 @@ def export_agent_data():
         df.to_csv('logs/event_output.csv', index=False)
     except PermissionError:
         print(f"Unable to write the output CSV as the file is already open.")
-    # with open('logs/event_output.txt', 'w') as file:
-    #     file.write(json.dumps(agent_data))
 
 
 class Event:
-    def __init__(self, text: str, event_type: str):
+    def __init__(self, text: str, event_type: str, agent_event_name: str, attacker_event_name: str = None):
+        self.agent = agent_event_name
+        self.attacker = attacker_event_name
         self.text = text
         self.event_type = event_type
         self.time = round(cs.world.world_time, 3)
@@ -75,4 +74,6 @@ class Event:
     def record_event(self) -> None:
         app.save_event({'text': self.text,
                         'event_type': self.event_type,
-                        'time': self.time})
+                        'time': self.time,
+                        'agent_event_name': self.agent,
+                        'attacker_event_name': self.attacker})

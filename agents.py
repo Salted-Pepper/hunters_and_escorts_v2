@@ -246,29 +246,25 @@ class Agent:
         self.set_up_for_maintenance()
         self.remove_from_missions()
 
-    def create_event(self, type_of_event, extra_text=None):
-        if self.combat_type == "COALITION ESCORT":
-            identifier = "Escort"
-        elif self.combat_type == "COALITION AIRCRAFT":
-            identifier = "Coalition Aircraft"
-        elif self.combat_type == "CN NAVY":
-            identifier = "Hunter"
-        elif self.combat_type == "CN AIRCRAFT":
-            identifier = "CN Aircraft"
-        elif self.combat_type == "CN SUB":
-            identifier = "CN Submarine"
-        elif self.combat_type == "COALITION SUB":
-            identifier = "Coalition Submarine"
+    def create_event(self, type_of_event, extra_text=None, other_combat_type=None):
+        identifier = cs.COMBAT_TYPE_IDENTIFIER.get(self.combat_type, "Merchant")
+
+        if other_combat_type is not None:
+            other_identifier = cs.COMBAT_TYPE_IDENTIFIER.get(other_combat_type, "Merchant")
         else:
-            identifier = "Merchant"
+            other_identifier = None
 
         tracker.log_event(self.service, self.model, type_of_event)
         if extra_text is None:
             tracker.Event(text=f"{self.service} ({self.agent_id}) has been {type_of_event}",
-                          event_type=f"{identifier} {type_of_event}")
+                          event_type=f"{identifier} {type_of_event}",
+                          agent_event_name=identifier,
+                          attacker_event_name=other_identifier)
         else:
             tracker.Event(text=f"{self.service} ({self.agent_id}) has been {type_of_event} {extra_text}",
-                          event_type=f"{identifier} {type_of_event}")
+                          event_type=f"{identifier} {type_of_event}",
+                          agent_event_name=identifier,
+                          attacker_event_name=other_identifier)
 
     def set_up_for_maintenance(self) -> None:
         self.remaining_maintenance_time = self.maintenance_time
@@ -395,7 +391,8 @@ class Agent:
         self.destroyed = True
         self.activated = False
         self.manager.agent_was_destroyed(self)
-        self.create_event(type_of_event="Destroyed", extra_text=destroyed_by_str)
+        self.create_event(type_of_event="Destroyed", extra_text=destroyed_by_str,
+                          other_combat_type=destroyer.combat_type)
 
     def check_if_in_zone(self, zone: zones.Zone) -> bool:
         """

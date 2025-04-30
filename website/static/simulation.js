@@ -56,7 +56,7 @@ function placeLandmasses(app, landmasses) {
 
 simulation_started = false;
 
-function startSimulation(){
+function startSimulation(refresh=false){
     let start_button = document.getElementById("start-button");
     start_button.innerHTML = "Running Simulation...";
     start_button.style.backgroundColor = "red";
@@ -71,7 +71,12 @@ function startSimulation(){
         var txt = document.getElementById('sim-logs');
         txt.value += "Starting Simulation...\n" + txt.value
     }
+    if (!refresh)
     socket.emit("start");
+}
+
+if (running){
+    startSimulation(true);
 }
 
 sprite_dict = {"Merchant Manager": "static/assets/merchant_24x16.png",
@@ -289,8 +294,8 @@ function updateLogs(events) {
                         "Coalition Aircraft Destroyed": 0,
                         "Coalition Submarine Destroyed": 0,
                         "Aircraft Destroyed": 0,
-                        "Hunter Deterred": 0,
-                        "Hunter Destroyed": 0,
+                        "CN Ship Deterred": 0,
+                        "CN Ship Destroyed": 0,
                         "CN Aircraft Destroyed": 0,
                         "CN Submarine Destroyed": 0,
     };
@@ -315,8 +320,8 @@ function updateLogs(events) {
     document.getElementById('aircraft-log-destroyed').innerHTML = event_counts["Coalition Aircraft Destroyed"];
     document.getElementById('submarines-log-destroyed').innerHTML = event_counts["Coalition Submarine Destroyed"];
 
-    document.getElementById('escorts-log-deterred').innerHTML = event_counts["Hunter Deterred"];
-    document.getElementById('hunters-log-destroyed').innerHTML = event_counts["Hunter Destroyed"];
+    document.getElementById('escorts-log-deterred').innerHTML = event_counts["CN Ship Deterred"];
+    document.getElementById('hunters-log-destroyed').innerHTML = event_counts["CN Ship Destroyed"];
     document.getElementById('cn-aircraft-log-destroyed').innerHTML = event_counts["CN Aircraft Destroyed"];
     document.getElementById('cn-submarines-log-destroyed').innerHTML = event_counts["CN Submarine Destroyed"];
 
