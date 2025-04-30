@@ -474,13 +474,9 @@ DEFAULT_CHINA_ASSIGNMENT = {
 }
 
 coalition_r_o_e_rules = min_r_o_e[COALITION_SELECTED_LEVEL]
-hunter_target_rules = {hunter_agent: {coalition_agent: True for coalition_agent in cs.COALITION_TYPES}
-<<<<<<< HEAD
-                       for hunter_agent in cs.HUNTER_TYPES} #change subs to FALSE
-=======
-                       for hunter_agent in cs.HUNTER_TYPES}
+hunter_target_rules = {hunter_agent: {coalition_agent: True for coalition_agent in cs.COALITION_TYPES} 
+                      for hunter_agent in cs.HUNTER_TYPES} #change subs to FALSE
 hunter_target_rules[cs.HUNTER_SUBMARINE] = {coalition_agent: False for coalition_agent in cs.COALITION_TYPES}
->>>>>>> e6fcb6f187b80a0d5fbbf78b3dcb525ca573e69c
 
 boarding_only = True
 
