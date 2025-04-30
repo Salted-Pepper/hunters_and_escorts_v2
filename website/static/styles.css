@@ -28,7 +28,7 @@
 
 .larger-centered-container {
   margin: auto;
-  width: 1000px;
+  width: 1600px;
   background-color: #f5f5f5;
   padding: 30px 100px 0 100px;
 }
@@ -83,6 +83,7 @@
     margin-left: 10px;
     margin-right: 10px;
 }
+
 /* || Custom Selection Tables */
 
 .standard-table {
@@ -151,4 +152,71 @@
     padding-left: 2px;
     padding-right: 4px;
     margin-bottom: 3px;
+}
+
+/* || Statistics Page */
+.turn-losses-figure{
+  width: 50%;
+  height: 500px;
+  background-color: #f5f5f5;
+  padding: 10px 0px 0px 0px;
+  float: left;
+}
+
+.country-losses-figure{
+  width: 50%;
+  height: 500px;
+  background-color: #f5f5f5;
+  padding: 10px 0px 0px 0px;
+  float: right;
+}
+
+.losses-cause-selection{
+  width: 40%;
+  height: 500px;
+  background-color: #f5f5f5;
+  padding: 10px 0px 0px 0px;
+  float: left;
+}
+
+.target-selector{
+  width: 50%;
+  background-color: #f5f5f5;
+  padding: 10px 0px 0px 0px;
+  float: right;
+
+}
+
+.attacker-selector{
+  width: 50%;
+  background-color: #f5f5f5;
+  padding: 10px 0px 0px 0px;
+  float: left;
+
+}
+
+.losses-cause-figure{
+  width: 60%;
+  height: 500px;
+  background-color: #f5f5f5;
+  padding: 10px 50px 0px 0px;
+  float: right;
+}
+
+.relating-logs{
+  background-color: #f5f5f5;
+  width: 800px;
+  padding-bottom: 50px;
+}
+
+.filtered-sim-logs {
+    width: 800px;
+    height: 250px;
+    padding: 6px 10px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    font-size: 16px;
+    resize: none;
 }

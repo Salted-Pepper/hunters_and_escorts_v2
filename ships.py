@@ -207,17 +207,23 @@ class Merchant(Ship):
         self.manager.active_agents.remove(self)
         self.manager.inactive_agents.append(self)
 
+        event_name = cs.COMBAT_TYPE_IDENTIFIER.get(self.combat_type, "Merchant")
+
         if not self.boarded:
             self.base.receive_agent(self)
             self.set_up_for_maintenance()
             tracker.Event(text=f"{self.service} ({self.agent_id}) reached {self.base.name}",
-                          event_type="Merchant Arrived")
+                          event_type="Merchant Arrived", agent_event_name=event_name)
             tracker.log_event(self.service, self.model, "arrived")
         else:
+            seizer_event_name = cs.COMBAT_TYPE_IDENTIFIER.get(self.seizing_agent.combat_type, "Merchant")
             tracker.log_event(self.service, self.model, "seized")
             tracker.Event(text=f"{self.service} ({self.agent_id}) has been seized by "
-                               f"{self.seizing_agent.service} ({self.seizing_agent.agent_id}) - {self.seizing_agent.model}.",
-                          event_type="Merchant Seized")
+                               f"{self.seizing_agent.service} ({self.seizing_agent.agent_id}) - "
+                               f"{self.seizing_agent.model}.",
+                          event_type="Merchant Seized",
+                          agent_event_name=event_name,
+                          attacker_event_name=seizer_event_name)
 
         self.mission.complete()
         self.activated = False

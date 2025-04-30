@@ -9,6 +9,7 @@ import webbrowser
 import constants as cs
 from world import World
 from tracker import export_agent_data
+import event_statistics
 
 app = create_app()
 socket = SocketIO(app)
@@ -56,6 +57,8 @@ def start_simulation():
     cs.simulation_running = True
     cs.world.time_delta = settings.time_delta
     settings.simulation_end_time += settings.simulation_period
+    settings.turn_periods.append(settings.simulation_end_time)
+    settings.number_of_turns += 1
 
 
 def take_time_step(world: World):
@@ -106,6 +109,15 @@ def get_time_info(timestamp) -> None:
         socket.emit('update_weather', weather)
         socket.emit('update_logs', json.dumps(events))
         return
+
+
+@socket.on('request-update-statistics')
+def update_statistics(attackers, targets):
+    global events
+    print(f"Received request to update statistics\n{attackers}\n{targets}")
+    filtered_logs = event_statistics.update_figures(events, attackers, targets)
+    socket.emit('updated_statistics')
+    socket.emit('filtered_logs', json.dumps(filtered_logs))
 
 
 def save_event(event: dict):

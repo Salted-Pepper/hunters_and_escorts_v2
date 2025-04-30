@@ -37,6 +37,14 @@ def simulation():
     return render_template("simulation.html", **data)
 
 
+@views.route('/statistics', methods=['GET', 'POST'])
+def update_statistics():
+    data = {"max_time": settings.simulation_end_time,
+            "agent_types": cs.EVENT_NAMES,
+            }
+    return render_template("statistics.html", **data)
+
+
 @views.route('/settings', methods=['GET', 'POST'])
 def settings_page():
     global last_settings_update

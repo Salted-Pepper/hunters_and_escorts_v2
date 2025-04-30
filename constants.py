@@ -82,12 +82,14 @@ HUNTER_PAFMM = "Ship PAFMM"
 HUNTER_PLAN = "Ship PLAN"
 
 HUNTER_SUBMARINE = "CN SUB"
-HUNTER_MINELAYER = "Minelayer"
+# HUNTER_MINELAYER = "Minelayer"
 
 HUNTER_UAV = "Air UAV"
 HUNTER_AIRCRAFT = "Air Manned"
 
-HUNTER_TYPES = [HUNTER_CCG, HUNTER_MSA, HUNTER_PAFMM, HUNTER_PLAN, HUNTER_MINELAYER, HUNTER_SUBMARINE,
+# HUNTER_TYPES = [HUNTER_CCG, HUNTER_MSA, HUNTER_PAFMM, HUNTER_PLAN, HUNTER_MINELAYER, HUNTER_SUBMARINE,
+#                 HUNTER_UAV, HUNTER_AIRCRAFT]
+HUNTER_TYPES = [HUNTER_CCG, HUNTER_MSA, HUNTER_PAFMM, HUNTER_PLAN, HUNTER_SUBMARINE,
                 HUNTER_UAV, HUNTER_AIRCRAFT]
 
 # Coalition Types
@@ -113,6 +115,16 @@ COALITION_TYPES = [COALITION_TW_MERCHANT, COALITION_US_MERCHANT, COALITION_JP_ME
                    COALITION_TW_ESCORT, COALITION_TW_AIRCRAFT, COALITION_TW_SUB,
                    COALITION_US_ESCORT, COALITION_US_AIRCRAFT, COALITION_US_SUB,
                    COALITION_JP_ESCORT, COALITION_JP_AIRCRAFT, COALITION_JP_SUB]
+
+# ---- Event Naming Conventions ----
+EVENT_NAMES = ["Merchant", "Escort", "Coalition Aircraft", "Coalition Submarine", "CN Ship", "CN Aircraft", "CN Submarine"]
+
+COMBAT_TYPE_IDENTIFIER = {"COALITION ESCORT": "Escort",
+                          "COALITION AIRCRAFT": "Coalition Aircraft",
+                          "COALITION SUB": "Coalition Submarine",
+                          "CN NAVY": "CN Ship",
+                          "CN AIRCRAFT": "CN Aircraft",
+                          "CN SUB": "CN Submarine"}
 
 # ---- Agent Data ----
 CHINA_NAVY_DATA = None

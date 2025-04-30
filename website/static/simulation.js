@@ -294,8 +294,8 @@ function updateLogs(events) {
                         "Coalition Aircraft Destroyed": 0,
                         "Coalition Submarine Destroyed": 0,
                         "Aircraft Destroyed": 0,
-                        "Hunter Deterred": 0,
-                        "Hunter Destroyed": 0,
+                        "CN Ship Deterred": 0,
+                        "CN Ship Destroyed": 0,
                         "CN Aircraft Destroyed": 0,
                         "CN Submarine Destroyed": 0,
     };
@@ -320,8 +320,8 @@ function updateLogs(events) {
     document.getElementById('aircraft-log-destroyed').innerHTML = event_counts["Coalition Aircraft Destroyed"];
     document.getElementById('submarines-log-destroyed').innerHTML = event_counts["Coalition Submarine Destroyed"];
 
-    document.getElementById('escorts-log-deterred').innerHTML = event_counts["Hunter Deterred"];
-    document.getElementById('hunters-log-destroyed').innerHTML = event_counts["Hunter Destroyed"];
+    document.getElementById('escorts-log-deterred').innerHTML = event_counts["CN Ship Deterred"];
+    document.getElementById('hunters-log-destroyed').innerHTML = event_counts["CN Ship Destroyed"];
     document.getElementById('cn-aircraft-log-destroyed').innerHTML = event_counts["CN Aircraft Destroyed"];
     document.getElementById('cn-submarines-log-destroyed').innerHTML = event_counts["CN Submarine Destroyed"];
 

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %} Simulation {% endblock %}
+{% block content %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
+<script>
+    let max_time = {{ max_time }};
+    let agent_types = {{ agent_types | tojson }};
+</script>
+<script src="{{ url_for('static', filename='statistics.js') }}" defer>
+</script>
+
+<div class="larger-centered-container">
+    <div style="text-align: center;">
+        <h2> Statistics </h2>
+
+    </div>
+
+    <div class="turn-losses-figure">
+        <h5> By Turn Losses </h5>
+        <img src="static/assets/graph_placeholder.png" id="turn-losses-fig">
+
+    </div>
+    <div class="country-losses-figure">
+        <h5> Country Losses </h5>
+        <img src="static/assets/graph_placeholder.png" id="country-losses-fig">
+    </div>
+
+    <div class="losses-cause-selection">
+        <h5> Selection </h5>
+            <div class="attacker-selector">
+                <h6>Attackers</h6>
+            </div>
+            <div class="target-selector">
+                <h6>Targets</h6>
+            </div>
+    </div>
+    <div class="losses-cause-figure">
+        <h5> Losses Cause </h5>
+        <img src="static/assets/graph_placeholder.png" id="losses-cause-fig">
+    </div>
+
+    <div class="relating-logs">
+        <h5> Related Logs </h5>
+        <textarea id="filtered-sim-logs" autofocus readonly class="filtered-sim-logs"></textarea>
+    </div>
+
+</div>
+{% endblock %}
