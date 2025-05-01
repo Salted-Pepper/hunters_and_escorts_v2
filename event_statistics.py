@@ -3,6 +3,7 @@ from __future__ import annotations
 import pandas as pd
 import seaborn as sns
 import matplotlib
+
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
@@ -10,7 +11,7 @@ import settings
 import constants as cs
 
 country_palette = {"China": "indianred",
-                   "USA": "marineblue",
+                   "USA": "navy",
                    "Taiwan": "forestgreen",
                    "Japan": "antiquewhite",
                    "All": "gray"}
@@ -30,7 +31,7 @@ def compute_by_turn_losses(df: pd.DataFrame) -> None:
 
     for turn in range(1, num_turns + 1):
         min_bound, max_bound = get_turn_bounds(turn)
-        filtered_data = df[(df["time"] > min_bound) & (df["time"] <= max_bound)]
+        filtered_data = df[(df["time"] >= min_bound) & (df["time"] < max_bound)]
 
         for agent_type in cs.EVENT_NAMES:
             losses = len(filtered_data[filtered_data["agent_event_name"] == agent_type].index)
@@ -65,26 +66,29 @@ def compute_by_country_losses(df: pd.DataFrame) -> None:
     plot.set(xlabel="Country", ylabel="Destroyed")
     plot.tick_params(axis='x', rotation=30)
     fig = plot.get_figure()
-    fig.subplots_adjust(bottom=0.2)
+    fig.subplots_adjust(bottom=0.25)
     fig.savefig("website/static/assets/country-losses.png")
 
 
 def compute_loss_causes(df: pd.DataFrame, attackers: list[str], targets: list[str]) -> None:
     records = []
 
-    df = df[(df["agent_event_name"].isin(targets)) &
-            (df["attacker_event_name"].isin(attackers))]
+    filtered_df = df[(df["agent_event_name"].isin(targets)) &
+                     (df["attacker_event_name"].isin(attackers))]
 
-    for attacker_type in df["attacker_type"].unique():
-        for country in df["Attacker Country"].unique():
-            count = len(df[(df["attacker_type"] == attacker_type) & 
-                           (df["Attacker Country"] == country)].index)
+    for attacker_type in filtered_df["attacker_type"].unique():
+        for country in filtered_df["Attacker Country"].unique():
+            count = len(filtered_df[(filtered_df["attacker_type"] == attacker_type) &
+                                    (filtered_df["Attacker Country"] == country)].index)
             if count > 0:
                 records.append({"attacker_type": attacker_type, "country": country, "losses": count})
 
     for country in df["Attacker Country"].unique():
         overall_losses = sum([r["losses"] for r in records if r["country"] == country])
         records.insert(0, {"attacker_type": "Total", "losses": overall_losses, "country": country})
+
+    if len(records) == 0:
+        return
 
     data = pd.DataFrame.from_records(records)
 
@@ -120,7 +124,6 @@ def get_agent_type(agent: str) -> str:
 
 
 def get_agent_country(row: pd.Series, agent_role) -> str:
-
     if agent_role == "defender":
         if row["agent_event_name"].startswith("CN"):
             return "China"

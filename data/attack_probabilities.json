@@ -818,6 +818,233 @@
     "Prob CTL":0.0,
     "Prob Nothing":0.8
   },
+
+  {
+    "Attacker Type":"COALITION SUB",
+    "Attacker Skill":"basic",
+    "Defender Type":"CN SUB",
+    "Defender Skill":"stealthy",
+    "Number of Attacks":10.0,
+    "Reload Time":45.0,
+    "Prob Sunk":0.05,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.95
+  },
+  {
+    "Attacker Type":"COALITION SUB",
+    "Attacker Skill":"basic",
+    "Defender Type":"CN SUB",
+    "Defender Skill":"vsmall",
+    "Number of Attacks":10.0,
+    "Reload Time":45.0,
+    "Prob Sunk":0.1,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.9
+  },
+  {
+    "Attacker Type":"COALITION SUB",
+    "Attacker Skill":"basic",
+    "Defender Type":"CN SUB",
+    "Defender Skill":"small",
+    "Number of Attacks":10.0,
+    "Reload Time":45.0,
+    "Prob Sunk":0.25,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.75
+  },
+  {
+    "Attacker Type":"COALITION SUB",
+    "Attacker Skill":"basic",
+    "Defender Type":"CN SUB",
+    "Defender Skill":"medium",
+    "Number of Attacks":10.0,
+    "Reload Time":45.0,
+    "Prob Sunk":0.4,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.6
+  },
+  {
+    "Attacker Type":"COALITION SUB",
+    "Attacker Skill":"basic",
+    "Defender Type":"CN SUB",
+    "Defender Skill":"large",
+    "Number of Attacks":10.0,
+    "Reload Time":45.0,
+    "Prob Sunk":0.55,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.45
+  },
+
+  {
+    "Attacker Type":"COALITION SUB",
+    "Attacker Skill":"advanced",
+    "Defender Type":"CN SUB",
+    "Defender Skill":"stealthy",
+    "Number of Attacks":10.0,
+    "Reload Time":45.0,
+    "Prob Sunk":0.05,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.95
+  },
+  {
+    "Attacker Type":"COALITION SUB",
+    "Attacker Skill":"advanced",
+    "Defender Type":"CN SUB",
+    "Defender Skill":"vsmall",
+    "Number of Attacks":10.0,
+    "Reload Time":45.0,
+    "Prob Sunk":0.15,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.85
+  },
+  {
+    "Attacker Type":"COALITION SUB",
+    "Attacker Skill":"advanced",
+    "Defender Type":"CN SUB",
+    "Defender Skill":"small",
+    "Number of Attacks":10.0,
+    "Reload Time":45.0,
+    "Prob Sunk":0.35,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.65
+  },
+  {
+    "Attacker Type":"COALITION SUB",
+    "Attacker Skill":"advanced",
+    "Defender Type":"CN SUB",
+    "Defender Skill":"medium",
+    "Number of Attacks":10.0,
+    "Reload Time":45.0,
+    "Prob Sunk":0.55,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.45
+  },
+  {
+    "Attacker Type":"COALITION SUB",
+    "Attacker Skill":"advanced",
+    "Defender Type":"CN SUB",
+    "Defender Skill":"large",
+    "Number of Attacks":10.0,
+    "Reload Time":45.0,
+    "Prob Sunk":0.95,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.05
+  },
+
+
+  {
+    "Attacker Type":"CN SUB",
+    "Attacker Skill":"basic",
+    "Defender Type":"COALITION SUB",
+    "Defender Skill":"stealthy",
+    "Number of Attacks":10.0,
+    "Reload Time":45.0,
+    "Prob Sunk":0.05,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.95
+  },
+  {
+    "Attacker Type":"CN SUB",
+    "Attacker Skill":"basic",
+    "Defender Type":"COALITION SUB",
+    "Defender Skill":"vsmall",
+    "Number of Attacks":10.0,
+    "Reload Time":45.0,
+    "Prob Sunk":0.1,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.9
+  },
+  {
+    "Attacker Type":"CN SUB",
+    "Attacker Skill":"basic",
+    "Defender Type":"COALITION SUB",
+    "Defender Skill":"small",
+    "Number of Attacks":10.0,
+    "Reload Time":45.0,
+    "Prob Sunk":0.25,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.75
+  },
+  {
+    "Attacker Type":"CN SUB",
+    "Attacker Skill":"basic",
+    "Defender Type":"COALITION SUB",
+    "Defender Skill":"medium",
+    "Number of Attacks":10.0,
+    "Reload Time":45.0,
+    "Prob Sunk":0.4,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.6
+  },
+  {
+    "Attacker Type":"CN SUB",
+    "Attacker Skill":"basic",
+    "Defender Type":"COALITION SUB",
+    "Defender Skill":"large",
+    "Number of Attacks":10.0,
+    "Reload Time":45.0,
+    "Prob Sunk":0.55,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.45
+  },
+
+  {
+    "Attacker Type":"CN SUB",
+    "Attacker Skill":"advanced",
+    "Defender Type":"COALITION SUB",
+    "Defender Skill":"stealthy",
+    "Number of Attacks":10.0,
+    "Reload Time":45.0,
+    "Prob Sunk":0.05,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.95
+  },
+  {
+    "Attacker Type":"CN SUB",
+    "Attacker Skill":"advanced",
+    "Defender Type":"COALITION SUB",
+    "Defender Skill":"vsmall",
+    "Number of Attacks":10.0,
+    "Reload Time":45.0,
+    "Prob Sunk":0.15,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.85
+  },
+  {
+    "Attacker Type":"CN SUB",
+    "Attacker Skill":"advanced",
+    "Defender Type":"COALITION SUB",
+    "Defender Skill":"small",
+    "Number of Attacks":10.0,
+    "Reload Time":45.0,
+    "Prob Sunk":0.35,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.65
+  },
+  {
+    "Attacker Type":"CN SUB",
+    "Attacker Skill":"advanced",
+    "Defender Type":"COALITION SUB",
+    "Defender Skill":"medium",
+    "Number of Attacks":10.0,
+    "Reload Time":45.0,
+    "Prob Sunk":0.55,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.45
+  },
+  {
+    "Attacker Type":"CN SUB",
+    "Attacker Skill":"advanced",
+    "Defender Type":"COALITION SUB",
+    "Defender Skill":"large",
+    "Number of Attacks":10.0,
+    "Reload Time":45.0,
+    "Prob Sunk":0.95,
+    "Prob CTL":0.0,
+    "Prob Nothing":0.05
+  },
+
+
   {
     "Attacker Type":"CN AIRCRAFT",
     "Attacker Skill":"basic",
