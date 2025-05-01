@@ -201,11 +201,11 @@ min_r_o_e = {
                               ZONE_F.name: 1, ZONE_G.name: 2, ZONE_H.name: 1, ZONE_I.name: 1, ZONE_L.name: 4},
 
         cs.COALITION_US_ESCORT: {ZONE_A.name: 2, ZONE_B.name: 2, ZONE_C.name: 1, ZONE_D.name: 2, ZONE_E.name: 2,
-                                 ZONE_F.name: 2, ZONE_G.name: 2, ZONE_H.name: 2, ZONE_I.name: 2, ZONE_L.name: 4},
+                                 ZONE_F.name: 2, ZONE_G.name: 2, ZONE_H.name: 2, ZONE_I.name: 1, ZONE_L.name: 4},
         cs.COALITION_US_AIRCRAFT: {ZONE_A.name: 2, ZONE_B.name: 2, ZONE_C.name: 1, ZONE_D.name: 2, ZONE_E.name: 2,
-                                   ZONE_F.name: 2, ZONE_G.name: 2, ZONE_H.name: 2, ZONE_I.name: 2, ZONE_L.name: 4},
+                                   ZONE_F.name: 2, ZONE_G.name: 2, ZONE_H.name: 2, ZONE_I.name: 1, ZONE_L.name: 4},
         cs.COALITION_US_SUB: {ZONE_A.name: 2, ZONE_B.name: 2, ZONE_C.name: 1, ZONE_D.name: 2, ZONE_E.name: 2,
-                              ZONE_F.name: 2, ZONE_G.name: 2, ZONE_H.name: 2, ZONE_I.name: 2, ZONE_L.name: 4},
+                              ZONE_F.name: 2, ZONE_G.name: 2, ZONE_H.name: 2, ZONE_I.name: 1, ZONE_L.name: 4},
 
         cs.COALITION_JP_ESCORT: {ZONE_A.name: 4, ZONE_B.name: 4, ZONE_C.name: 4, ZONE_D.name: 2, ZONE_E.name: 1,
                                  ZONE_F.name: 4, ZONE_G.name: 4, ZONE_H.name: 4, ZONE_I.name: 4, ZONE_L.name: 4},
