@@ -80,9 +80,9 @@ function tryToUpdateImage(path, image_id){
 }
 
 function updateStatistics(){
-    tryToUpdateImage("static/assets/turn-losses.png", "turn-losses-fig")
-    tryToUpdateImage("static/assets/country-losses.png", "country-losses-fig")
-    tryToUpdateImage("static/assets/losses-cause.png", "losses-cause-fig")
+    tryToUpdateImage("static/assets/turn-losses.png?random="+new Date().getTime(), "turn-losses-fig")
+    tryToUpdateImage("static/assets/country-losses.png?random="+new Date().getTime(), "country-losses-fig")
+    tryToUpdateImage("static/assets/losses-cause.png?random="+new Date().getTime(), "losses-cause-fig")
 }
 
 

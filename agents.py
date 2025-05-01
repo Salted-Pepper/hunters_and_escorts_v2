@@ -289,9 +289,7 @@ class Agent:
         # if coalition, it depends on the r_o_e
         if self.team == 1:
             t_0 = time.time()
-            if target_zone == zones.ZONE_P:
-                target_zone = zones.ZONE_B
-            elif target_zone == zones.ZONE_N:
+            if target_zone == zones.ZONE_N:
                 target_zone = zones.ZONE_H
             elif target_zone == zones.ZONE_K:
                 target_zone = zones.ZONE_B
