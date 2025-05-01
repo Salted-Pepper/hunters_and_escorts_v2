@@ -338,13 +338,13 @@ DEFAULT_COALITION_ASSIGNMENT = {
                                  ZONE_I: 0, ZONE_J: 0, ZONE_K: 0, ZONE_L: 0, ZONE_N: 0, ZONE_P: 0, ZONE_Q: 0},
         cs.COALITION_JP_SUB: {ZONE_A: 0, ZONE_B: 0, ZONE_C: 0, ZONE_D: 0, ZONE_E: 0, ZONE_F: 0, ZONE_G: 0, ZONE_H: 0,
                               ZONE_I: 0, ZONE_J: 0, ZONE_K: 0, ZONE_L: 0, ZONE_N: 0, ZONE_P: 0, ZONE_Q: 0},
-        cs.COALITION_TW_AIRCRAFT: {ZONE_A: 0, ZONE_B: 0, ZONE_C: 0, ZONE_D: 0, ZONE_E: 0, ZONE_F: 0, ZONE_G: 0,
-                                   ZONE_H: 0, ZONE_I: 0, ZONE_J: 0.25, ZONE_K: 0, ZONE_L: 0, ZONE_N: 0, ZONE_P: 0.75,
+        cs.COALITION_TW_AIRCRAFT: {ZONE_A: 0, ZONE_B: 0, ZONE_C: 0.5, ZONE_D: 0, ZONE_E: 0, ZONE_F: 0, ZONE_G: 0,
+                                   ZONE_H: 0, ZONE_I: 0, ZONE_J: 0, ZONE_K: 0, ZONE_L: 0, ZONE_N: 0, ZONE_P: 0.5,
                                    ZONE_Q: 0},
-        cs.COALITION_TW_ESCORT: {ZONE_A: 0, ZONE_B: 0, ZONE_C: 0, ZONE_D: 0, ZONE_E: 0, ZONE_F: 0, ZONE_G: 0, ZONE_H: 0,
-                                 ZONE_I: 0, ZONE_J: 0.25, ZONE_K: 0, ZONE_L: 0, ZONE_N: 0, ZONE_P: 0.75, ZONE_Q: 0},
+        cs.COALITION_TW_ESCORT: {ZONE_A: 0, ZONE_B: 0, ZONE_C: .5, ZONE_D: 0, ZONE_E: 0, ZONE_F: 0, ZONE_G: 0, ZONE_H: 0,
+                                 ZONE_I: 0, ZONE_J: 0.25, ZONE_K: 0, ZONE_L: 0, ZONE_N: 0, ZONE_P: 0.5, ZONE_Q: 0},
         cs.COALITION_TW_SUB: {ZONE_A: 0, ZONE_B: 0, ZONE_C: 0, ZONE_D: 0, ZONE_E: 0, ZONE_F: 0, ZONE_G: 0, ZONE_H: 0,
-                              ZONE_I: 0, ZONE_J: 0, ZONE_K: 0, ZONE_L: 0, ZONE_N: 0, ZONE_P: 1, ZONE_Q: 0},
+                              ZONE_I: 0, ZONE_J: 0, ZONE_K: 0, ZONE_L: 0, ZONE_N: 0, ZONE_P: 0, ZONE_Q: 0},
         cs.COALITION_US_AIRCRAFT: {ZONE_A: 0, ZONE_B: 0, ZONE_C: 0, ZONE_D: 0, ZONE_E: 0, ZONE_F: 0, ZONE_G: 0,
                                    ZONE_H: 0, ZONE_I: 0, ZONE_J: 0, ZONE_K: 0, ZONE_L: 0, ZONE_N: 0, ZONE_P: 0,
                                    ZONE_Q: 0},
@@ -518,8 +518,8 @@ DEFAULT_CHINA_ASSIGNMENT = {
 }
 
 coalition_r_o_e_rules = min_r_o_e[COALITION_SELECTED_LEVEL]
-hunter_target_rules = {hunter_agent: {coalition_agent: True for coalition_agent in cs.COALITION_TYPES}
-                       for hunter_agent in cs.HUNTER_TYPES}
+hunter_target_rules = {hunter_agent: {coalition_agent: True for coalition_agent in cs.COALITION_TYPES} 
+                      for hunter_agent in cs.HUNTER_TYPES} #change subs to FALSE
 hunter_target_rules[cs.HUNTER_SUBMARINE] = {coalition_agent: False for coalition_agent in cs.COALITION_TYPES}
 
 boarding_only = True
