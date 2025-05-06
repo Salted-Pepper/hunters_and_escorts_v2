@@ -3,3 +3,7 @@
 *.xml
 /__pycache__
 /.idea
+
+website/static/assets/country-losses.png
+website/static/assets/losses-cause.png
+website/static/assets/turn-losses.png

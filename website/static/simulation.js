@@ -10,10 +10,37 @@ console.log("Connecting to Socket...");
 let socket = io.connect("http://" + document.domain + ":" + location.port);
 let sprites = {};
 
+let zoomed = false;
+let zoomed_min_lat = 119;
+let zoomed_max_lat = 126;
+let zoomed_min_lon = 20;
+let zoomed_max_lon = 27;
+
+function toggleZoom(){
+    let button = document.getElementById("zoom-button");
+    if (!zoomed){
+        zoomed = true;
+        button.innerHTML = "Zoom Out"
+    } else{
+        zoomed = false;
+        button.innerHTML = "Zoom In"
+    }
+    convertCoordsToCanvas(landmasses, bases);
+    placeLandmasses(app, landmasses);
+    placeBases(app, bases);
+    requestTimestampUpdate()
+}
+
 function lonLatToCanvas(lat, lon) {
-    let x = WIDTH * ((lat - min_lat) / (max_lat - min_lat));
-    let y = HEIGHT - HEIGHT * ((lon - min_lon) / (max_lon - min_lon));
-    return [x, y];
+    if (!zoomed){
+        let x = WIDTH * ((lat - min_lat) / (max_lat - min_lat));
+        let y = HEIGHT - HEIGHT * ((lon - min_lon) / (max_lon - min_lon));
+        return [x, y];
+    } else {
+        let x = WIDTH * ((lat - zoomed_min_lat) / (zoomed_max_lat - zoomed_min_lat));
+        let y = HEIGHT - HEIGHT * ((lon - zoomed_min_lon) / (zoomed_max_lon - zoomed_min_lon));
+        return [x, y];
+    }
 }
 
 function flatListOfCoordsToCanvasCoords(coords){
@@ -31,24 +58,31 @@ function flatListOfCoordsToCanvasCoords(coords){
 function convertCoordsToCanvas(landmasses, bases){
     landmasses.forEach(landmass => {
         let new_coords = flatListOfCoordsToCanvasCoords(landmass.coords)
-        landmass.coords = new_coords;
+        landmass.adjusted_coords = new_coords;
     })
 
     bases.forEach(base => {
         let new_coords = lonLatToCanvas(base.x, base.y)
-        base.x = new_coords[0]
-        base.y = new_coords[1]
+        base.adjusted_x = new_coords[0]
+        base.adjusted_y = new_coords[1]
     })
 }
 
+let current_landmasses = [];
+
 function placeLandmasses(app, landmasses) {
+    current_landmasses.forEach(graphic => {
+        app.stage.removeChild(graphic);
+    })
+    current_landmasses = [];
 
     landmasses.forEach(landmass => {
         let graphics = new PIXI.Graphics();
         graphics.beginFill(landmass.color);
-        graphics.drawPolygon(landmass.coords);
+        graphics.drawPolygon(landmass.adjusted_coords);
         graphics.endFill();
 
+        current_landmasses.push(graphics);
         app.stage.addChild(graphics);
     })
 }
@@ -96,14 +130,22 @@ sprite_dict = {"Merchant Manager": "static/assets/merchant_24x16.png",
                "AirportGreen": "static/assets/airport_green_16x16.png",
                };
 
+let current_bases = [];
+
 function placeBases(app, bases) {
+    current_bases.forEach(sprite => {
+        app.stage.removeChild(sprite);
+    })
+    current_bases = [];
+
     bases.forEach(base => {
         let sprite = PIXI.Sprite.from(sprite_dict[base.icon]);
         sprite.width = 16;
         sprite.height = 16;
         sprite.anchor.set(0.5);
-        sprite.x = base.x;
-        sprite.y = base.y;
+        sprite.x = base.adjusted_x;
+        sprite.y = base.adjusted_y;
+        current_bases.push(sprite)
         app.stage.addChild(sprite);
     })
 }
