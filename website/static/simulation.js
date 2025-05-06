@@ -303,13 +303,14 @@ function updateWeather(receptors) {
             rect.drawRect(min_x, min_y, width, height);
             rect.endFill();
             receptor_nodes[receptor.receptor_id] = rect;
-            app.stage.addChild(rect)
-            app.stage.setChildIndex(rect, 0)
+            app.stage.addChild(rect);
+            app.stage.setChildIndex(rect, 0);
         });
     }
     else {
         receptors.forEach(receptor => {
             rect = receptor_nodes[receptor.receptor_id];
+            rect.clear();
             let [min_x, min_y] = lonLatToCanvas(receptor.min_x, receptor.min_y);
             let [max_x, max_y] = lonLatToCanvas(receptor.max_x, receptor.max_y);
             const width = max_x - min_x;
