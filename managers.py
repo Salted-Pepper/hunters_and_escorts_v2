@@ -616,6 +616,7 @@ class ChinaNavyManager(Manager):
     def __init__(self):
         super().__init__()
         self.name = "China Navy Manager"
+        self.country = settings.CHINA
         self.team = 2
         self.initiate_agents()
 
@@ -690,6 +691,7 @@ class ChinaAirManager(Manager):
         self.name = "China Air Manager"
         self.team = 2
         self.initiate_agents()
+        self.country = settings.CHINA
 
     def pre_turn_actions(self) -> None:
         for agent in self.active_agents:
@@ -760,6 +762,7 @@ class ChinaSubManager(Manager):
         super().__init__()
         self.name = "China Sub Manager"
         self.team = 2
+        self.country = settings.CHINA
         self.initiate_agents()
 
     def pre_turn_actions(self) -> None:
