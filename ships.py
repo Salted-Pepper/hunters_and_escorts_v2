@@ -104,11 +104,14 @@ class Ship(Agent):
             self.return_to_base()
         elif outcome == "ctl":
             target.CTL = True
-            tracker.log_event(self.service, self.model,"CTL")
+            tracker.Event(text=f"{target} was CTL", event_type="CTL", agent=target,
+                          agent_event_name=target.combat_type, attacker=self, attacker_event_name=self.combat_type)
         elif outcome == "nothing":
             if target.combat_type == cs.MERCHANT:
                 if target.damage == 0:
-                    tracker.log_event(self.service, self.model, "damaged")
+                    tracker.Event(text=f"{target} was damaged", event_type="damaged", agent=target,
+                                  agent_event_name=target.combat_type, attacker=self,
+                                  attacker_event_name=self.combat_type)
                 target.damage += 1
         else:
             raise ValueError(f"Unknown outcome {outcome}")
@@ -212,16 +215,24 @@ class Merchant(Ship):
         if not self.boarded:
             self.base.receive_agent(self)
             self.set_up_for_maintenance()
+            if self.CTL:
+                event_type = "Merchant Arrived (CTL)"
+            elif self.damage > 0:
+                event_type = "Merchant Arrived (Damaged)"
+            else:
+                event_type = "Merchant Arrived"
+
             tracker.Event(text=f"{self.service} ({self.agent_id}) reached {self.base.name}",
-                          event_type="Merchant Arrived", agent_event_name=event_name)
-            tracker.log_event(self.service, self.model, "arrived")
+                          agent=self, attacker=None,
+                          event_type=event_type, agent_event_name=event_name)
+
         else:
             seizer_event_name = cs.COMBAT_TYPE_IDENTIFIER.get(self.seizing_agent.combat_type, "Merchant")
-            tracker.log_event(self.service, self.model, "seized")
             tracker.Event(text=f"{self.service} ({self.agent_id}) has been seized by "
                                f"{self.seizing_agent.service} ({self.seizing_agent.agent_id}) - "
                                f"{self.seizing_agent.model}.",
                           event_type="Merchant Seized",
+                          agent=self, attacker=self.seizing_agent,
                           agent_event_name=event_name,
                           attacker_event_name=seizer_event_name)
 

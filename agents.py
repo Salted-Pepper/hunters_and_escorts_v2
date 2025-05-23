@@ -38,7 +38,10 @@ class Agent:
         self.base = base
         self.manager = manager
         self.team = manager.team
-        self.country = None
+        if hasattr(manager, "country"):
+            self.country = manager.country
+        else:
+            self.country = None
         self.model = model
         self.service = None
         self.agent_type = None
@@ -246,7 +249,7 @@ class Agent:
         self.set_up_for_maintenance()
         self.remove_from_missions()
 
-    def create_event(self, type_of_event, extra_text=None, other_combat_type=None):
+    def create_event(self, type_of_event, extra_text=None, other_combat_type=None, attacker=None):
         identifier = cs.COMBAT_TYPE_IDENTIFIER.get(self.combat_type, "Merchant")
 
         if other_combat_type is not None:
@@ -254,16 +257,19 @@ class Agent:
         else:
             other_identifier = None
 
-        tracker.log_event(self.service, self.model, type_of_event)
         if extra_text is None:
             tracker.Event(text=f"{self.service} ({self.agent_id}) has been {type_of_event}",
                           event_type=f"{identifier} {type_of_event}",
+                          agent=self,
+                          attacker=attacker,
                           agent_event_name=identifier,
                           attacker_event_name=other_identifier)
         else:
             tracker.Event(text=f"{self.service} ({self.agent_id}) has been {type_of_event} {extra_text}",
                           event_type=f"{identifier} {type_of_event}",
+                          agent=self,
                           agent_event_name=identifier,
+                          attacker=attacker,
                           attacker_event_name=other_identifier)
 
     def set_up_for_maintenance(self) -> None:
@@ -389,7 +395,7 @@ class Agent:
         self.destroyed = True
         self.activated = False
         self.manager.agent_was_destroyed(self)
-        self.create_event(type_of_event="Destroyed", extra_text=destroyed_by_str,
+        self.create_event(type_of_event="Destroyed", extra_text=destroyed_by_str, attacker=destroyer,
                           other_combat_type=destroyer.combat_type)
 
     def check_if_in_zone(self, zone: zones.Zone) -> bool:
