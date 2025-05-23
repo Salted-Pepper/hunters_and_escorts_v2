@@ -55,10 +55,27 @@ def create_dataframe_from_events() -> pd.DataFrame:
                         "service": event.agent.service,
                         "model": event.agent.model,
                         "period": event.sim_period,
-                        "event_type": event.event_type,
+                        "event_type": extract_event_type(event.event_type),
                         })
 
     return pd.DataFrame.from_records(records)
+
+
+def extract_event_type(event_type: str):
+    upper_event = event_type.upper()
+    if "DESTROYED" in upper_event:
+        return "Destroyed"
+    elif "SEIZED" in upper_event:
+        return "Seized"
+    elif "ARRIVED" in upper_event and "DAMAGED" in upper_event:
+        return "Arrived (Damaged)"
+    elif "CTL" in upper_event:
+        return "CTL"
+    elif "ARRIVED" in upper_event:
+        return "Arrived"
+    else:
+        print(f"Unmapped event type - {upper_event}")
+        return event_type
 
 
 def row_and_column_to_cell(row: int, col: int) -> str:
