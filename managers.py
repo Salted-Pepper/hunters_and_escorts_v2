@@ -97,7 +97,7 @@ class Manager:
 
         if holding_only:
             agents_in_holding = [a for a in self.active_agents
-                                 if a.mission.mission_type == "hold"
+                                 if a.mission is not None and a.mission.mission_type == "hold"
                                  and a.allowed_to_enter_zone(zone)]
             if len(agents_in_holding) > 0:
                 self.add_task(target, mission)

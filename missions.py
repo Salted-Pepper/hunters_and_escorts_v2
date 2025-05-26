@@ -26,6 +26,7 @@ mission_id = 0
 class Mission:
     def __init__(self, agent: Agent, target: Agent | Point):
         global mission_id
+        self.support_requested = False
         self.mission_id = mission_id
         mission_id += 1
 
@@ -134,7 +135,6 @@ class Track(Mission):
     def __init__(self, agent: Agent, target: Agent):
         super().__init__(agent, target)
         self.mission_type = "track"
-        self.support_requested = False
 
         logger.debug(f"{agent}")
         if agent.team == target.team:
@@ -296,6 +296,13 @@ class Guard(Mission):
         Return(self.agent, self.agent.base.location)
 
     def abort(self) -> None:
+        if hasattr(self.target, "boarded"):
+            if self.target.boarded:
+                self.target.boarded = False
+                self.target.team = 1
+                if self.target.mission is not None:
+                    self.target.mission.abort()
+                Return(self.target, target=self.target.base.location)
         self.remove_mission_status()
         Return(self.agent, self.agent.base.location)
 

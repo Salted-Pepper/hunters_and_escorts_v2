@@ -400,10 +400,7 @@ for zone in zones:
 ax.set_xlim(110, 140)
 ax.set_ylim(15, 42)
 
-ax.scatter(122.0, 31.306, color="purple")
-ax.scatter(121.7, 28.231, color="purple")
-ax.scatter(119.04, 24.684, color="purple")
-ax.scatter(119.8, 26.061, color="purple")
+ax.scatter(121.82820171694196, 24.125173540490092, color="purple")
 
 # Labels and legend
 ax.set_xlabel('Longitude')
