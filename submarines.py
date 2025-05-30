@@ -109,10 +109,8 @@ class Submarine(Agent):
             if detected:
                 self.mission.complete()
                 missions.Track(self, agent)
-                logger.debug(f"{self} detected {agent}")
                 return True
 
-        logger.debug(f"{self} failed to detect any of {agents}")
         self.spread_pheromones(self.location)
         return False
 

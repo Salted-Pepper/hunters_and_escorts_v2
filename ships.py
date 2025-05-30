@@ -275,15 +275,15 @@ class Merchant(Ship):
         self.team = boarder.team
 
         if self.team == 1:
-            self.boarded = False
-            location = self.base.location
-        elif self.team == 2:
+            # When Escorts board - the merchant returns automatically through the cancellation of hunter guard
+            pass
+        if self.team == 2:
             self.boarded = True
             location = boarder.base.location
+            missions.Return(self, target=location)
+            self.request_support(target=boarder)
         else:
             raise ValueError(f"Unknown team {self.team}")
-
-        missions.Return(self, target=location)
 
     def get_resistance_level(self) -> str:
         return settings.merchant_rules[settings.COALITION_SELECTED_LEVEL][self.country]
