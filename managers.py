@@ -550,33 +550,64 @@ class MerchantManager(Manager):
         super().__init__()
         self.name = "Merchant Manager"
         self.team = 3
+        self.scheduled_entrances = []
 
     def __str__(self):
         return self.name
 
     def pre_turn_actions(self) -> None:
-        self.generate_incoming_merchants()
+        self.check_for_merchant_entrances()
         self.set_agent_movement()
 
-    def generate_incoming_merchants(self) -> None:
-        for merchant_type in settings.MERCHANT_INFO:
-            attributes = settings.MERCHANT_INFO[merchant_type]
-            weekly_arrivals = attributes["arrivals"]
-            sample_arrivals = self.sample_arrivals(weekly_arrivals)
-            self.generate_merchants(merchant_type, sample_arrivals)
+    def check_for_merchant_entrances(self) -> None:
+        self.await_merchant_initiation()
+
+        while len(self.scheduled_entrances) > 0:
+            new_entry = self.scheduled_entrances.pop(0)
+
+            if new_entry["entry_time"] <= cs.world.world_time:
+                self.create_merchant(new_entry["merchant_type"])
+            else:
+                self.scheduled_entrances.insert(0, new_entry)
+                return
 
     @staticmethod
-    def sample_arrivals(weekly_arrivals: int) -> int:
-        per_period_arrivals = weekly_arrivals / ((24 * 7) / cs.world.time_delta)
-        sampled_arrivals = np.random.poisson(per_period_arrivals)
-        return sampled_arrivals
+    def await_merchant_initiation() -> None:
+        while not settings.merchants_initiated:
+            pass
 
-    def generate_merchants(self, merchant_type: str, number: int):
-        for _ in range(number):
-            new_merchant = Merchant(self, model=merchant_type,
-                                    base=self.sample_random_base(), country=self.sample_country())
-            self.active_agents.append(new_merchant)
-            cs.world.all_agents.append(new_merchant)
+    def create_merchant(self, merchant_type: str) -> None:
+        new_merchant = Merchant(self, model=merchant_type,
+                                base=self.sample_random_base(), country=self.sample_country())
+        self.active_agents.append(new_merchant)
+        cs.world.all_agents.append(new_merchant)
+
+    def generate_this_period_arrivals(self) -> None:
+        arrival_data = settings.MERCHANT_INFO
+        arriving_merchants = []
+        for merchant_type in arrival_data:
+            for _ in range(int(arrival_data[merchant_type]["arrivals"])):
+                arriving_merchants.append({"merchant_type": merchant_type})
+
+        random.shuffle(arriving_merchants)
+        inter_arrival_times = np.random.exponential(scale=1, size=len(arriving_merchants))
+        total_time = sum(inter_arrival_times)
+        arrival_times = np.cumsum(inter_arrival_times)
+        real_period_time = settings.turn_periods[-1] - settings.turn_periods[-2]
+
+        for index, merchant_dict in enumerate(arriving_merchants):
+            merchant_dict["entry_time"] = arrival_times[index] * (real_period_time / total_time)
+
+        if settings.number_of_turns == 1:  # Include warm up period
+            warm_up_arrivals = []
+            for merchant in arriving_merchants:
+                warm_up_merchant = {"merchant_type": merchant["merchant_type"], "entry_time": -merchant["entry_time"]}
+                warm_up_arrivals.insert(0, warm_up_merchant)
+            self.scheduled_entrances = warm_up_arrivals + arriving_merchants
+        else:
+            self.scheduled_entrances = self.scheduled_entrances + arriving_merchants
+
+        settings.merchants_initiated = True
 
     def initiate_agents(self) -> None:
         """

@@ -59,6 +59,7 @@ def start_simulation():
     settings.simulation_end_time += settings.simulation_period
     settings.turn_periods.append(settings.simulation_end_time)
     settings.number_of_turns += 1
+    cs.world.merchant_manager.generate_this_period_arrivals()
 
 
 def take_time_step(world: World):
@@ -84,6 +85,7 @@ def send_ready_signal():
     export_agent_data()
     print("Finished computing simulation period.")
     socket.emit('completed_simulation', settings.simulation_end_time)
+    settings.merchants_initiated = False
 
 
 @socket.on('request_timestamp_data')

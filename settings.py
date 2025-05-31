@@ -139,6 +139,8 @@ merchant_rules = {1: {MARKET: cs.COMPLY,
                       USA: cs.RESIST,
                       JAPAN: cs.RESIST}}
 
+merchants_initiated = False
+
 
 def get_merchant_rule(country: str) -> str:
     return merchant_rules[COALITION_SELECTED_LEVEL][country]

@@ -109,6 +109,10 @@ def export_agent_data():
 
     workbook = xlsxwriter.Workbook(path)
 
+    if len(df.index) == 0:
+        print(f"No data exported, as no data was saved.")
+        return
+
     models = df["model"].unique()
     outcomes = df["event_type"].unique()
 
