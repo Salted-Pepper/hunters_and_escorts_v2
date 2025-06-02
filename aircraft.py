@@ -17,6 +17,7 @@ class Aircraft(Agent):
         self.agent_type = "air"
         self.manned = True
         self.max_detection_range = 648
+        self.asw_location = None
 
     @abstractmethod
     def initiate_model(self) -> None:
@@ -88,9 +89,9 @@ class Aircraft(Agent):
         distance = self.location.distance_to_point(agent.location)
 
         if self.anti_sub_skill == cs.DET_BASIC:
-            max_distance = 5
+            max_distance = 15.7
         elif self.anti_sub_skill == cs.DET_ADV:
-            max_distance = 18.5
+            max_distance = 27.78
         else:
             raise ValueError(f"Invalid anti-ship skill for {self.model}")
 
@@ -169,7 +170,10 @@ class Aircraft(Agent):
         if outcome == "sunk":
             target.is_destroyed(self)
             self.mission.complete()
-            self.return_to_base()
+            if self.asw_location is not None:
+                missions.Observe(self, target=self.asw_location)
+            else:
+                self.return_to_base()
         elif outcome == "ctl":
             target.CTL = True
         elif outcome == "nothing":

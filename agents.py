@@ -426,7 +426,10 @@ class Agent:
             if zone.check_if_agent_in_zone(self):
                 self.current_zone = zone
                 return
-        raise ValueError(f"No zone found for {self} at {self.location}")
+
+        logger.warning(f"Failed to find zone for {self} at {self.location} - assigning default zone A")
+        self.current_zone = zones.ZONE_A
+        # raise ValueError(f"No zone found for {self} at {self.location}")
 
 # ---- OLD ZONE GRABBING METHOD
 #     def get_current_zone(self) -> zones.Zone:
@@ -499,8 +502,10 @@ class Agent:
                 detected = self.surface_detection(agent)
             elif agent.agent_type == "air":
                 detected = self.air_detection(agent)
-            elif agent.agent_type == "sub":
+            elif agent.agent_type == "sub" and not traveling:
                 detected = self.sub_detection(agent)
+            elif agent.agent_type == "sub":
+                continue
             else:
                 raise ValueError(f"Unknown Class {type(agent)} - unable to observe.")
             tracker.USED_TIME["Observe-Detecting"] += time.time() - t_0
@@ -597,6 +602,13 @@ class Agent:
         #     iterations += 1
         #     if iterations > settings.ITERATION_LIMIT:
         #         raise TimeoutError(f"Exceeded Iteration limit in Patrol Move")
+
+        # Make patrol moves for ASW aircraft patrolling an area
+        if self.agent_type == "air" and self.anti_sub_skill is not None:
+            self.remaining_endurance -= self.movement_left_in_turn
+            self.movement_left_in_turn = 0
+            return
+
         outcome = self.move_through_route()
 
         if outcome == "Reached End Of Route":

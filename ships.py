@@ -277,7 +277,7 @@ class Merchant(Ship):
         if self.team == 1:
             # When Escorts board - the merchant returns automatically through the cancellation of hunter guard
             pass
-        if self.team == 2:
+        elif self.team == 2:
             self.boarded = True
             location = boarder.base.location
             missions.Return(self, target=location)
