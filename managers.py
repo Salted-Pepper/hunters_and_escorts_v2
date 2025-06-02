@@ -594,9 +594,13 @@ class MerchantManager(Manager):
         total_time = sum(inter_arrival_times)
         arrival_times = np.cumsum(inter_arrival_times)
         real_period_time = settings.turn_periods[-1] - settings.turn_periods[-2]
+        start_time = settings.turn_periods[-2]
 
         for index, merchant_dict in enumerate(arriving_merchants):
-            merchant_dict["entry_time"] = arrival_times[index] * (real_period_time / total_time)
+            if settings.enter_at_start_of_period:
+                merchant_dict["entry_time"] = 0
+            else:
+                merchant_dict["entry_time"] = start_time + arrival_times[index] * (real_period_time / total_time)
 
         if settings.number_of_turns == 1:  # Include warm up period
             warm_up_arrivals = []

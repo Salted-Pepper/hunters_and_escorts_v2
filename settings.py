@@ -46,6 +46,7 @@ PLOTTING_MODE = True
 RECEPTOR_PLOT_PARAMETER = "Sea States"
 
 # ---- Merchant Settings ----
+enter_at_start_of_period = False
 
 MERCHANT_INFO = {
     "T1": {"Type": "Tanker", "Class": "VLCC", "DWT": 320, "Cargo Size": 304, "Cargo Value": 160,
