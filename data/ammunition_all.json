@@ -361,11 +361,35 @@
   },
   {
     "Attacker Type": "COALITION AIRCRAFT",
+    "Attacker Skill": "Basic",
+    "Defender Type": "CN NAVY",
+    "Weapon Name": "JSOW",
+    "Weapon Range": 40,
+    "World Weapon Ammunition": 200
+  },
+  {
+    "Attacker Type": "COALITION AIRCRAFT",
+    "Attacker Skill": "Advanced",
+    "Defender Type": "CN NAVY",
+    "Weapon Name": "JSOW",
+    "Weapon Range": 40,
+    "World Weapon Ammunition": 200
+  },
+  {
+    "Attacker Type": "COALITION AIRCRAFT",
     "Attacker Skill": "Advanced",
     "Defender Type": "CN NAVY",
     "Weapon Name": "NSM/SLAM-ER",
     "Weapon Range": 200,
-    "World Weapon Ammunition": 300
+    "World Weapon Ammunition": 650
+  },
+  {
+    "Attacker Type": "COALITION AIRCRAFT",
+    "Attacker Skill": "Advanced",
+    "Defender Type": "CN NAVY",
+    "Weapon Name": "LRASM",
+    "Weapon Range": 370,
+    "World Weapon Ammunition": 200
   },
   {
     "Attacker Type": "COALITION AIRCRAFT",
@@ -389,7 +413,7 @@
     "Defender Type": "CN AIRCRAFT",
     "Weapon Name": "AIM-120<D",
     "Weapon Range": 81,
-    "World Weapon Ammunition": 818
+    "World Weapon Ammunition": 1000
   },
   {
     "Attacker Type": "COALITION AIRCRAFT",
@@ -397,7 +421,15 @@
     "Defender Type": "CN AIRCRAFT",
     "Weapon Name": "AIM-120<D",
     "Weapon Range": 81,
-    "World Weapon Ammunition": 818
+    "World Weapon Ammunition": 1000
+  },
+  {
+    "Attacker Type": "COALITION AIRCRAFT",
+    "Attacker Skill": "Advanced",
+    "Defender Type": "CN AIRCRAFT",
+    "Weapon Name": "AIM-120D",
+    "Weapon Range": 111,
+    "World Weapon Ammunition": 500
   },
   {
     "Attacker Type": "COALITION AIRCRAFT",
@@ -405,7 +437,15 @@
     "Defender Type": "CN SUB",
     "Weapon Name": "Torpedo",
     "Weapon Range": 11,
-    "World Weapon Ammunition": 48
+    "World Weapon Ammunition": "INF"
+  },
+  {
+    "Attacker Type": "COALITION AIRCRAFT",
+    "Attacker Skill": "Advanced",
+    "Defender Type": "CN SUB",
+    "Weapon Name": "Torpedo",
+    "Weapon Range": 11,
+    "World Weapon Ammunition": "INF"
   },
   {
     "Attacker Type": "COALITION ESCORT",
@@ -429,7 +469,23 @@
     "Defender Type": "CN NAVY",
     "Weapon Name": "Harpoon",
     "Weapon Range": 111,
-    "World Weapon Ammunition": 120
+    "World Weapon Ammunition": 500
+  },
+  {
+    "Attacker Type": "COALITION ESCORT",
+    "Attacker Skill": "Basic",
+    "Defender Type": "CN NAVY",
+    "Weapon Name": "SM-6",
+    "Weapon Range": 370,
+    "World Weapon Ammunition": 750
+  },
+  {
+    "Attacker Type": "COALITION ESCORT",
+    "Attacker Skill": "Advanced",
+    "Defender Type": "CN NAVY",
+    "Weapon Name": "SM-6",
+    "Weapon Range": 370,
+    "World Weapon Ammunition": 750
   },
   {
     "Attacker Type": "COALITION ESCORT",
@@ -437,23 +493,23 @@
     "Defender Type": "CN AIRCRAFT",
     "Weapon Name": "ESSM",
     "Weapon Range": 26,
-    "World Weapon Ammunition": 40
+    "World Weapon Ammunition": 200
   },
   {
     "Attacker Type": "COALITION ESCORT",
     "Attacker Skill": "Advanced",
     "Defender Type": "CN AIRCRAFT",
-    "Weapon Name": "SM-1",
+    "Weapon Name": "ESSM",
     "Weapon Range": 26,
-    "World Weapon Ammunition": 100
+    "World Weapon Ammunition": 200
   },
   {
     "Attacker Type": "COALITION ESCORT",
     "Attacker Skill": "Basic",
     "Defender Type": "CN AIRCRAFT",
-    "Weapon Name": "SM-1",
+    "Weapon Name": "SM-2",
     "Weapon Range": 200,
-    "World Weapon Ammunition": 100
+    "World Weapon Ammunition": 1000
   },
   {
     "Attacker Type": "COALITION ESCORT",
@@ -461,7 +517,15 @@
     "Defender Type": "CN AIRCRAFT",
     "Weapon Name": "SM-2",
     "Weapon Range": 200,
-    "World Weapon Ammunition": 191
+    "World Weapon Ammunition": 1000
+  },
+  {
+    "Attacker Type": "COALITION ESCORT",
+    "Attacker Skill": "Advanced",
+    "Defender Type": "CN AIRCRAFT",
+    "Weapon Name": "SM-6",
+    "Weapon Range": 370,
+    "World Weapon Ammunition": 750
   },
   {
     "Attacker Type": "COALITION ESCORT",
@@ -469,7 +533,7 @@
     "Defender Type": "CN SUB",
     "Weapon Name": "Torpedo",
     "Weapon Range": 15,
-    "World Weapon Ammunition": 48
+    "World Weapon Ammunition": "INF"
   },
   {
     "Attacker Type": "COALITION ESCORT",
@@ -477,7 +541,7 @@
     "Defender Type": "CN SUB",
     "Weapon Name": "Torpedo",
     "Weapon Range": 15,
-    "World Weapon Ammunition": 48
+    "World Weapon Ammunition": "INF"
   },
   {
     "Attacker Type": "COALITION ESCORT",
@@ -485,7 +549,7 @@
     "Defender Type": "CN SUB",
     "Weapon Name": "ASROC",
     "Weapon Range": 22,
-    "World Weapon Ammunition": 9
+    "World Weapon Ammunition": 100
   },
   {
     "Attacker Type": "COALITION SUB",
