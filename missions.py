@@ -243,6 +243,9 @@ class Observe(Mission):
         super().__init__(agent, target)
         self.mission_type = "observe"
 
+        if hasattr(agent, "asw_location"):
+            agent.asw_location = target
+
     def __repr__(self):
         return f"{self.mission_id} Observing {self.agent.assigned_zone}"
 
