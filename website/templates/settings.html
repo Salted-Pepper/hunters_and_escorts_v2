@@ -6,6 +6,7 @@
 <script>
     let time_delta_set = {{ time_delta_set | tojson }};
     let boarding_only = {{ boarding_only | tojson }};
+    let enter_at_start = {{ enter_at_start | tojson }};
 </script>
 
 <div class="centered-container">
@@ -71,7 +72,14 @@
                     name="boarding-only"
                     {% if boarding_only %} checked {% endif %}
                 >
-                <label for="boarding-only">  Hunter Boarding Only</label>
+                <label for="boarding-only">  Hunter Boarding Only</label> <br>
+                <input
+                    type="checkbox"
+                    id="enter-at-start"
+                    name="enter-at-start"
+                    {% if enter_at_start %} checked {% endif %}
+                >
+                <label for="enter-at-start"> Merchants Enter at Start of period </label>
             </div>
 
         <br>
