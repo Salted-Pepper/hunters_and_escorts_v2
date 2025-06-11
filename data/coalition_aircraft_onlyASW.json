@@ -163,7 +163,7 @@
     "service": "USN",
     "type": "Aircraft",
     "name": "P-8",
-    "numberofagents": 66,
+    "numberofagents": 50,
     "SurfaceVisibility": "Large",
     "Airvisibility": "Large",
     "UnderseaVisibility": null,
