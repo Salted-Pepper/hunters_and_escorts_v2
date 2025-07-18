@@ -3,19 +3,14 @@ from geopy.distance import geodesic
 import math
 
 # Define the latitude-longitude points
-coords = [
-    (25.005, 122.1),
-    (25.700, 122.1),
-    (26.91, 122.57),
-    (25.26, 122.87),
-    (24.5, 122.7),
-    (22.27, 122.48),
-    (21.125, 121.946),
-    (20.874, 120.437),
-    (21.6575, 120.8150),
-    (21.9, 121.65),
-    (23.45, 121.6),
-]
+coords = [(25.26, 122.87),
+ (24.5, 122.7),
+ (23.4867, 122.6),
+ (23.4867, 121.5088),
+ (24.5983, 121.8950),
+ (25.0100, 122.0000),
+ (25.6300, 122.0650),
+ (25.6300, 122.0650)]
 
 # Convert to Polygon (Shapely expects lon, lat format)
 polygon_coords = [(lon, lat) for lat, lon in coords]
