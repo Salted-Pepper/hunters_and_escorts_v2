@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naval Scenario Diagram</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #e6f3ff;
+            font-family: Arial, sans-serif;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        
+        .scenario-canvas {
+            width: 100%;
+            height: 600px;
+            border: 2px solid #34495e;
+            background: linear-gradient(180deg, #87ceeb 0%, #4682b4 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .baseline {
+            position: absolute;
+            left: 50px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background-color: #2c3e50;
+            z-index: 10;
+        }
+        
+        .baseline-label {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: rotate(-90deg) translateY(-50%);
+            transform-origin: center;
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+        
+        .patrol-zone {
+            position: absolute;
+            left: 200px;
+            top: 50px;
+            width: 300px;
+            height: 500px;
+            background-color: rgba(255, 0, 0, 0.1);
+            border: 2px dashed #dc3545;
+            border-radius: 15px;
+        }
+        
+        .patrol-label {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #dc3545;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .distance-marker {
+            position: absolute;
+            top: 580px;
+            left: 200px;
+            width: 300px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            font-weight: bold;
+        }
+        
+        .ship {
+            position: absolute;
+            width: 40px;
+            height: 20px;
+            background-color: #007bff;
+            clip-path: polygon(0% 50%, 20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%);
+            z-index: 5;
+        }
+        
+        .ship::before {
+            content: '';
+            position: absolute;
+            left: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-right: 15px solid #007bff;
+        }
+        
+        .ship-trail {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(0,123,255,0.5), transparent);
+            z-index: 1;
+        }
+        
+        .red-aircraft {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background-color: #dc3545;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            z-index: 6;
+        }
+        
+        .red-ship {
+            position: absolute;
+            width: 30px;
+            height: 15px;
+            background-color: #dc3545;
+            clip-path: polygon(0% 50%, 25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%);
+            z-index: 6;
+        }
+        
+        .movement-arrow {
+            position: absolute;
+            font-size: 24px;
+            color: #007bff;
+            z-index: 7;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        
+        .legend {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+        }
+        
+        .blue { background-color: #007bff; }
+        .red { background-color: #dc3545; }
+        .patrol { background-color: rgba(255, 0, 0, 0.2); border: 2px dashed #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Naval Scenario: U.S. Ships Approaching Baseline with Red Force Patrol</h1>
+        
+        <div class="scenario-canvas">
+            <!-- Baseline -->
+            <div class="baseline"></div>
+            <div class="baseline-label">Baseline (600 km)</div>
+            
+            <!-- Patrol Zone -->
+            <div class="patrol-zone">
+                <div class="patrol-label">Red Patrol Zone</div>
+            </div>
+            <div class="distance-marker">3,000-4,000 km from baseline</div>
+            
+            <!-- Blue Ships approaching from right -->
+            <div class="ship" style="top: 150px; right: 100px;"></div>
+            <div class="ship-trail" style="top: 159px; right: 140px; width: 200px;"></div>
+            
+            <div class="ship" style="top: 250px; right: 150px;"></div>
+            <div class="ship-trail" style="top: 259px; right: 190px; width: 250px;"></div>
+            
+            <div class="ship" style="top: 350px; right: 80px;"></div>
+            <div class="ship-trail" style="top: 359px; right: 120px; width: 180px;"></div>
+            
+            <div class="ship" style="top: 450px; right: 200px;"></div>
+            <div class="ship-trail" style="top: 459px; right: 240px; width: 300px;"></div>
+            
+            <!-- Movement arrows -->
+            <div class="movement-arrow" style="top: 145px; right: 50px;">←</div>
+            <div class="movement-arrow" style="top: 245px; right: 100px;">←</div>
+            <div class="movement-arrow" style="top: 345px; right: 30px;">←</div>
+            <div class="movement-arrow" style="top: 445px; right: 150px;">←</div>
+            
+            <!-- Red patrol forces -->
+            <div class="red-aircraft" style="top: 100px; left: 250px;"></div>
+            <div class="red-aircraft" style="top: 200px; left: 350px;"></div>
+            <div class="red-aircraft" style="top: 300px; left: 280px;"></div>
+            <div class="red-aircraft" style="top: 450px; left: 400px;"></div>
+            
+            <div class="red-ship" style="top: 180px; left: 320px;"></div>
+            <div class="red-ship" style="top: 380px; left: 260px;"></div>
+            <div class="red-ship" style="top: 500px; left: 350px;"></div>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color blue"></div>
+                <span>Blue Ships (approaching from far side)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color red"></div>
+                <span>Red Aircraft</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color red"></div>
+                <span>Red Ships</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color patrol"></div>
+                <span>Red Patrol Zone (3,000-4,000km)</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,2280 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{makecell}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{adjustbox}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{geometry}
+\usepackage{lscape}
+\newcommand{\newcomment}[1]{}
+\usepackage{array}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning}
+\usetikzlibrary{calc}
+\usepackage{animate}
+\usepackage{multirow}
+\usepackage{arydshln}
+
+\begin{document}
+
+\tableofcontents
+
+\section{Change Log: 13 Jan 2025}
+
+\begin{itemize}
+    \item Changed section headers to Agent Types (e.g., Chinese Ships) for easier viewing in the editor
+    \item Changed types of merchants. Integrated speed into the table of characteristics.
+\end{itemize}
+
+\section{Simulation Model}
+The goal of the simulation is to gain insight in consequences of an international conflict surrounding Taiwan. More specifically, the simulation model is made to analyze the impact of the effectiveness of Chinese measures to stop an effective supply chain to Taiwan. It will allow two players to participate in the simulation to give input and analyze different scenarios based on the inputs provided. \\
+
+\noindent The simulation model consists of a number of environmental factors and actors. In this section we will briefly list the different settings in the world and the high-level agents interacting with each other in varying world states. In the sections following we will dive into details of the listed elements.
+
+\subsection{World Map}
+The world map contains the area in which the simulation takes place. This is a simplified version based on a real subsection of the world, surrounding the area of Taiwan. The world contains several layers of information that are relevant to the interactions taking place in the simulation. \\
+
+\noindent The world consists the following layers:
+
+    \begin{itemize}
+        \item Time
+        \item Landmasses
+        \item Zones
+        \item Receptor Grid
+        \item Weather Condition
+    \end{itemize}
+
+\subsection{Agents}
+
+The simulation has a set of different agents. First of all, each of these agents belong to a country. Each country can set different rules for their agents, and has different options to manage their resources. A country is defined as one of the following:
+
+\begin{itemize}
+    \item China
+    \item Taiwan
+    \item Japan
+    \item US
+\end{itemize}
+
+\noindent The agent structure can be defined as the following:
+
+\begin{itemize}
+    \item Chinese Ships
+    \item Coalition Ships
+    \item Chinese Aircraft
+    \item Coalition Aircraft
+    \item Chinese Submarines
+    \item Coalition Submarines
+    \item Merchants
+\end{itemize}
+
+\subsection{Structures}
+
+\noindent Next to agents, there are a couple of fixed structures on the map that interact with agents. Structures are bases for host agents, allowing dispatching, maintenance, and more. Other structures provide other actions, but are location bound. The structures are defined as follows:
+
+\begin{itemize}
+    \item Bases
+    \begin{itemize}
+        \item Airbase
+        \item Harbours
+    \end{itemize}
+    \item OTH Radars
+    \item Satellite
+\end{itemize}
+
+
+\subsection{Managers}
+Managers are the class overseeing individual agents. Each subsection of agents per country has a manager. Managers ensure that individual agents work together efficiently, while accounting for practical things, such as communication delays and selecting agents suitable for required actions.
+
+\noindent The following managers exist:
+\begin{itemize}
+    \item China Manager
+    \begin{itemize}
+        \item China OTH Manager
+        \item China UAV Manager
+        \item China Navy Manager (Subclass of general navy-manager)
+    \end{itemize}
+    \item Taiwan Manager
+    \begin{itemize}
+        \item Taiwan Navy Manager (Subclass of general navy-manager)
+    \end{itemize}
+    \item US Manager
+    \begin{itemize}
+        \item US Navy Manager (Subclass of general navy-manager)
+        \item US Submarine Manager
+    \end{itemize}
+    \item Japan Manager
+    \begin{itemize}
+        \item Japan Navy Manager 
+    \end{itemize}
+    \item Merchant Manager
+\end{itemize}
+
+\subsection{Attack and Defense}
+
+The attacker's skill is given by the relevant skill based on the defender type (anti-ship skill, anti-submarine skill, or anti-aircraft skill).
+
+The relevant statistic for the defender is given by this table, depending on what types the attacker and defender are.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\multirow{2}{*}{\textbf{Attacker}} & \multicolumn{3}{c|}{\textbf{Relevant Defense Characteristic}} \\ \cline{2-4}
+ & \textbf{Ship} & \textbf{Airplane} & \textbf{Submarine} \\ \hline
+\textbf{Ship} & Defense against missiles & Defense against missiles & Visibility \\ \hline
+\textbf{Airplane} & Defense against missiles & Defense against missiles & Visibility \\ \hline
+\textbf{Submarine} & Anti-submarine skill & N/A & Visibility \\ \hline
+\end{tabular}
+\caption{Relevant defense metrics based on attacker and defender unit types}
+\end{table}
+
+\subsection{Ammunition}
+
+The range of each agent is determined by 1) what they're shooting at (air/sea/submarine/merchant), 2) their skill, and 3) the most capable munition that still exists for their side. Agents always shoot the farthest range munition that they can against their target (note: merchants are a separate category and thus cannot As agents shoot, they deplete the global stockpile of weapons from farthest range to closest range. A full table of these ranges and munitions will follow. 
+
+\subsection{Player Input}
+During certain moments in the simulation, players can adapt their approaches and strategy, affecting actions that agents take and impacting the analytics. During these interceptions, players are able to change rules of engagement, strategies, and commitment of agents.
+
+\subsection*{Hunter Missions}
+
+These represent the behaviors that different platforms of hunters can engage in. Below, the columns represent the escalation level of China in a given scenario. The rows then identify what is the most aggressive mission that a Chinese platform can be assigned in a scenario using that Chinese escalation level.
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{|c|X|X|X|X|X|}
+\hline
+\textbf{Platform ID \#} & \textbf{1 -- Non-kinetic} & \textbf{2 -- Covert} & \textbf{3 -- Overt (no strikes on Taiwan)} & \textbf{4 -- Overt (no strikes on Japan)} & \textbf{5 -- Total War} \\ 
+\hline
+1 -- \makecell{Ships in services \\ CCG/MSA/PAFMM} & Hunting & Observing & Observing & Observing & Inactive \\ 
+\hline
+2 -- Submarines & Inactive & Hunting & Hunting & Hunting & Hunting \\ 
+\hline
+3 -- Minelayers & Inactive & Hunting & Hunting & Hunting & Hunting \\ 
+\hline
+4 -- Ships in service PLAN & Observing & Inactive & Hunting & Hunting & Hunting \\ 
+\hline
+5 -- Armed UAVs & Observing & Observing & Hunting & Hunting & Hunting \\ 
+\hline
+6 -- Unarmed UAVs & Observing & Observing & Observing & Observing & Observing \\ 
+\hline
+7 -- Armed Planes & Inactive & Inactive & Hunting & Hunting & Hunting \\ 
+\hline
+8 -- Unarmed planes & Observing & Observing & Observing & Observing & Observing \\ 
+\hline
+9 -- Missiles & Inactive & Inactive & Hunting & Hunting & Hunting \\ 
+\hline
+\end{tabularx}
+\caption{Chinese Platform Missions by Escalation Level}
+\end{table}
+
+
+
+
+\subsection*{Maximum Hunter Rules of Engagement}
+
+According to the scenario’s ‘Chinese Escalation Level’, various hunter platforms will be forbidden from entering into or conducting their mission in certain ‘Forbidden Zones’. The relevant options are below (retaining their lettering from the general RoE map):
+\begin{itemize}
+    \item A -- All Zones
+    \item C -- Taiwan Territorial
+    \item E -- Japan Territorial
+    \item G -- Filipino Territorial
+\end{itemize}
+
+Users are responsible for ensuring that assigned missions do not exceed these parameters.
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{|c|X|X|X|X|X|}
+\hline
+\textbf{Platform ID \#} & \textbf{1 -- Non-kinetic} & \textbf{2 -- Covert} & \textbf{3 -- Overt (no strikes on Taiwan)} & \textbf{4 -- Overt (no strikes on Japan)} & \textbf{5 -- Total War} \\ 
+\hline
+1 -- CCG/MSA/PAFMM & C, E, G & C, E, G & C, E, G & E, G & \\ 
+\hline
+2 -- Submarines & A & & & & \\ 
+\hline
+3 -- Minelaying & A & & & & \\ 
+\hline
+4 -- PLAN Surface Ships & A & A & C, E, G & E, G & \\ 
+\hline
+5 -- Armed UAVs & C, E, G & C, E, G & C, E, G & E, G & \\ 
+\hline
+6 -- Unarmed UAVs & C, E, G & C, E, G & C, E, G & E, G & \\ 
+\hline
+7 -- Armed Planes & A & A & C, E, G & E, G & \\ 
+\hline
+8 -- Unarmed planes & C, E, G & C, E, G & C, E, G & E, G & \\ 
+\hline
+9 -- Missiles & A & A & C, E, G & E, G & \\ 
+\hline
+\end{tabularx}
+\caption{Forbidden Zones by Hunter Platform and Escalation Level}
+\end{table}
+
+\subsection*{Maximum Escort Rules of Engagement}
+
+The scenario limits the most aggressive Rules of Engagement (RoE) that can be assigned to a country’s escorts in each zone. Players may choose not to use the most aggressive RoE in each zone. The escort RoE levels are as follows:
+\begin{itemize}
+    \item 1) Anytime: Any hunter found in the specified zone can be attacked at any time
+    \item 2) Retaliatory: Only attack hunters that have attacked a merchant
+    \item 3) Unmanned: Escorts can attack UAVs in the zone, but no other type of hunter
+    \item 4) Forbidden: Hunters in that zone may not be engaged
+\end{itemize}
+
+% Taiwan Table
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{|c|X|X|X|X|X|}
+\hline
+\textbf{Zone} & \textbf{1 -- Passive Taiwan / No U.S.} & \textbf{2 -- Aggressive Taiwan / No U.S.} & \textbf{3 -- Aggressive Taiwan / Light U.S.} & \textbf{4 -- Aggressive Taiwan / Full U.S.} & \textbf{5 -- Aggressive Taiwan / Full U.S.} \\ 
+\hline
+\makecell{[A] All \\ zones} & No rule & 1 & 1 & 1 & 1 \\ 
+\hline
+\makecell{[B] Taiwanese \\ Contiguous Zone} & 2 & 1 & 1 & 1 & 1 \\ 
+\hline
+\makecell{[C] Taiwanese \\ Territorial Waters} & 1 & 1 & 1 & 1 & 1 \\ 
+\hline
+\makecell{[D] Japanese \\ Contiguous Zone} & 4 & 1 & 1 & 1 & 1 \\ 
+\hline
+\makecell{[E] Japanese \\ Territorial Waters} & 4 & 2 & 2 & 1 & 1 \\ 
+\hline
+\makecell{[F] Filipino \\ Contiguous Zone} & 4 & 1 & 1 & 1 & 1 \\ 
+\hline
+\makecell{[G] Filipino \\ Territorial Waters} & 4 & 2 & 2 & 1 & 1 \\ 
+\hline
+\makecell{[H] Outside \\ Chinese 10 Dash, \\ Not in B-G} & 2 & 1 & 1 & 1 & 1 \\ 
+\hline
+\makecell{[I] Inside \\ Chinese 10 Dash, \\ outside B-G} & 4 & 1 & 1 & 1 & 1 \\ 
+\hline
+\makecell{[L] Within \\ median line} & 4 & 4 & 4 & 4 & 1 \\ 
+\hline
+\end{tabularx}
+\caption{Taiwan -- Escort Rules by Coalition Escalation Level}
+\end{table}
+
+% U.S. Table
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{|c|X|X|X|X|X|}
+\hline
+\textbf{Zone} & \textbf{1 -- Passive Taiwan / No U.S.} & \textbf{2 -- Aggressive Taiwan / No U.S.} & \textbf{3 -- Aggressive Taiwan / Light U.S.} & \textbf{4 -- Aggressive Taiwan / Full U.S.} & \textbf{5 -- Aggressive Taiwan / Full U.S.} \\ 
+\hline
+\makecell{[A] All \\ zones} & No rule & No rule & 2 & 1 & 1 \\ 
+\hline
+\makecell{[B] Taiwanese \\ Contiguous Zone} & 4 & 4 & 2 & 1 & 1 \\ 
+\hline
+\makecell{[C] Taiwanese \\ Territorial Waters} & 4 & 4 & 1 & 1 & 1 \\ 
+\hline
+\makecell{[D] Japanese \\ Contiguous Zone} & 4 & 4 & 2 & 2 & 1 \\ 
+\hline
+\makecell{[E] Japanese \\ Territorial Waters} & 4 & 4 & 2 & 1 & 1 \\ 
+\hline
+\makecell{[F] Filipino \\ Contiguous Zone} & 4 & 4 & 2 & 2 & 1 \\ 
+\hline
+\makecell{[G] Filipino \\ Territorial Waters} & 4 & 4 & 2 & 1 & 1 \\ 
+\hline
+\makecell{[H] Outside \\ Chinese 10 Dash, \\ Not in B-G} & 4 & 4 & 2 & 2 & 1 \\ 
+\hline
+\makecell{[I] Inside \\ Chinese 10 Dash, \\ outside B-G} & 4 & 4 & 2 & 2 & 1 \\ 
+\hline
+\makecell{[L] Within \\ median line} & 4 & 4 & 4 & 4 & 1 \\ 
+\hline
+\end{tabularx}
+\caption{U.S. -- Escort Rules by Coalition Escalation Level}
+\end{table}
+
+% Japan Table
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{|c|X|X|X|X|X|}
+\hline
+\textbf{Zone} & \textbf{1 -- Passive Taiwan / No U.S.} & \textbf{2 -- Aggressive Taiwan / No U.S.} & \textbf{3 -- Aggressive Taiwan / Light U.S.} & \textbf{4 -- Aggressive Taiwan / Full U.S.} & \textbf{5 -- Aggressive Taiwan / Full U.S.} \\ 
+\hline
+\makecell{[A] All \\ zones} & No rule & No rule & No rule & 2 & 1 \\ 
+\hline
+\makecell{[B] Taiwanese \\ Contiguous Zone} & 4 & 4 & 4 & 2 & 1 \\ 
+\hline
+\makecell{[C] Taiwanese \\ Territorial Waters} & 4 & 4 & 4 & 2 & 1 \\ 
+\hline
+\makecell{[D] Japanese \\ Contiguous Zone} & 2 & 2 & 2 & 1 & 1 \\ 
+\hline
+\makecell{[E] Japanese \\ Territorial Waters} & 1 & 1 & 1 & 1 & 1 \\ 
+\hline
+\makecell{[F] Filipino \\ Contiguous Zone} & 4 & 4 & 4 & 4 & 4 \\ 
+\hline
+\makecell{[G] Filipino \\ Territorial Waters} & 4 & 4 & 4 & 4 & 2 \\ 
+\hline
+\makecell{[H] Outside \\ Chinese 10 Dash, \\ Not in B-G} & 4 & 4 & 4 & 2 & 1 \\ 
+\hline
+\makecell{[I] Inside \\ Chinese 10 Dash, \\ outside B-G} & 4 & 4 & 4 & 2 & 1 \\ 
+\hline
+\makecell{[L] Within \\ median line} & 4 & 4 & 4 & 4 & 1 \\ 
+\hline
+\end{tabularx}
+\caption{Japan -- Escort Rules by Coalition Escalation Level}
+\end{table}
+
+\section{World Map}
+In this section we discuss the details for each of the world layers. The world combines the different agents and the provided environment to make the simulation as accurate as possible. For areas such as landmasses or defined zones, polygons are established using coordinates. The polygons are an approximation of the true extent of the area. Adding too little detail in the polygons will make the simulation less realistic, whereas adding too much detail can increase computational time. Due to the differences in agent behavior, we believe that it is beneficial to use vectorization rather than rasterization of the map. This because some actions have to be completed on a very specific low-level, while many other actions can be performed on a large scale. Using a fine rasterization would again impact computational time, whereas vectorization using polygons allows us to refine interactions where required. \\
+
+\noindent The world state is shown in a plot for each time step, which can also be combined to create an animation of the simulation. The speed of the simulation can also be selected. 
+
+\subsection{Time}
+
+The simulation is set up in discrete time. For this, a time window has to be selected, the \textit{time-delta} ($\Delta t$). The time delta is how much time passes in a single simulation step. A $\Delta t = 1$ corresponds to 1 hour of real world time. Choosing a low $\Delta t$ will yield more accurate results, but will require significantly more computations. Whereas a high $\Delta t$ will increase simulation speed, but might affect accuracy or miss important interactions. \\
+
+\noindent To strike a balance between efficiency and detail, we define a second time delta, the sub-time delta: $\Delta t_{\text{sub}}$. This time delta is used for interactions where small-step accuracy is incredibly important. For example, two high-speed agents travelling in opposite directions passing through the edge of each others detection range. Using large time steps we might neglect the probability of detection, but for these interactions we can repeat the interaction using the reduced $\Delta t_{\text{sub}}$, ensuring that we increase accuracy for cases where required, without increases computation time across the entire simulation. For this reason it is important that we select a proper sub-time delta such that $\Delta t_{\text{sub}} < \Delta t$. A list of recommended values will be provided at the end.
+
+\subsection{Landmasses}
+
+Landmasses are also established using polygons. It is the assumption that no agent that is a vessel can pass through any landmass at any time. For this reason harbours are slightly off set of the coast to prevent any issues for vessels to reach harbours. Airborne agents are assumed to be able to cross landmasses unless the rules of engagement establish different rules. Landmasses are displayed in different colours to represent countries. The landmass polygons are created using approximations of the real coastlines coordinates of the countries in the area using Google Maps data. 
+
+\subsection{Zones}
+
+Zones are areas in the world for which decision can be made. There are no direct impacts from the environment for these zones, but the zones rather allow players to establish agent behaviour. Players will be able to assign agents to zones, and choose between different behavioural patterns for each zone.
+
+\noindent The following zones are included in the simulation:
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{Unified Map.png}
+    \caption{Zones in Simulation}
+    \label{fig:enter-label}
+\end{figure}
+
+
+\begin{enumerate}[label=(\Alph*)]
+\item   All Zones
+\item	Taiwanese Contiguous Zone
+\item	Taiwanese Territorial Waters
+\item	Japanese Contiguous Zone
+\item	Japanese Territorial Waters
+\item	Filipino Contiguous Zone
+\item	Filipino Territorial Waters
+\item	Outside Chinese 10 Dash, not in B-G
+\item	Inside Chinese 10 Dash, outside B-G
+\item	Between Philippines and Taiwan
+\item	Between Japan and Taiwan
+\item	Within median line
+\item	Beyond median line [currently unused]
+\item	Holding Area
+\item	Miyako Strait [currently unused]
+\item   Primary Hunting Grounds
+
+\end{enumerate}
+
+\subsection{Receptor Grid}
+The receptor grid is a set of points on the world map. This grid is used to store localized data. For example, the weather in the area, or distributions of manager's believes on the odds of an enemy agent being located in the area. The receptors can also be displayed in the animation of the world state to gain information in manager information and underlying factors in the current world state. The receptors are merely a tool to effectively store information and assist calculations and manager decision making. Whenever information on the local world-state is required, agents (or managers) can seek the closest receptor node  to represent the local state required for any calculations (e.g. probability of detection). 
+
+\subsection{Weather Condition}
+For the current version, the weather condition is purely defined by the sea-state. For the sea state, we define sea states $s$, which is in a range between 0 and 7, that is $s \in \{0, 1, 2, 3, 4, 5, 6, 7 \}$. The receptor grids are also used to track data on the sea state. At the start of the simulation, each sea state is equal to 2. Then each time a day passes in simulation time (i.e. $\Delta \delta = 1$), the sea state is updating using a Markov Transition Matrix. This transition matrix is estimated on historical weather data and provides a probability of transition from one sea state to another. To sample the transition probability, we create a layer of \textit{Gaussian Perlin Noise}. This layer will allow us to have correlation in the local area, as we would expect in real life weather conditions, while sampling random values based on historical data. 
+
+\section{Agents}
+In this section we will go into more detail on the agents interacting in (and with) the world. We will start at the highest level of the agent class, and then break down into the sub-classes. We list the attributes that each sub-class of agent is required to have, and how it is defined. Each agent has a set of \textit{characteristics}, containing information about the agent and the agents it is interaction with, and \textit{actions}, things the agent has to be able to do to represent its role in the simulation model.
+
+\subsection{Agent}
+The top level agent class covers a lot of the basic functionality that every agent needs to have. It also contains a set of actions that a significant number of agents might require, but not all agents need. These include: \\
+
+\begin{itemize}
+    \item Transiting to assigned areas
+    \item Returning to base 
+\end{itemize}
+
+\noindent Agents have a number of constant properties that are defined by Matt.
+
+\begin{itemize}
+    \item Team: 1 for China, 2 for Coalition
+    \item Base: The starting area for an agent when spawned
+    \item Service: The controlling agency, used for Rules of Engagement and player assignments
+    \item Type: Ship, submarine, aircraft, or miscellaneous
+    \item Name: Decorative for log files, not used for coding
+    \item Number of Agents: The beginning number available to each side
+    \item Surface Visibility: How easily the agent can be spotted by ship agents
+    \item Air Visibility: How easily the agent can be spotted by aircraft agents
+    \item Undersea Visibility: How easily the agent can be spotted by submarine agents
+    \item Speed Max [km/hr]: Fastest speed possible, used when tracking or targeting
+    \item Speed Cruise: The speed used in transiting to and from an assigned area and when observing
+    \item Displacement: Size of a ship. Not used for aircraft or submarines.
+    \item Endurance: How many kilometers the agent can travel with its fuel. This used to be given in hours for aircrafts, but has been changed to kilometers for simplicity.
+    \item Helicopter: If the agent can spawn a helicopter. Currently not implemented.
+    \item Air Detection Range: How good the agent is at detecting aircraft
+    \item Surface Detection Range: How good the agent is at detecting ships
+    \item Submarine Detection Range: How good the agent is at detecting submarines
+    \item Armed: If the agent has any weapons. This is only important for failed boarding efforts; ships that attempt to board, are unsuccessful and are armed will switch to attacking with deckguns.
+    \item Anti-ship Skill: How well the agent attacks and defends against surface ships
+    \item Anti-ship Max Ammunition: How many times the agent can attack surface ships in one time away from its base
+    \item Anti-air Skill: How well the agent attacks and defends against airplanes
+    \item Anti-air Max Ammunition: How many times the agent can attack aircraft in one time away from its base
+    \item Anti-sub Skill: How well the agent attacks and defends against submarines
+    \item Anti-sub Max Ammunition: How many times the agent can attack submarines in one time away from its base
+    \item Self-defending: If the agent is a modern military craft that can intercept missiles and use electromagnetic warfare [deprecated]
+\end{itemize}
+
+There are also properties that are defined within the code by Rob:
+\begin{itemize}
+    \item Identifier
+    \item Activated
+    \item Destroyed
+    \item Model
+    \item Location
+    \item Speed
+    \item Remaining Endurance
+    \item Distance to Travel
+    \item Route
+    \item Last Location
+    \item Next Point
+    \item Target
+    \item Able to Attack
+    \item Located Agent
+    \item Convoy
+    \item Pheromone Spread
+    \item Pheromone Type
+    \item Mission
+    \item Trailing Agents
+    \item Guarding Agents
+    \item Support Agent
+    \item Guarding Target
+    \item Colour
+    \item Current Anti-ship Ammunition: Starts equal to Max Anti-ship Ammunition, ammunition is depleted as it is used
+    \item Current Anti-air Ammunition: Starts equal to Max Anti-air Ammunition, ammunition is depleted as it is used
+    \item Current Anti-sub Ammunition Starts equal to Max Submarine Ammunition, ammunition is depleted as it is used
+    \item Damaged: Integer of how much damage a merchant has taken, affects probabilities of future action taken on the merchant.
+    \item CTL: Constructive Total Loss. If a merchant with CTL reaches its destination without being sunk, its tonnage is counted towards the turn's total, but the CTL is recorded and doesn't leave Taiwan (if that was its destination).
+\end{itemize}
+
+
+\noindent For each individual agent, we require basic behaviour to move around and interact with the world, as constructed in the Class Structure file. Things such as routing and maintenance can be done in the same way. However, three distinct actions differ significantly between type of agents. The following two interactions need to be mapped per agent type:
+
+\begin{itemize}
+    \item Detecting Other Agents
+    \item Taking Action On Other Agents 
+\end{itemize}
+\noindent Agents have to detect other agents to take action (or get assigned to them through other sources). Each agent has a score (none/basic/advanced) for its ability to detect other agents of each given type (ship/plane/sub). Some agents have special scores in certain domains (Airborne Early Warning vs. air, T-AGOs vs. subs). Some agents have their detection scores changed by their mission (ships conducting Anti-Submarine Warfare are better detectors of submarines as they are deploying their towed arrays). For each type of agent the calculation can vary. \\ 
+
+The second interaction is \textit{Taking Action On Other Agents}. Once an agent has detected or is assigned to a target, agents will have to take appropriate actions. These actions also vary based on the combination of agents. We will now go over different possible interactions and list the behaviour the simulation model will follow.
+
+\pagebreak
+\section{Chinese Aircraft}
+
+For mission assignment, we distinguish between UAVs and manned aircraft.\\
+
+\subsection{Detecting Behaviour}
+    
+    \subsubsection{Target: Coalition Ships or Merchants}
+    Chinese aircraft detect coalition ships and merchants using the cube root law based on the Ship Detection Skill of the Chinese aircraft and the Airvisibility of the target.
+        \begin{itemize}
+            \item \( P(d) \) is determined by the equation:
+            \[
+            P(d) = 1 - e^{\frac{-khrs}{d^3}}
+            \]
+            \begin{itemize}
+                \item \( e \) is Euler’s number.
+                \item \( h \) is the height of the searcher, which is assumed to be 10 km.
+                \item \( d \) is the lateral distance in kilometers from the searcher to the target.
+                \item \( k \) is as follows:
+                    \begin{itemize}
+                        \item Advanced: \( 39{,}633 \)
+                        \item Basic: \( 2{,}747 \)
+                    \end{itemize}
+                \item \( r \) is an adjustment for the radar cross section of the target:
+                \begin{itemize}
+                    \item Stealthy: \( 0.25 \)
+                    \item Vsmall: \( 0.5 \)
+                    \item Small: \( 1 \)
+                    \item Medium: \( 1.25 \)
+                    \item Large: \( 1.5 \)
+                \end{itemize}
+                \item \( s \) is an adjustment for the sea state according to the table below:
+                \begin{itemize}
+                    \item Sea State 0: \( 1 \)
+                    \item Sea State 1: \( 0.89 \)
+                    \item Sea State 2: \( 0.77 \)
+                    \item Sea State 3: \( 0.68 \)
+                    \item Sea State 4: \( 0.62 \)
+                    \item Sea State 5: \( 0.53 \)
+                    \item Sea State 6: \( 0.47 \)
+                \end{itemize}
+            \end{itemize}
+        \end{itemize}
+        
+    \subsubsection{Target: Coalition Aircraft}
+    
+    Chinese aircraft detecting coalition aircraft at fixed distances based on the Air Detection Skill of the Chinese aircraft and the Airvisibility of the target.
+        \begin{table}[h!]
+            \centering
+            \begin{tabular}{|c|c|c|c|c|c|}
+            \hline
+             & Large & Medium & Small & VSmall & Stealthy \\ \hline
+            AEW & 648 & 648 & 496 & 198 & 59 \\ \hline
+            Advanced & 333 & 274 & 196 & 78 & 24 \\ \hline
+            Basic & 254 & 178 & 128 & 50 & 11 \\ \hline
+            \end{tabular}
+            \caption{How Chinese Aircraft Detect Coalition Aircraft}
+        \end{table}
+
+    \subsubsection{Target: Submarines} 
+    
+    Whenever an aircraft with a player-assigned anti-submarine searching mission arrives in its assigned area, it stops and remains stationary. During that time, it creates a circle around itself defined by its Submarine Detection Skill. in which all enemy submarines are found. \\
+          
+    The radius of the covered area by the capability of the aircraft is:
+    
+    \begin{itemize}
+        \item Basic: 15.7 km
+        \item Advanced : 27.78 km
+    \end{itemize}
+
+\subsection{Action Behaviour}
+    \subsubsection{Observing [Chinese Aircraft]:}
+            \begin{itemize}
+                \item{Can be used by:} Any plane whose Surface Detection Range is Advanced
+                \item{When this mission begins:} An aircraft the zone where it is assigned to observe
+                \item{While executing this mission:} An aircraft moves inside a zone and provides information to other hunters about the locations of merchants and escort. If it detects a ship, put it in the detected merchant manager. Begin tracking that ship.
+                \item{When this mission ends:} 
+                \begin{enumerate}[label=\arabic*)]
+                    \item An aircraft  detects a ship
+                    [hunter gains Tracking]
+                    \item Current endurance $<$20\% of max endurance [hunter transits to base]
+                \end{enumerate}
+            \end{itemize}
+    \subsubsection{Tracking [Chinese Aircraft]:}
+            \begin{itemize}
+                \item{Can be used by:} Any plane
+                \item{When this mission begins:} 1) A Chinese aircraft with mission Observing detects a ship, or 2) a Chinese aircraft with mission `Holding' is assigned a target
+                \item{While executing this mission:} While the target is in a Rules of Engagement zone where observing is allowed and their anti-surface weapon - non-Deckgun ammunition is 0 (i.e., they are not armed), move at max speed to within 10km of the target, then match course and bearing of the target. If the hunter with Tracking is armed, then the mission should end and they should begin attacking when they deck within range of the target.
+                \item{This mission ends when:} 
+                \begin{enumerate}[label=\arabic*)]
+                    \item The target ship is sunk by a different agent \par
+                    [hunter resumes player-assigned mission]
+                    \item The target ship goes to a zone where RoE forbids observing \par
+                    [hunter resumes player-assigned mission]
+                    \item The tracker with anti-surface weapon - non-Deckgun ammunition $>$ 0, gets within anti-ship weapon range of the target, and the target is in a zone where attacking is allowed \par
+                    [hunter begins attacking]
+                    \item Current endurance $<$ 20\% of max \par
+                    [hunter transits to base]
+                \end{enumerate}
+            \end{itemize}
+    \subsubsection{Holding [Chinese Aircraft]:}
+            \begin{itemize}
+                \item{Can be used by:} Any plane whose current anti-ship ammunition is \textgreater 0
+                \item{When this mission begins:} A Chinese aircraft who the player has assigned to holding reaches the holding area
+                \item{While executing this mission:} Move in a small pattern at cruising speed in a player-designated designated area (N)
+                \item{When this mission ends:} 
+                \begin{enumerate}[label=\arabic*)]
+                        \item The hunter is assigned a target merchant or escort \par
+                        [hunter gains tracking mission on its target]
+                        
+                        \item An escort attacks the hunter \par
+                        [hunter transits to base, report escort attack]
+                    \item Current endurance becomes $<20\%$ of max \par
+                    [hunter transits to base]
+                \end{enumerate}
+            \end{itemize}
+            
+    \subsubsection{Attacking Ship - Non-Deckgun [Chinese Aircraft]:} 
+           \begin{itemize}
+                \item{Can be used by:} A plane whose Current Anti-ship Ammunition is \textgreater 0, has Anti-ship Skill == ``Basic'' OR ``Advanced''), and is within range of a detected, RoE valid target. Thus, a plane that is armed and assigned to tracking will move towards its target until it is within range, then move to the Attacking Ship mission when it gets within range. \textcolor{blue}{Range is determined by the farthest range munition remaining for Chinese aircraft of the given skill (Basic or Advanced for Anti-Ship skill). \textbf{Note: Attacks on merchants will not use the longest range Chinese missiles}}
+                
+                \item{When this mission begins:} The aircraft gains AttackedAMerchant = 1. Their anti-ship ammunition goes down by one.\\ 
+                
+                \item{While executing this mission:}
+                    For every point of damage the target has, add 20\% to the likelihood of the target being sunk. The chance of an undamaged merchant being sunk of a constructive total loss (CTL) is given below. \\
+                    \begin{table}[h!]
+                    \centering
+                    \begin{tabularx}{\textwidth}{|X|X|X|X|X|X|}
+                    \hline
+                    \textbf{Merchant Size} & \textbf{1,000 – 10,000} & \textbf{10,001 – 20,000} & \textbf{20,001 – 90,000} & \textbf{90,001 – 120,000} & \textbf{120,001 + TONS} \\
+                    \hline
+                    \textbf{Sunk} & 7.7\% & 3.6\% & 2.4\% & 0\% & 0\% \\
+                    \hline
+                    \textbf{CTL} & 15.4\% & 21.4\% & 6.0\% & 0\% & 8.5\% \\
+                    \hline
+                    \end{tabularx}
+                    \caption{Damage as Percentage of Total Attacks by Size of Target Ship}
+                    \label{table:ChineseAircraftwithMissilesvsShipDamage}
+                    \end{table}
+                    \\ The chance of an escort being sunk / CTL / damaged is given below:\\
+                    \begin{table}[h!]
+                        \centering
+                        \begin{tabular}{@{}lccc@{}}
+                        \toprule
+                        \textbf{Defender} & \textbf{None} & \textbf{Basic} & \textbf{Advanced} \\
+                        \midrule
+                        \textbf{Attacker} \textbf{Basic}    & 25 / 50 / 25    & 7.5 / 32.5 / 60     & 2.5 / 7.5 / 90     \\
+                        \textbf{Advanced} & 49 / 42 / 9     & 14.7 / 46.6 / 38.7 & 4.9 / 15.1 / 80     \\
+                        \bottomrule
+                        \end{tabular}
+                        \caption{Comparison of Attacker and Defender outcomes.}
+                        \label{tab:Chance of a Chinese Aircraft hitting an escort ship}
+                        \end{table}
+                    \\If the target was CTL or damaged, it gets damage = damage + 1. If the target is sunk, then the attacking aircraft returns to the holding area and resumes that mission. If the target is not sunk, and if the hunter's number of anti-ship weapons is 0, then it gains mission `Transit to base' and the targeted escort or merchant is put back into the appropriate manager. If ammunition remains and the target is not sunk, then:
+                    \begin{enumerate}
+                        \item While the aircraft has anti-ship ammunition greater than 0, the target still meets RoE, and the target is not sunk, an attacking aircraft alters course and speed to stay within range of its target.
+                        \item After 10 minute Reload time, the aircraft attacks again (goes to the top of this loop).
+                    \end{enumerate}
+                \item{This mission ends when:} 
+                \begin{enumerate}[label=\arabic*)]
+                    \item The target is sunk \& current anti-ship ammunition $>0$ \par
+                    [hunter transits to holding area then resumes holding, report target sinking]
+                    \item The attacker’s current anti-ship ammunition is $0$ \par
+                    [hunter transits to base, report damage to target]
+                    \item The target enters an invalid RoE zone \par
+                    [hunter transits to holding area then resumes holding]
+                \end{enumerate}
+            \end{itemize}
+
+        \subsubsection{Attacking Aircraft - Air-to-Air Combat [Chinese Aircraft]:}
+            \begin{itemize}
+                \item Can be used by: A plane with Current Air-to-Air Ammunition \textgreater 0, an Anti-Air Skill of ``Basic'' or ``Advanced'', and within range of a detected and RoE-valid airborne target. Thus, a plane that is armed and assigned to tracking will move toward its target until within range, then shift to the Attacking Aircraft mission. \textcolor{blue}{Range is determined by the farthest-range air-to-air munition remaining, depending on the attacking aircraft's skill level.}
+            
+                \item When this mission begins: The aircraft flags TargetedAircraft = 1. Its Air-to-Air Ammunition is reduced by one.
+            
+                \item \textbf{While executing this mission:} The likelihood of a successful hit depends on the attacker's Anti-Air Skill and the defender's Missile Defense capability. See Table~\ref{table:AirToAirHitChances} below.
+            
+                \begin{table}[h!]
+                \centering
+                \caption{Probability of Hit in Air-to-Air Combat}
+                \label{table:AirToAirHitChances}
+                \begin{tabular}{|c|c|c|c|}
+                    \hline
+                    \textbf{Attacker Anti-Air Skill} & \textbf{None} & \textbf{Basic} & \textbf{Advanced} \\
+                    \hline
+                    \textbf{Basic}    & 50\%  & 25\%  & 15\% \\
+                    \textbf{Advanced} & 75\%  & 40\%  & 25\% \\
+                    \hline
+                \end{tabular}
+                \end{table}
+
+                \item Outcomes:
+                \begin{itemize}
+                    \item If the attack succeeds, the targeted aircraft is marked as destroyed and removed from the simulation.
+                    \item If the attack fails, the defending aircraft continues its mission uninterrupted.
+                    \item If the attacker still has ammunition and the target is not destroyed, the attacker may attempt to re-engage after a 10-minute reload time.
+                \end{itemize}
+            
+                \item This mission ends when:
+                \begin{enumerate}[label=\arabic*)]
+                    \item The target aircraft is destroyed and the attacker has remaining ammunition. \\
+                          Attacker resumes holding mission or seeks next valid target.
+                    \item The attacker’s Air-to-Air Ammunition reaches 0. \\
+                          Attacker transits to base.
+                    \item The target enters an invalid RoE zone or is no longer detectable. \\
+                          Attacker returns to holding pattern.
+                \end{enumerate}
+            \end{itemize}
+
+            
+        \subsubsection{Anti-submarine Searching [Chinese Aircraft]}
+            \begin{itemize}
+                \item Can be used by: Any aircraft with basic or advanced submarine detection
+                \item When this mission begins: A plane whose player-assigned mission is Anti-submarine Warfare arrives in its assigned area. There should be some procedure for deciding where in an assigned area each particular plane searches; possibly using the pheromone system.
+                \item While executing this mission: The aircraft remains stationary. During that time, any submarines within its radius are detected.
+                \item This mission ends when:
+                \begin{enumerate}[label=\arabic*)]
+                    \item The aircraft has been on station for 4 hours \par
+                    [Aircraft mission becomes Transit to Base]
+                    \item The aircraft detects an enemy submarine and anti-submarine weapons $>0$\par
+                    [Aircraft mission becomes Attacking Submarine]
+                    \item The aircraft is attacked by an enemy ship or aircraft \par
+                    [Aircraft mission becomes Transit to Base]
+                \end{enumerate}
+            \end{itemize}
+
+        \subsubsection{Attacking Submarine [Chinese Aircraft]}
+            \begin{itemize}
+                \item Can be used by: Any aircraft with basic or advanced anti-submarine skill and whose anti-submarine ammunition $>0$
+                \item When this mission begins: A detected submarine is within the detection radius of an aircraft (5km for Basic detectors, 18.5 for advanced detectors) with the active mission of Antisubmarine Searching (no allowance for other aircraft to move in and engage a detected submarine)
+                \item Roll on the table below about the relative anti-submarine attack capability of the aircraft and the submarine's signature.
+                    \begin{table}[h!]
+                        \centering
+                        \begin{tabularx}{\textwidth}{|l|X|X|X|X|X|}
+                        \hline
+                        \textbf{Category} & \textbf{Large} & \textbf{Medium} & \textbf{Small} & \textbf{VSmall} & \textbf{Stealthy} \\
+                        \hline
+                        \textbf{Basic} & 40\% & 20\% & 10\% & 5\% & 2.5\% \\
+                        \hline
+                        \textbf{Advanced} & 50\% & 25\% & 12.5\% & 7.5\% & 3.25\% \\
+                        \hline
+                        \end{tabularx}
+                        \caption{How likely each Chinese aircraft anti-submarine attack is to sink a detected submarine}
+                        \label{table:ChineseAircraftAttackingSubmarines}
+                    \end{table}
+            If the submarine is still within detection range of the aircraft and the aircraft's anti-submarine ammunition is $>$ 0, then wait another 10 minutes [Reload Time] and roll again.
+                \item This mission ends when:
+                \begin{enumerate}[label=\arabic*)]
+                    \item After rolling for an attack, the aircraft's anti-submarine ammunition is 0\par
+                    [Aircraft mission becomes Transit to Base]
+                    \item Submarine is destroyed, no other detected submarines are within weapons' range, and anti-submarine ammunition is $>$ 0\par
+                    [Aircraft mission becomes Antisubmarine searching]
+                    \item Upon unsuccessfully rolling for destruction of the submarine, the submarine is no longer in the aircraft's detection range\par
+                    [Aircraft mission becomes Antisubmarine searching]
+                \end{enumerate}
+            \end{itemize}
+            
+\subsection{Other Behaviour}
+        \noindent \textit{Maintenance} \\
+        
+\subsection{Player Decisions}
+    Players input missions by aircraft manning and armament to their assigned areas. Players should put in a percentage of total forces that they wish to allocate and what mission could be performed in each area.
+    
+        \begin{table}[h!]
+            \centering
+            \begin{tabularx}{\textwidth}{|l|*{4}{>{\centering\arraybackslash}X|}}
+            \hline
+            \textbf{Assigned Areas} & \textbf{Unarmed UAVs} & \textbf{Armed UAVs} & \textbf{Unarmed Planes} & \textbf{Armed Planes} \\
+            \hline
+            \makecell{[A] All zones} & & & & \\
+            \hline
+            \makecell{[B] Taiwanese \\ Contiguous Zone} & & & & \\
+            \hline
+            \makecell{[C] Taiwanese \\ Territorial Waters} & & & & \\
+            \hline
+            \makecell{[D] Japanese \\ Contiguous Zone} & & & & \\
+            \hline
+            \makecell{[E] Japanese \\ Territorial Waters} & & & & \\
+            \hline
+            \makecell{[F] Filipino \\ Contiguous Zone} & & & & \\
+            \hline
+            \makecell{[G] Filipino \\ Territorial Waters} & & & & \\
+            \hline
+            \makecell{[H] Outside Chinese 10 \\ Dash, not in B-G} & & & & \\
+            \hline
+            \makecell{[I] Inside Chinese 10 \\ Dash, outside B-G} & & & & \\
+            \hline
+            \makecell{[J] Between Philippines \\ and Taiwan} & & & & \\
+            \hline
+            \makecell{[K] Between Japan \\ and Taiwan} & & & & \\
+            \hline
+            \makecell{[L] Within median line} & & & & \\
+            \hline
+            \makecell{[M] Beyond median line \\ Currently Unused} & & & & \\
+            \hline
+            \makecell{[N] Holding Area} & & & & \\
+            \hline
+            \makecell{Miyako Strait \\ Currently Unused} & & & & \\
+            \hline
+            \makecell{[P] Primary Hunting Ground} & & & & \\
+            \hline
+            \end{tabularx}
+            \caption{Assigned Areas by Properties of Chinese Aircraft}
+            \label{table:Chineseaircraft_assigned_areas}
+        \end{table}
+
+\newpage
+
+\section{Coalition Aircraft}
+
+\subsection{Detecting Behaviour}
+    
+    \subsubsection{Target: Chinese Ships}
+    Coalition aircraft detect Chinese ships using the cube root law based on the Ship Detection Skill of the Coalition aircraft and the Airvisibility of the target.
+
+    \begin{itemize}
+        \item \( P(d) \) is determined by the equation:
+        \[
+        P(d) = 1 - e^{\frac{-khrs}{d^3}}
+        \]
+        \begin{itemize}
+            \item \( e \) is Euler’s number.
+            \item \( h \) is the height of the searcher, which is assumed to be 10 km.
+            \item \( d \) is the lateral distance in kilometers from the searcher to the target.
+            \item \( k \) is as follows:
+            \begin{itemize}
+                \item Advanced: \( 39{,}633 \)
+                \item Basic: \( 2{,}747 \)
+            \end{itemize}
+            \item \( r \) is an adjustment for the radar cross section of the target:
+            \begin{itemize}
+                \item Stealthy: \( 0.25 \)
+                \item Vsmall: \( 0.5 \)
+                \item Small: \( 1 \)
+                \item Medium: \( 1.25 \)
+                \item Large: \( 1.5 \)
+            \end{itemize}
+            \item \( s \) is an adjustment for the sea state according to the table below:
+            \begin{itemize}
+                \item Sea State 0: \( 1 \)
+                \item Sea State 1: \( 0.89 \)
+                \item Sea State 2: \( 0.77 \)
+                \item Sea State 3: \( 0.68 \)
+                \item Sea State 4: \( 0.62 \)
+                \item Sea State 5: \( 0.53 \)
+                \item Sea State 6: \( 0.47 \)
+            \end{itemize}
+        \end{itemize}
+    \end{itemize}
+
+    \subsubsection{Target: Chinese Aircraft}
+        \begin{table}[h!]
+            \centering
+            \begin{tabular}{|c|c|c|c|c|c|}
+            \hline
+             & Large & Medium & Small & VSmall & Stealthy \\ \hline
+            AEW & 648 & 648 & 496 & 198 & 59 \\ \hline
+            Advanced & 333 & 274 & 196 & 78 & 24 \\ \hline
+            Basic & 254 & 178 & 128 & 50 & 11 \\ \hline
+            \end{tabular}
+            \caption{How Coalition Aircraft Detect Chinese Aircraft}
+        \end{table}
+
+    \subsubsection{Target: Chinese Submarines} 
+    
+    Whenever an aircraft with a player-assigned anti-submarine searching mission arrives in its assigned area, it stops and remains stationary. During that time, it creates a circle around itself defined by its Submarine Detection Skill. in which all enemy submarines are found. \\
+          
+    The radius of the covered area by the capability of the aircraft is:
+    
+    \begin{itemize}
+        \item Basic : 15.7km
+        \item Advanced : 18.5 km
+    \end{itemize}
+
+\subsection{Action Behaviour}
+
+    \subsubsection{Patrolling [Coalition Aircraft]:}
+            \begin{itemize}
+                \item{Can be used by:} Any plane whose Surface Detection Range is Advanced
+                \item{When this mission begins:} An aircraft the zone where it is assigned to observe
+                \item{While executing this mission:} An aircraft moves inside a zone, searching for hunter ships.
+                \item{When this mission ends:} Either 1) The agent detects a ship [aircraft begins tracking that ship] or 2) Current endurance $<$20\% of max endurance [Aircraft begins mission Return to Base]
+            \end{itemize}
+    \subsubsection{Tracking [Coalition Aircraft]:} 
+            \begin{itemize}
+                \item{Can be used by:} Any plane
+                \item{When this mission begins:} 1) An aircraft with mission Observing detects a ship, or 2) an aircraft with mission `Holding' is assigned a target
+                \item{While executing this mission:} While the target is in a Rules of Engagement zone where Attacking is allowed, move at max speed to within anti-ship non-deck gun range.
+                \item{This mission ends when:} 
+                \begin{enumerate}[label=\arabic*)]
+                    \item The target ship is sunk by a different agent \par
+                    [Escort resumes player-assigned mission]
+                    \item The target ship goes to a zone where RoE forbids observing \par
+                    [Escort resumes player-assigned mission]
+                    \item The tracker is armed, gets within anti-ship weapon range of the target, and the target is in a zone where attacking is allowed \par
+                    [Aircraft begins mission Attacking Ship - Non-Deckgun]
+                    \item Current endurance $<$ 20\% of max \par
+                    [Aircraft begins mission Return to Base]
+                \end{enumerate}
+            \end{itemize}
+    \subsubsection{Holding [Coalition Aircraft]:}
+            \begin{itemize}
+                \item{Can be used by:} Any plane whose current anti-ship ammunition is \textgreater 0
+                \item{When this mission begins:} An aircraft who the player has assigned to holding reaches the holding area
+                \item{While executing this mission:} Move in a small pattern at cruising speed in a player-designated designated area (N)
+                \item{When this mission ends:} 
+                \begin{enumerate}[label=\arabic*)]
+                    \item The aircraft is assigned a hunter \par
+                    [Aircraft gains Tracking mission on its target]
+                    \item Current endurance becomes $<20\%$ of max \par
+                    [Aircraft begins mission Return to Base]
+                \end{enumerate}
+            \end{itemize}
+    \subsubsection{Attacking Ship - Non-Deckgun [Coalition Aircraft]:}
+           \begin{itemize}
+                \item{Can be used by:} Any plane whose Current Anti-ship Ammunition is \textgreater 0.
+                \item{When this mission begins:} A plane whose Current Anti-ship Ammunition is \textgreater 0, has Anti-ship Skill == ``Basic'' OR ``Advanced''), and is within range of a detected, RoE valid target. Thus, a plane that is armed and assigned to tracking will move towards its target until it is within range, then move to the Attacking Ship mission. \textcolor{blue}{Range is determined by the farthest range munition remaining for appropriate country's aircraft of the given skill (Basic or Advanced for Anti-Ship skill).}
+                \item{While executing this mission:}
+                    Their anti-ship ammunition goes down by one.\\
+                    For every point of damage the target has, add 20\% to the likelihood of the target being sunk. 
+                    \\ The chance of a Chinese ship being sunk / CTL / damaged is given below:\\
+                    \begin{table}[h!]
+                        \centering
+                        \begin{tabular}{@{}lccc@{}}
+                        \toprule
+                        \textbf{Defender} & \textbf{None} & \textbf{Basic} & \textbf{Advanced} \\
+                        \midrule
+                        \textbf{Attacker} \textbf{Basic}    & 25 / 50 / 25    & 7.5 / 32.5 / 60     & 2.5 / 7.5 / 90     \\
+                        \textbf{Advanced} & 49 / 42 / 9     & 14.7 / 46.6 / 38.7 & 4.9 / 15.1 / 80     \\
+                        \bottomrule
+                        \end{tabular}
+                        \caption{Coalition Aircraft vs. Chinese Ships}
+                        \label{tab:Chance of a Coalition Aircraft hitting a Chinese ship}
+                        \end{table}
+                    \\If the target was CTL, it gets damage = damage + 1. If the target is sunk, then the attacking aircraft returns to the holding area and resumes that mission. If the target is not sunk, and if the coalition aircraft's number of anti-ship weapons is 0, then it gains mission `Transit to base' and the targeted hunter is put back into the appropriate manager. If ammunition remains and the target is not sunk, then:
+                    \begin{enumerate}
+                        \item While the aircraft has anti-ship ammunition greater than 0, the target still meets RoE, and the target is not sunk, an attacking aircraft alters course and speed to stay within range of its target.
+                        \item After 10 minute Reload time, the aircraft attacks again (goes to the top of this loop).
+                    \end{enumerate}
+                \item{This mission ends when:} 
+                \begin{enumerate}[label=\arabic*)]
+                    \item The target is sunk \& current anti-ship ammunition $>0$ \par
+                    [aircraft transits to holding area then resumes holding, report Chinese ship sinking]
+                    \item The attacker’s current anti-ship ammunition is $0$ \par
+                    [aircraft transits to base, report damage to Chinese ship]
+                    \item The target enters an invalid RoE zone \par
+                    [aircraft transits to holding area then resumes holding]
+                \end{enumerate}
+            \end{itemize}
+    \subsubsection{Attacking Aircraft - Air-to-Air Combat [Coalition Aircraft]:}
+        \begin{itemize}
+            \item Can be used by: A plane with Current Air-to-Air Ammunition \textgreater 0, an Anti-Air Skill of ``Basic'' or ``Advanced'', and within range of a detected and RoE-valid airborne target. Thus, a plane that is armed and assigned to tracking will move toward its target until within range, then shift to the Attacking Aircraft mission. \textcolor{blue}{Range is determined by the farthest-range air-to-air munition remaining, depending on the attacking aircraft's skill level.}
+        
+            \item When this mission begins: The aircraft flags TargetedAircraft = 1. Its Air-to-Air Ammunition is reduced by one.
+        
+            \item \textbf{While executing this mission:} The likelihood of a successful hit depends on the attacker's Anti-Air Skill and the defender's Missile Defense capability. See Table~\ref{table:AirToAirHitChances} below.
+        
+            \begin{table}[h!]
+            \centering
+            \caption{Probability of Hit in Air-to-Air Combat}
+            \label{table:AirToAirHitChances}
+            \begin{tabular}{|c|c|c|c|}
+                \hline
+                \textbf{Attacker Anti-Air Skill} & \textbf{None} & \textbf{Basic} & \textbf{Advanced} \\
+                \hline
+                \textbf{Basic}    & 50\%  & 25\%  & 15\% \\
+                \textbf{Advanced} & 75\%  & 40\%  & 25\% \\
+                \hline
+            \end{tabular}
+            \end{table}
+        
+            \item Outcomes:
+            \begin{itemize}
+                \item If the attack succeeds, the targeted aircraft is marked as destroyed and removed from the simulation.
+                \item If the attack fails, the defending aircraft continues its mission uninterrupted.
+                \item If the attacker still has ammunition and the target is not destroyed, the attacker may attempt to re-engage after a 10-minute reload time.
+            \end{itemize}
+        
+            \item This mission ends when:
+            \begin{enumerate}[label=\arabic*)]
+                \item The target aircraft is destroyed and the attacker has remaining ammunition. \\
+                      Attacker resumes holding mission or seeks next valid target.
+                \item The attacker’s Air-to-Air Ammunition reaches 0. \\
+                      Attacker transits to base.
+                \item The target enters an invalid RoE zone or is no longer detectable. \\
+                      Attacker returns to holding pattern.
+            \end{enumerate}
+        \end{itemize}
+
+            
+    \subsubsection{Antisubmarine Searching [Coalition Aircraft]}
+            \begin{itemize}
+                \item Can be used by: Any aircraft with basic or advanced submarine detection
+                \item When this mission begins: A plane whose player-assigned mission is Antisubmarine Warfare arrives in its assigned area. There should be some procedure for deciding where in an assigned area each particular plane searches; possibly using the pheromone system.
+                \item While executing this mission: The aircraft remains stationary. During that time, any submarines within its radius are detected.
+                \item This mission ends when:
+                \begin{enumerate}[label=\arabic*)]
+                    \item The aircraft has been on station for 4 hours \par
+                    [Aircraft begins mission Return to Base]
+                    \item The aircraft detects an enemy submarine and anti-submarine weapons $>1$\par
+                    [Aircraft mission becomes Attacking Submarine]
+                    \item The aircraft is attacked by an enemy ship or aircraft \par
+                    [Aircraft begins mission Return to Base]
+                \end{enumerate}
+            \end{itemize}
+
+    \subsubsection{Attacking Submarine [Coalition Aircraft]}
+            \begin{itemize}
+                \item Can be used by: Any aircraft with basic or advanced submarine detection and whose anti-submarine ammunition $>0$
+                \item When this mission begins: A submarine is within the detection radius of an aircraft with the active mission of Antisubmarine Searching (no allowance for other aircraft to move in and engage a detected submarine)
+                \item Roll on the table below about the relative capability of the ship for anti-submarine detection and the submarine's signature.
+                
+                \begin{table}[h!]
+                    \centering
+                    \begin{tabularx}{\textwidth}{|l|X|X|X|X|X|}
+                    \hline
+                    \textbf{Category} & \textbf{Large} & \textbf{Medium} & \textbf{Small} & \textbf{VSmall} & \textbf{Stealthy} \\
+                    \hline
+                    \textbf{Basic} & 40\% & 20\% & 10\% & 5\% & 2.5\% \\
+                    \hline
+                    \textbf{Advanced} & 50\% & 25\% & 12.5\% & 7.5\% & 3.25\% \\
+                    \hline
+                    \end{tabularx}
+                    \caption{How likely each Coalition anti-submarine attack from an aircraft is to sink a detected submarine}
+                    \label{table:CoalitionAircraftAttackingSubmarines}
+                \end{table}
+                
+            If the submarine is still within detection range of the aircraft and the aircraft's anti-submarine ammunition is $>$ 0, then wait another 10 minutes [Reload Time] and roll again.
+            
+            \item This mission ends when:
+            \begin{enumerate}[label=\arabic*)]
+                \item After rolling for an attack, the aircraft's anti-submarine ammunition is 0\par
+                [Aircraft mission becomes Transit to Base]
+                \item Upon unsuccessfully rolling for destruction of the submarine, the submarine is no longer in the aircraft's detection range\par
+                [Aircraft mission becomes Antisubmarine searching]
+            \end{enumerate}
+        \end{itemize}
+
+\subsection{Other Behaviour}
+        \noindent \textit{Maintenance} \\
+        
+\subsection{Player Decisions}
+    Players input missions by aircraft manning and armament to their assigned areas. Players should put in a percentage of total forces that they wish to allocate and what mission could be performed in each area.
+
+\section{Chinese Ships}
+
+Chinese ships come from four services: CCG, MSA, PAFMM, and PLAN. \\
+
+\subsection{Detecting Behaviour}
+
+     \subsubsection{Target: Ships and Merchants}
+            \par \noindent This is implemented deterministically by comparing Surface Detection Range with the Surface Visibility of the target.
+            \begin{table}[H]
+                \centering
+                \begin{tabularx}{\textwidth}{|l|X|X|X|X|X|}
+                    \hline
+                    \textbf{Type} & \textbf{Large} & \textbf{Medium} & \textbf{Small} & \textbf{VSmall} & \textbf{Stealthy} \\
+                    \hline
+                    \textbf{Advanced} & 56 & 56 & 37 & 20 & 11 \\
+                    \hline
+                    \textbf{Basic} & 37 & 37 & 28 & 17 & 9 \\
+                    \hline
+                \end{tabularx}
+                \caption{When Ships Detect Ships by Capability, Mission, and Target Size}
+                \label{table:ChineseShipDetectionofShips}
+            \end{table}
+
+     \subsubsection{Target: Aircraft}
+            \par \noindent This is implemented deterministically by comparing Aircraft Detection Range with the Surface Visibility of the target.
+            \begin{table}[h!]
+            \centering
+            \begin{tabularx}{\textwidth}{|l|X|X|X|X|X|}
+            \hline
+            \textbf{Target} & \textbf{Large} & \textbf{Medium} & \textbf{Small} & \textbf{VSmall} & \textbf{Stealthy} \\
+            \hline
+            \textbf{Advanced} & 463 & 320 & 239 & 102 & 30 \\
+            \hline
+            \textbf{Basic} & 350 & 244 & 176 & 70 & 20 \\
+            \hline
+            \end{tabularx}
+            \caption{When Ships Detect Aircraft by Capability, Mission, and Target Size}
+            \label{table:ChineseShipDetectionofAircraft}
+            \end{table}
+
+    \subsubsection{Target: Submarines}
+        
+                    \noindent The only advanced ships are T-AGOs ships, which are specially designed catamarans that can detect submarines at great distances. It can only detect submarines when it is executing its ASW [Anti-Submarine Warfare] mission (i.e., it does not passively detect on its way back and forth from its mission area).\\
+                    
+                    \noindent Basic ships that are specifically conducting an ASW mission can deploy a towed array that is much more effective than bow mounted sonars. However, most of the time ships will not move around with this towed array as it requires the ship to move slowly and not conduct other missions. In the game, Basic ships only get that farther range if they are executing the ASW mission.\\
+                    
+                    \noindent Ships without a towed array are assumed to not have a practical ASW capability and are labeled ``none''. \\
+                    
+                    \par \noindent This is currently implemented deterministically; in the future, we can change this to be a cube root with Pd = .5 at the specified distance. \\
+                   \begin{table}[H]
+                        \centering
+                        \begin{tabularx}{\textwidth}{|l|*{5}{>{\raggedleft\arraybackslash}X|}}
+                        \hline
+                        \textbf{Category} & \textbf{Large} & \textbf{Medium} & \textbf{Small} & \textbf{VSmall} & \textbf{Stealthy} \\
+                        \hline
+                        \textbf{\makecell{Advanced +\\ ASW Mission}} & 185 & 74 & 37 & 18.5 & 9.25 \\
+                        \hline
+                        \textbf{\makecell{Basic +\\ ASW Mission}} & 64.82 & 25.928 & 12.964 & 6.482 & 3.241 \\
+                        \hline
+                        \textbf{Basic} & 39.818 & 15.9272 & 7.9636 & 3.9818 & 1.9909 \\
+                        \hline
+                        \end{tabularx}
+                        \caption{When Ships Detect Submarines by Capability, Mission, and Target Size}
+                        \label{table:ChineseShipDetectionofSubs}
+                    \end{table}
+
+\subsection{Action Behaviour}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\linewidth]{Chinese Ships DAG.png}
+        \caption{Chinese Ship DAG}
+        \label{fig:Chinese Ship DAG}
+    \end{figure}
+
+\par
+
+    \subsubsection{Observing [Chinese Ships]:}
+            \begin{itemize}
+                \item{Can be used by:} Any ship
+                \item{When this mission begins:} A ship arrives at the zone where it is assigned by the player to observe
+                \item{While executing this mission:} A ship moves inside a zone and provides information to other hunters about the locations of merchants and escorts. It spreads out with other ships in that zone in accordance with the pheromones of other ships on that assigned mission and area. 
+                \item{This mission ends when:} 
+                \begin{enumerate}[label=\arabic*)]
+                    \item A merchant is detected \par 
+                    [Hunter begins tracking that merchant; merchant is put into the detected merchant manage.]
+                    \item A coalition ship is detected and it is a valid target per RoE \par
+                    [Begin `Attacking Ship - Non-Deckgun']
+                    \item Current endurance $<$ 20\% of max \par
+                    [Hunter begins `Transit to Base']
+                \end{enumerate}
+            \end{itemize}
+    \subsubsection{Tracking [Chinese Ships]:}
+            \begin{itemize}
+                \item{Can be used by:} Any ship
+                \item{When this mission begins:} 1) A ship with the Observing mission detects a ship, 2) a Chinese ship with mission `Holding' is assigned a target
+                \item{While executing this mission:} While the target is in a Rules of Engagement zone where observing is allowed, move at max speed to within 10km of the target, then match course and bearing of the target.
+                \item{This mission ends when:} 
+                    \begin{enumerate}[label=\arabic*)]
+                    \item The target ship is sunk by a different agent \par
+                    [hunter resumes player-assigned mission]
+                    \item The target ship goes to a zone where RoE forbids observing \par
+                    [hunter resumes player-assigned mission]
+                    \item China escalation is 3 or more, the tracker has a weapon in its Anti-Ship weapons list other than "Deckgun", the tracker gets within anti-ship weapon range of the target, and the target is in a zone where attacking is allowed \par
+                    [hunter begins Attacking - Non-Deckgun]
+                    \item China escalation is 1, the tracker gets within 12km of the target, and the target is in a zone where boarding is allowed \par
+                    [hunter begins boarding]
+                    \item Current endurance $<$ 20\% of max \par
+                    [hunter transits to base]
+                    \end{enumerate}
+            \end{itemize}
+    \subsubsection{Holding [Chinese Ships]:}
+            \begin{itemize}
+                \item{Can be used by:} Any ship whose anti-ship max ammunition is \textgreater 0
+                \item{When this mission begins:} A ship who the player has assigned to holding reaches the holding area
+                \item{While executing this mission:} Move in a small pattern at cruising speed in a player-designated designated area in a designated area (N)
+                \item{This mission ends when:}
+                \begin{enumerate}[label=\arabic*)]
+                    \item The ship is assigned a target merchant or escort \par 
+                    [hunter gains tracking mission on its target]
+                    \item An escort attacks the ship \par 
+                    [Hunter returns to base, record escort chases off hunter] 
+                    \item Current endurance becomes $<$ 20\% of max \par
+                    [Hunter gains mission ``Return to Base'']
+                \end{enumerate}
+            \end{itemize}
+            
+    \subsubsection{Attacking Ship - Non-Deckgun [Chinese Ships]}
+        \begin{itemize}
+            \item{Can be used by:} A ship whose Current Anti-ship Ammunition is \textgreater 0, has Anti-ship Skill == ``Basic'' OR ``Advanced''), and is within range of a detected, RoE valid target. Thus, a ship that is armed and assigned to tracking will move towards its target until it is within range, then move to the Attacking Ship mission when it gets within range. \textcolor{blue}{Range is determined by the farthest range munition remaining for Chinese ship of the given skill (Basic or Advanced for Anti-Ship skill). \textbf{Note: Attacks on merchants will not use the longest range Chinese missiles}}
+            
+            \item{When this mission begins:} The ship gains AttackedAMerchant = 1 (even if the target isn't a merchant). Their anti-ship ammunition goes down by one.\\ 
+            
+            \item{While executing this mission:}
+                For every point of damage the target has, add 20\% to the likelihood of the target being sunk. The chance of an undamaged merchant being sunk or a constructive total loss (CTL) is given below. \\
+                \begin{table}[h!]
+                \centering
+                \begin{tabularx}{\textwidth}{|X|X|X|X|X|X|}
+                \hline
+                \textbf{Merchant Size} & \textbf{1,000 – 10,000} & \textbf{10,001 – 20,000} & \textbf{20,001 – 90,000} & \textbf{90,001 – 120,000} & \textbf{120,001 + TONS} \\
+                \hline
+                \textbf{Sunk} & 7.7\% & 3.6\% & 2.4\% & 0\% & 0\% \\
+                \hline
+                \textbf{CTL} & 15.4\% & 21.4\% & 6.0\% & 0\% & 8.5\% \\
+                \hline
+                \end{tabularx}
+                \caption{Damage as Percentage of Total Attacks by Size of Target Ship}
+                \label{table:ChineseShipwithMissilesvsShipDamage}
+                \end{table}
+                \\ The chance of an escort being sunk / CTL / undamaged is given below:\\
+                \begin{table}[h!]
+                    \centering
+                    \begin{tabular}{@{}lccc@{}}
+                    \toprule
+                    \textbf{Defender} & \textbf{None} & \textbf{Basic} & \textbf{Advanced} \\
+                    \midrule
+                    \textbf{Attacker} \textbf{Basic}    & 25 / 50 / 25    & 7.5 / 32.5 / 60     & 2.5 / 7.5 / 90     \\
+                    \textbf{Advanced} & 49 / 42 / 9     & 14.7 / 46.6 / 38.7 & 4.9 / 15.1 / 80     \\
+                    \bottomrule
+                    \end{tabular}
+                    \caption{Comparison of Attacker and Defender outcomes.}
+                    \label{tab:Chance of a Chinese Ship hitting an escort ship}
+                    \end{table}
+                \\Note: Unlike merchants, the righthand probability is the chance of being undamaged, not damaged. Thus, a merchant is always hit, but an escort has a chance of getting no damage.\\
+                If the target was CTL, it gets damage = damage + 1. If the target is sunk, then the attacking ship returns to its player given mission. If the target is not sunk, and if the hunter's number of anti-ship weapons is 0, then it gains mission `Transit to Base' and the targeted escort or merchant is put back into the appropriate manager. If ammunition remains and the target is not sunk, then:
+                \begin{enumerate}
+                    \item While the ship has anti-ship ammunition greater than 0, the target still meets RoE, and the target is not sunk, an attacking aircraft alters course and speed to stay within range of its target.
+                    \item After 10 minute Reload time, the aircraft attacks again (goes to the top of this loop).
+                \end{enumerate}
+            \item{This mission ends when:} 
+            \begin{enumerate}[label=\arabic*)]
+                \item The target is sunk \& current anti-ship ammunition $>0$ \par
+                [hunter resumes player-assigned mission, report target sinking]
+                \item The attacker’s current anti-ship ammunition is $0$ \par
+                [hunter transits to base, report damage to target]
+                \item The target enters an invalid RoE zone \par
+                [hunter resumes player assigned mission]
+            \end{enumerate}
+        \end{itemize}
+            
+    \subsubsection{Boarding Ship [Chinese Ships]:}
+        \begin{itemize}
+            \item{Can be used by:} Any Chinese ship when Chinese escalation level is 1
+            \item{When this mission begins:} During Chinese escalation level 1, if any detected merchant passes within 12km of a Chinese ship that is tracking that merchant
+            \item{While executing this mission:} 
+            \begin{enumerate}[label=\arabic*)]
+                \item If the merchant is unescorted
+                \item The Chinese ship gets LaunchedABoarder=1
+                \item After the `LaunchedABoarder' modifier, wait 40 minutes if the Chinese ship doesn't have a helicopter0.. Wait 10 minutes if it does have a helicopter. 
+                \item Check again to see if the merchant is unescorted and not sunk [do not recheck RoE]
+                \item If the merchant is still unescorted, roll to see if the merchant is boarded. Probability of success starts at 22\% (assuming the merchant's resistance level is Evade), with the following modifiers:
+                    \begin{itemize}
+                        \item -20\% if sea state 3. Automatic failure if sea state 4 or higher.
+                        \item +20\% if the launching ship's service is CCG or MSA
+                        \item +20\% if the launching ship has a helicopter.
+                        \item -30\% if merchant’s ResistanceLevel = Resist
+                        \item +60\% if merchant’s ResistanceLevel = Compliant.
+                    \end{itemize}
+                \item Upon a successful boarding, merchants get Boarded=1 and plot a course back to China. The boarding ship accompanies them. When one of them reaches China, they both disappear from the game board.
+                \item If boarding is unsuccessful:
+                    \begin{itemize}
+                        \item If the boarding ship is armed (which is a separate variable, also determined by the ship having ``Deckgun'' in Anti-ship Weapon List) and the Merchant's resistance level is Resist, then the would-be boarder gains the mission ``Attacking Ship with Guns'' 
+                        \item Else, the boarding ship begins a transit to base mission and the next closest eligible boarder gains tracking on the merchant 
+                    \end{itemize} 
+            \end{enumerate}
+            \item{This mission ends when:}
+                \begin{enumerate}[label=\arabic*)]
+                    \item If the merchant ever becomes escorted  \par
+                    [hunter returns to player assigned mission, record hunter deterred]
+                    \item If the merchant is sunk while the boarding is underway \par
+                    [hunter returns to player assigned mission]
+                    \item If an armed boarder is unsuccessful against a Resist merchant \par
+                    [Hunter begins mission `Attacking Ship With Guns']
+                    \item If any other boarding mission is unsuccessful \par
+                    [Hunter begins return to base mission, next closest eligible boarder gains `tracking' mission on the merchant]
+                    \item If the boarding is successful and one of the merchant of the border makes it back to China \par
+                    [despawn both, record successful seizure of merchant]
+                \end{enumerate}
+        \end{itemize}
+            
+    \subsubsection{Attacking Ship With Guns [Chinese Ships]:}
+        \begin{itemize}
+            \item{Can be used by:} An armed boarder who fails to board a merchant with Resist
+            \item{When this mission begins:} Immediately after an unsuccessful boarding roll by an eligible boarder
+            \item{While executing this mission:} Check RoE. Boarder matches course and speed with the merchant for 30 minutes or until the merchant reaches becomes RoE ineligible. Roll a 20\% CTL, 20\% sunk, 60\% damaged. 
+            \item{When this mission ends:} 
+                \begin{enumerate}[label=\arabic*)]
+                    \item Initial failed RoE check \par
+                    [hunter resumes player assigned mission]
+                    \item Failed RoE check anytime after initial failed RoE check \par
+                    [hunter transits to base, record merchant damaged]
+                    \item Damage roll: Merchant sunk, CTL, or damaged \par
+                    [hunter transits to base, record result of merchant]
+                \end{enumerate}
+        \end{itemize}
+
+    \subsubsection{Anti-submarine searching [Chinese Ships]}
+        \begin{itemize}
+            \item Can be used by: Any ship with basic or advanced submarine detection
+            \item When this mission begins: A ship whose player-assigned mission is Anti-submarine Warfare arrives in its assigned area. There should be some procedure for deciding where in an assigned area each particular plane searches; possibly using the pheromone system, or simply randomly.
+            \item While executing this mission: The ship moves around according to pheromones. During that time, any submarines within its radius are detected. The ship's endurance decreases at its cruising rate.
+            \item When this mission ends:
+                \begin{enumerate}[label=\arabic*)]
+                    \item The ships current endurance becomes less than $<$ 20\% of max  \par
+                    [Ship mission becomes Transit to Base]
+                    \item The ship detects an enemy submarine and anti-submarine weapons $>0$\par
+                    [Ship mission becomes Attacking Submarine]
+                    \item The ship is attacked by an enemy ship or aircraft \par
+                    [Ship mission becomes Transit to Base]
+                \end{enumerate}
+        \end{itemize}
+
+    \subsubsection{Attacking submarines [Chinese Ships]}
+        \begin{itemize}
+            \item{Can be used by:} Any Chinese ship with basic or advanced anti-submarine skill whose whose anti-submarine ammunition $>0$
+            \item{When this mission begins:} A detected submarine is within the attack range of a ship (no provision for ships to track towards a detected submarine). The ship's mission does not have to be Anti-submarine searching.
+            \item{While executing this mission:} Roll on the table below about the relative anti-submarine capability of the ship (NOT detection capability) and the submarine's signature.
+                \begin{table}[h!]
+                    \centering
+                    \begin{tabular}{|l|l|c|c|c|c|c|}
+                    \hline
+                    \textbf{} & \textbf{Defender} & \textbf{Large} & \textbf{Medium} & \textbf{Small} & \textbf{Vsmall} & \textbf{Stealthy} \\ \hline
+                    \multirow{2}{*}{\textbf{Attacker}} & \textbf{{Basic}}  & 75 & 55 & 35 & 20 & 10 \\ \cline{2-7} 
+                     & \textbf{Advanced} & 85 & 80 & 70 & 45 & 25 \\ \hline
+                    \end{tabular}
+                    \caption{Percentage Chance for an attacking ship to hit a defending submarine}
+                    \label{tab:ChineseShipsvsCoalitionSubmarines}
+                \end{table}
+                If the submarine is still within detection range of the ship and the ship's anti-submarine ammunition is $>$ 0, then wait another 10 minutes [Reload Time] and roll again.
+            \item{When this mission ends:}
+            \begin{enumerate}[label=\arabic*)]
+                \item After rolling for an attack, the ship's anti-submarine ammunition is 0 AND the ship's player-assigned mission is Submarine Searching \par
+                [Ship's mission becomes Transit to Base]
+                \item After rolling for an attack, the ship's anti-submarine ammunition is 0 and the ship's player-assigned mission is NOT Submarine Searching \par
+                [Ship resumes player-assigned mission]
+                \item Submarine is destroyed, no other detected submarines are within weapons' range, player-assigned mission is Anti-submarine searching, and anti-submarine ammunition is $>$ 0\par
+                [Ship's mission becomes Antisubmarine searching]
+                \item Upon unsuccessfully rolling for destruction of the submarine, the submarine is no longer in the ship's attack range\par
+                [Ship resumes player-assigned mission]
+            \end{enumerate}
+        \end{itemize}
+
+    \subsubsection{Attacking aircraft}: To be implemented later?
+
+\subsection{Other Behaviour}
+        \noindent \textit{Maintenance} \\
+
+\subsection{Player Decisions}
+    Players input missions to Chinese ships by service to their assigned areas. Players should put in a percentage of total forces that they wish to allocate and what mission could be performed in each area.
+    
+        \begin{table}[h!]
+            \centering
+            \begin{tabularx}{\textwidth}{|l|*{4}{>{\centering\arraybackslash}X|}}
+            \hline
+            \textbf{Assigned Areas} & \textbf{PAFMM} & \textbf{CCG} & \textbf{MSA} & \textbf{PLAN} \\
+            \hline
+            \makecell{[A] All zones} & & & & \\
+            \hline
+            \makecell{[B] Taiwanese \\ Contiguous Zone} & & & & \\
+            \hline
+            \makecell{[C] Taiwanese \\ Territorial Waters} & & & & \\
+            \hline
+            \makecell{[D] Japanese \\ Contiguous Zone} & & & & \\
+            \hline
+            \makecell{[E] Japanese \\ Territorial Waters} & & & & \\
+            \hline
+            \makecell{[F] Filipino \\ Contiguous Zone} & & & & \\
+            \hline
+            \makecell{[G] Filipino \\ Territorial Waters} & & & & \\
+            \hline
+            \makecell{[H] Outside Chinese 10 \\ Dash, not in B-G} & & & & \\
+            \hline
+            \makecell{[I] Inside Chinese 10 \\ Dash, outside B-G} & & & & \\
+            \hline
+            \makecell{[J] Between Philippines \\ and Taiwan} & & & & \\
+            \hline
+            \makecell{[K] Between Japan \\ and Taiwan} & & & & \\
+            \hline
+            \makecell{[L] Within median line} & & & & \\
+            \hline
+            \makecell{[M] Beyond median line \\ Currently Unused} & & & & \\
+            \hline
+            \makecell{[N] Holding Area} & & & & \\
+            \hline
+            \makecell{Miyako Strait \\ Currently Unused} & & & & \\
+            \hline
+            \end{tabularx}
+            \caption{Assigned Areas by Properties of Chinese Ships}
+            \label{table:Chinese_ship_assigned_areas}
+        \end{table}
+\newpage
+        
+\section{Coalition Ships}
+
+\subsection{Detecting Behaviour}
+    \subsubsection{Target: Chinese Ships}
+            \noindent his is implemented deterministically by comparing Surface Detection Range with the Surface Visibility of the target.
+            \begin{table}[h!]
+                \centering
+                \begin{tabularx}{\textwidth}{|l|X|X|X|X|X|}
+                    \hline
+                    \textbf{Type} & \textbf{Large} & \textbf{Medium} & \textbf{Small} & \textbf{VSmall} & \textbf{Stealthy} \\
+                    \hline
+                    \textbf{Advanced} & 56 & 56 & 37 & 20 & 11 \\
+                    \hline
+                    \textbf{Basic} & 37 & 37 & 28 & 17 & 9 \\
+                    \hline
+                \end{tabularx}
+                \caption{When Ships Detect Ships by Capability, Mission, and Target Size}
+                \label{table:CoalitionShipDetectionofShips}
+            \end{table}
+
+    \subsubsection{Target: Aircraft}
+            \noindent This is implemented deterministically by comparing Aircraft Detection Range with the Surface Visibility of the target.
+            \begin{table}[h!]
+            \centering
+            \begin{tabularx}{\textwidth}{|l|X|X|X|X|X|}
+            \hline
+            \textbf{Category} & \textbf{Large} & \textbf{Medium} & \textbf{Small} & \textbf{VSmall} & \textbf{Stealthy} \\
+            \hline
+            \textbf{Advanced} & 463 & 320 & 239 & 102 & 30 \\
+            \hline
+            \textbf{Basic} & 350 & 244 & 176 & 70 & 20 \\
+            \hline
+            \end{tabularx}
+            \caption{When Ships Detect Aircraft by Capability, Mission, and Target Size}
+            \label{table:CoalitionShipDetectionofAircraft}
+            \end{table}
+
+    \subsubsection{Target: Submarines}
+        
+        \noindent The only advanced ships are T-AGOs ships, which are specially designed catamarans that can detect submarines at great distances. It can only detect submarines when it is executing its ASW mission (i.e., it does not passively detect on its way back and forth from its mission area).\\
+        
+        \noindent Basic ships that are specifically conducting an Anti-Submarine Warfare (ASW) mission can deploy a towed array that is much more effective than bow mounted sonars. However, most of the time ships will not move around with this towed array as it requires the ship to move slowly and not conduct other missions. In the game, they only get that range if they are executing the ‘Anti-submarine Searching’ mission.\\
+        
+        \noindent Ships without a towed array are assumed to not have a practical ASW capability and are labeled “none”. \\
+        
+        This is currently implemented deterministically by comparing the ship's submarine detection capability and current mission status with the surface visibility of the submarine. \\
+       \begin{table}[h!]
+            \centering
+            \begin{tabularx}{\textwidth}{|l|*{5}{>{\raggedleft\arraybackslash}X|}}
+            \hline
+            \textbf{Category} & \textbf{Large} & \textbf{Medium} & \textbf{Small} & \textbf{VSmall} & \textbf{Stealthy} \\
+            \hline
+            \textbf{\makecell{Advanced +\\ ASW Mission}} & 185 & 74 & 37 & 18.5 & 9.25 \\
+            \hline
+            \textbf{\makecell{Basic +\\ ASW Mission}} & 64.82 & 25.928 & 12.964 & 6.482 & 3.241 \\
+            \hline
+            \textbf{Basic} & 39.818 & 15.9272 & 7.9636 & 3.9818 & 1.9909 \\
+            \hline
+            \end{tabularx}
+            \caption{When Ships Detect Submarines by Capability, Mission, and Target Size}
+            \label{table:CoalitionShipDetectionofSubs}
+        \end{table}
+
+\subsection{Action Behaviour}
+    
+    \subsubsection{Patrolling [Coalition Ships]:}
+            \begin{itemize}
+                \item{Can be used by:} Any ship
+                \item{When this mission begins:} A ship arrives at the zone where it is assigned by the player to patrol
+                \item{While executing this mission:} A ship moves inside a zone and engages any hunters who meet the rules of engagement. If it detects a hunter, put the hunter into the appropriate manager. If the escort has a weapon of the appropriate type (anti-ship, anti-air, or anti-sub), begin tracking that hunter.
+                \item{When this mission ends:} Either 1) A hunter is detected [escort begins tracking that ship] 2)endurance $<$ 20\% of max [escort returns to base]
+            \end{itemize}
+            
+    \subsubsection{Tracking [Coalition Ships]:}
+            \begin{itemize}
+                \item{Can be used by:} Any ship
+                \item{When this mission begins:} 1) A ship with the Patrolling mission detects a ship, 2) an escort ship with mission `Holding' is assigned a target
+                \item{While executing this mission:} While the target is in a Rules of Engagement zone where patrolling is allowed, follow or circle the target around 10km distant. If the target is able to be attacked or boarded by the tracker, then change to that mission.
+                \item{This mission ends when:} 
+                    \begin{enumerate}[label=\arabic*)]
+                    \item The target ship is sunk by a different agent \par
+                    [escort resumes player-assigned mission]
+                    \item The target ship goes to a zone where RoE forbids patrolling \par
+                    [escort resumes player-assigned mission]
+                    \item The tracker has a weapon in its Anti-Ship weapons list other than "Deckgun", the tracker gets within anti-ship weapon range of the target, and the target is in a zone where attacking is allowed \par
+                    [escort begins Attacking - Non-Deckgun]
+                    \item The tracker gets within 12km of a boarded merchant, and the boarded merchant is not in zone L [within median line] \par
+                    [escort begins liberation boarding]
+                    \item Current endurance $<$ 20\% of max \par
+                    [escort transits to base]
+                    \end{enumerate}
+            \end{itemize}
+            
+    \subsubsection{Holding [Coalition Ships]:}
+            \begin{itemize}
+                \item{Can be used by:} Any ship whose anti-ship max ammunition is \textgreater 0
+                \item{When this mission begins:} A ship who the player has assigned to holding reaches the holding area
+                \item{While executing this mission:} Move in a small pattern at cruising speed in a player-designated designated area
+                \item{When this mission ends:} Either 1) the ship is assigned a target [escort gains tracking mission on its target], or 2) current endurance becomes $<$ 20\% of max [escort returns to base]
+            \end{itemize}
+            
+    \subsubsection{Attacking Ship - Non-Deckgun: [Coalition Ships]}
+           \begin{itemize}
+                \item{Can be used by:} A ship whose Current Anti-ship Ammunition is \textgreater 0, has Anti-ship Skill == ``Basic'' OR ``Advanced''), and is within range of a detected, RoE valid target. Thus, a ship that is armed and assigned to tracking will move towards its target until it is within range, then move to the Attacking Ship mission when it gets within range. \textcolor{blue}{Range is determined by the farthest range munition remaining for Coalition ship of the given skill (Basic or Advanced for Anti-Ship skill)}. 
+                
+                \item{When this mission begins:} Their anti-ship ammunition goes down by one.\par 
+                
+                \item{While executing this mission:}
+                    For every point of damage the target has, add 20\% to the likelihood of the target being sunk. The chance of a hunter being sunk / CTL / undamaged is given below:\\
+                    \begin{table}[h!]
+                        \centering
+                        \begin{tabular}{@{}lccc@{}}
+                        \toprule
+                        \textbf{Defender} & \textbf{None} & \textbf{Basic} & \textbf{Advanced} \\
+                        \midrule
+                        \textbf{Attacker} \textbf{Basic}    & 25 / 50 / 25    & 7.5 / 32.5 / 60     & 2.5 / 7.5 / 90     \\
+                        \textbf{Advanced} & 49 / 42 / 9     & 14.7 / 46.6 / 38.7 & 4.9 / 15.1 / 80     \\
+                        \bottomrule
+                        \end{tabular}
+                        \caption{Comparison of Attacker and Defender outcomes.}
+                        \label{tab:Chance of a Coalition Ship hitting a Chinese ship}
+                        \end{table}
+                    \\If the target was CTL, it gets damage = damage + 1. If the target is sunk, then the attacking ship returns to its player given mission. If the target is not sunk, and if the coalition ship's number of anti-ship weapons is 0, then it gains mission `Transit to base' and the targeted hunter is put back into the appropriate manager. If ammunition remains and the target is not sunk, then:
+                    \begin{enumerate}
+                        \item While the ship has anti-ship ammunition greater than 0, the target still meets RoE, and the target is not sunk, an attacking aircraft alters course and speed to stay within range of its target.
+                        \item After 10 minute Reload time, the aircraft attacks again (goes to the top of this loop).
+                    \end{enumerate}
+                \item{This mission ends when:} 
+                \begin{enumerate}[label=\arabic*)]
+                    \item The target is sunk \& current anti-ship ammunition $>0$ \par
+                    [hunter resumes player-assigned mission, report target sinking]
+                    \item The attacker’s current anti-ship ammunition is $0$ \par
+                    [hunter transits to base, report damage to target]
+                    \item The target enters an invalid RoE zone \par
+                    [hunter resumes player assigned mission]
+                \end{enumerate}
+            \end{itemize}
+
+    \subsubsection{Boarding Ship [Coalition Ships]:}
+            \begin{itemize}
+                \item{Can be used by:} Any coalition ship
+                \item{When this mission begins:} When a coalition ship reaches within 12km of a boarded merchant that is not inside the Chinese median line.
+                \item{While executing this mission:} The boarded merchant becomes liberated. We will make this stochastic later. The escort and the merchant head to Taiwan, then the escort heads to base. The escorting hunter returns to base.
+                \item{This mission ends when:}
+            \end{itemize}
+        
+    \subsubsection{Anti-submarine searching [Coalition Ships]}
+            \begin{itemize}
+                \item Can be used by: Any ship with basic or advanced submarine detection
+                \item When this mission begins: A ship whose player-assigned mission is Anti-submarine Warfare arrives in its assigned area. There should be some procedure for deciding where in an assigned area each particular plane searches; possibly using the pheromone system, or simply randomly.
+                \item While executing this mission: The ship moves around according to the pheromone system. During that time, any submarines within its radius are detected. The ship's endurance decreases at its cruising rate.
+                \item When this mission ends:
+                    \begin{enumerate}[label=\arabic*)]
+                        \item The ships current endurance becomes less than $<$ 20\% of max  \par
+                        [Ship mission becomes Transit to Base]
+                        \item The ship detects an enemy submarine and anti-submarine weapons $>0$\par
+                        [Ship mission becomes Attacking Submarine]
+                        \item The ship is attacked by an enemy ship or aircraft \par
+                        [Aircraft mission becomes Transit to Base]
+                    \end{enumerate}
+            \end{itemize}
+
+    \subsubsection{Attacking submarines [Coalition Ships]}
+            \begin{itemize}
+                \item{Can be used by:} Any Coalition ship with basic or advanced anti-submarine skill whose whose anti-submarine ammunition $>0$
+                \item{When this mission begins:} A detected submarine is within the attack range of a ship (no provision for ships to track towards a detected submarine). The ship's mission does not have to be Anti-submarine searching.
+                \item{While executing this mission:} Roll on the table below about the relative anti-submarine capability of the ship (NOT detection capability) and the submarine's signature.
+                    \begin{table}[h!]
+                        \centering
+                        \begin{tabular}{|l|l|c|c|c|c|c|}
+                        \hline
+                        \textbf{} & \textbf{Defender} & \textbf{Large} & \textbf{Medium} & \textbf{Small} & \textbf{Vsmall} & \textbf{Stealthy} \\ \hline
+                        \multirow{2}{*}{\textbf{Attacker}} & \textbf{{Basic}}  & 75 & 55 & 35 & 20 & 10 \\ \cline{2-7} 
+                         & \textbf{Advanced} & 85 & 80 & 70 & 45 & 25 \\ \hline
+                        \end{tabular}
+                        \caption{Percentage chance for an attacking ship to hit a defending submarine}
+                        \label{tab:CoalitionShipsvsChineseSubmarines}
+                    \end{table}
+                    If the submarine is still within detection range of the ship and the ship's anti-submarine ammunition is $>$ 0, then wait another 10 minutes [Reload Time] and roll again.
+                \item{When this mission ends:}
+                \begin{enumerate}[label=\arabic*)]
+                    \item After rolling for an attack, the ship's anti-submarine ammunition is 0 AND the ship's player-assigned mission is Submarine Searching \par
+                    [Ship's mission becomes Transit to Base]
+                    \item After rolling for an attack, the ship's anti-submarine ammunition is 0 and the ship's player-assigned mission is NOT Submarine Searching \par
+                    [Ship resumes player-assigned mission]
+                    \item Submarine is destroyed, no other detected submarines are within weapons' range, player-assigned mission is Anti-submarine searching, and anti-submarine ammunition is $>$ 0\par
+                    [Ship's mission becomes Antisubmarine searching]
+                    \item Upon unsuccessfully rolling for destruction of the submarine, the submarine is no longer in the ship's attack range\par
+                    [Ship resumes player-assigned mission]
+                \end{enumerate}
+            \end{itemize}
+
+    \subsubsection{Attacking Ship With Guns: NOT IMPLEMENTED}
+            \begin{itemize}
+                \item{Can be used by:} 
+                \item{When this mission begins:} 
+                \item{While executing this mission:} 
+                \item{When this mission ends:} 
+            \end{itemize}
+            
+    \subsubsection{Attacking aircraft: NOT IMPLEMENTED}
+            \begin{itemize}
+                \item{Can be used by:} 
+                \item{When this mission begins:} 
+                \item{While executing this mission:} 
+                \item{When this mission ends:} 
+            \end{itemize}
+
+
+\subsection{Other Behaviour}
+
+        \noindent \textit{Maintenance}
+
+
+\subsection{Player Decisions}
+Players input missions by service to their assigned areas. Players should put in a percentage of total forces that they wish to allocate and what mission could be performed in each area.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabularx}{\textwidth}{|l|*{6}{>{\centering\arraybackslash}X|}}
+    \hline
+    \textbf{\centering Assigned Areas} & \textbf{\centering ROCN} & \textbf{\centering CGA} & \textbf{\centering USN} & \textbf{\centering USCG} & \textbf{\centering JMSDF} & \textbf{\centering JCG} \\
+    \hline
+    \makecell{[A] All zones} & & & & & & \\
+    \hline
+    \makecell{[B] Taiwanese \\ Contiguous Zone} & & & & & & \\
+    \hline
+    \makecell{[C] Taiwanese \\ Territorial Waters} & & & & & & \\
+    \hline
+    \makecell{[D] Japanese \\ Contiguous Zone} & & & & & & \\
+    \hline
+    \makecell{[E] Japanese \\ Territorial Waters} & & & & & & \\
+    \hline
+    \makecell{[F] Filipino \\ Contiguous Zone} & & & & & & \\
+    \hline
+    \makecell{[G] Filipino \\ Territorial Waters} & & & & & & \\
+    \hline
+    \makecell{[H] Outside Chinese 10 \\ Dash, not in B-G} & & & & & & \\
+    \hline
+    \makecell{[I] Inside Chinese 10 \\ Dash, outside B-G} & & & & & & \\
+    \hline
+    \makecell{[J] Between Philippines \\ and Taiwan} & & & & & & \\
+    \hline
+    \makecell{[K] Between Japan \\ and Taiwan} & & & & & & \\
+    \hline
+    \makecell{[L] Within median line} & & & & & & \\
+    \hline
+    \makecell{[M] Beyond median line \\ Currently Unused} & & & & & & \\
+    \hline
+    \makecell{[N] Holding Area} & & & & & & \\
+    \hline
+    \makecell{Miyako Strait \\ Currently Unused} & & & & & & \\
+    \hline
+    \end{tabularx}
+    \caption{Assigned Areas by Coalition Ship Service}
+    \label{table:Coalition_ships_assigned_areas}
+\end{table}
+
+
+\newpage
+\section{Chinese Submarines}
+
+\subsection{Detecting Behaviour}
+
+    \subsubsection{Target: Ships and Merchants}
+              \begin{table}[h!]
+                \centering
+                \begin{tabular}{|l|c|c|c|c|c|}
+                \hline
+                & \textbf{Large} & \textbf{Medium} & \textbf{Small} & \textbf{VSmall} & \textbf{Stealthy} \\
+                \hline
+                \textbf{Advanced} & 90 & 90 & 45 & 9 & 0 \\
+                \hline
+                \textbf{Basic} & 45 & 9 & 9 & 0 & 0 \\
+                \hline
+                \end{tabular}
+                \caption{Classification by Size and Stealth Level}
+                \label{table:ChineseSubmarinesvs.CoalitionShipsandMerchants}
+            \end{table}
+
+    \subsubsection{Target: Aircraft}
+    
+            Submarines are not capable of detecting aircraft. \\
+            
+    \subsubsection{Target: Submarines}
+                        
+        This is implemented deterministically by comparing the ship's submarine detection capability (Basic or Advanced) and current mission status (Anti-submarine Searching vs. not) with the submarine visibility of the submarine. \\
+ 
+        \begin{table}[h!]
+            \centering
+            \begin{tabular}{lccccc}
+                \hline
+                & \textbf{Large} & \textbf{Medium} & \textbf{Small} & \textbf{VSmall} & \textbf{Stealthy} \\
+                \hline
+                \textbf{Advanced + ASW Mission} & 37.00  & 14.80   & 7.40   & 3.70   & 1.85   \\
+                \textbf{Advanced}               & 27.78  & 11.112  & 5.556  & 2.778  & 1.389  \\
+                \textbf{Basic}                  & 18.52  & 7.408   & 3.704  & 1.852  & 0.926  \\
+                \hline
+            \end{tabular}
+            \caption{Detection Radii for Chinese Submarines vs. Coalition Submarines}
+            \label{ChineseSubmarinesvs.CoalitionSubmarines}
+        \end{table}
+
+\subsection{Action Behaviour}
+
+    \subsubsection{Observing [Chinese Subs]:}
+        \begin{itemize}
+            \item{Can be used by:} Any sub
+            \item{When this mission begins:} A submarine enters the the zone where it is assigned to observe
+            \item{While executing this mission:} A submarine moves inside a zone according to pheromones. If you detect a ship or submarine, begin tracking that ship.
+            \item{When this mission ends:} 
+            \begin{enumerate}[label=\arabic*)]
+            \item The agent detects a ship or submarine [hunter begins tracking that ship or submarine]
+            \item Current endurance $<$20\% of max endurance [hunter transits to base]
+            \item Submarine is attacked [hunter transits to base]
+            \end{enumerate}
+        \end{itemize}
+
+    \subsubsection{Tracking [Chinese Subs]:}
+        \begin{itemize}
+            \item{Can be used by:} Any sub with Observing mission
+            \item{When this mission begins:} 1) A Chinese sub with mission Observation detects a ship, or 2) a Chinese sub with mission `Holding' is assigned a target
+            \item{While executing this mission:} While the target is in a Rules of Engagement zone where observing is allowed, move on an intercept point towards the target.
+            \item{This mission ends when:} 
+            \begin{enumerate}[label=\arabic*)]
+                \item The target ship or sub is sunk by a different agent \par
+                [hunter resumes player-assigned mission]
+                \item The target ship or sub goes to a zone where RoE forbids observing \par
+                [hunter resumes player-assigned mission]
+                \item Any submarine who has $>$ 0 attacks in its ammunition, gets within 11km of any detected ship, and the ship is in a zone where attacking is allowed \par
+                [hunter begins Attacking Ship - Non-Deckgun [Chinese Subs]]
+                \item Any submarine who has $>$ 0 attacks in its ammunition, gets within 11km of any detected sub, and the sub is in a zone where attacking is allowed \par
+                [hunter begins Attacking Submarine [Chinese Subs]]
+                \item Current endurance $<$ 20\% of max \par
+                [hunter returns to base]
+            \end{enumerate}
+        \end{itemize}
+
+    \subsubsection{Attacking Ship - Non-Deckgun [Chinese Subs]:}
+        \begin{itemize}
+            \item{Can be used by:} A submarine whose Current Anti-ship Ammunition is \textgreater 0, has Anti-ship Skill == ``Basic'' OR ``Advanced''), and is within range of a detected, RoE valid target.
+            \item{When this mission begins:} The submarine gains AttackedAMerchant = 1. Their anti-ship ammunition goes down by one.\\ 
+            \item{While executing this mission:}
+            The chance of target being HIT is given below:\\
+            \begin{table}[h!]
+                \centering
+                \begin{tabular}{lccc}
+                    \toprule
+                    Defender & None & Basic & Advanced \\
+                    \midrule
+                    Attacker Basic    & 50\%  & 25\% & 10\% \\
+                    Attacker Advanced & 70\%  & 50\% & 20\% \\
+                    \bottomrule
+                \end{tabular}
+                \caption{Chance of One Chinese Anti-Ship Attack HITTING a Targeted Ship}
+                \label{tab:ChineseSubmarinesHitProbabilityvs.Ships}
+            \end{table}
+            If a hit is scored, then roll on the table below for whether the target is sunk based on the damage (this can be shared with damage from other sources). Any escort that is hit becomes sunk.
+            \begin{table}[h!]
+                \centering
+                \begin{tabular}{lcc}
+                    \toprule
+                    \textbf{TANKER or LNG Carrier} & \textbf{Probability of Sinking} \\
+                    \midrule
+                    1st hit  & 75\%  \\
+                    2 hits & 100\% \\
+                    3 hits & 100\% \\
+                    \midrule
+                    \textbf{OTHER} & \textbf{Prob of Sink} \\
+                    1st hit  & 53\%  \\
+                    2 hits & 73\%  \\
+                    3 hits & 71\%  \\
+                    4 hits & 100\% \\
+                    \bottomrule
+                \end{tabular}
+                \caption{Probability of sinking based on damage for different ship types}
+                \label{tab:ChineseSubsvsShipsProbabilitySinking}
+            \end{table}
+            If the target was hit but not sunk, it gets damage = damage + 1. If the target is sunk, then the attacking submarine resumes its player-assigned mission. If the target is not sunk, and if the hunter's number of anti-ship weapons is 0, then it gains mission `Transit to base' and the targeted escort or merchant is put back into the appropriate manager. If ammunition remains and the target is not sunk, then:
+            \begin{enumerate}
+                \item While the submarine has anti-ship ammunition greater than 0, the target still meets RoE, and the target is not sunk, an attacking submarine alters course and speed to stay within range of its target.
+                \item After 45 minute Reload time, the submarine attacks again (goes to the top of this loop).
+            \end{enumerate}
+            \item{This mission ends when:} 
+                \begin{enumerate}[label=\arabic*)]
+                    \item The target is sunk \& current ammunition $>0$ \par
+                    [hunter resumes player assigned-mission, report target sinking]
+                    \item The attacker’s current ammunition is $0$ \par
+                    [hunter transits to base, report damage to target]
+                    \item The target enters an invalid RoE zone \par
+                    [hunter transits to holding area then resumes holding]
+                \end{enumerate}
+        \end{itemize}
+        
+    \subsubsection{Anti-submarine searching [Chinese Subs]}
+        \begin{itemize}
+            \item Can be used by: Any sub with basic or advanced submarine detection
+            \item When this mission begins: A sub whose player-assigned mission is Anti-submarine Warfare arrives in its assigned area. There should be some procedure for deciding where in an assigned area each particular plane searches; possibly using the pheromone system, or simply randomly.
+            \item While executing this mission: The sub searches according to pheromones. During that time, any submarines within its radius are detected. The sub's endurance decreases at its cruising rate.
+            \item When this mission ends:
+                \begin{enumerate}[label=\arabic*)]
+                    \item The sub's current endurance becomes less than $<$ 20\% of max  \par
+                    [Sub mission becomes Transit to Base]
+                    \item The sub detects an enemy submarine and ammunition $>0$\par
+                    [Sub mission becomes Attacking Submarine]
+                    \item The sub is attacked by an enemy ship or aircraft \par
+                    [Sub mission becomes Transit to Base]
+                \end{enumerate}
+        \end{itemize}
+
+    \subsubsection{Attacking submarines [Chinese Submarines]}
+        \begin{itemize}
+            \item{Can be used by:} Any Chinese ship with basic or advanced anti-submarine skill whose ammunition $>0$ who is within 11km of a detected enemy submarine that is within an appropriate RoE zone
+            \item{When this mission begins:} A detected submarine is within the attack range of a sub (no provision for ships to track towards a detected submarine). The sub's mission does not have to be Anti-submarine Searching.
+            \item{While executing this mission:} Roll on the table below about the relative anti-submarine capability of the sub and the defending submarine's signature.
+                \begin{table}[h!]
+                    \centering
+                    \begin{tabular}{lccccc}
+                        \toprule
+                        \textbf{Defender} & \textbf{Large} & \textbf{Medium} & \textbf{Small} & \textbf{Vsmall} & \textbf{Stealthy} \\
+                        \midrule
+                        \textbf{Attacker Basic}    & 55 & 40 & 25 & 10 & 5 \\
+                        \textbf{Attacker Advanced} & 95 & 55 & 35 & 15 & 5 \\
+                        \bottomrule
+                    \end{tabular}
+                    \caption{Attack success rates for Chinese Subs vs. Coalition Subs}
+                    \label{tab:ChineseSubmarinesVs.CoalitionSubmarines}
+                \end{table}
+                If the submarine is still within detection range of the ship and the ship's anti-submarine ammunition is $>$ 0, then wait another 45 minutes [Reload Time] and roll again.
+            \item{When this mission ends:}
+                \begin{enumerate}[label=\arabic*)]
+                    \item After rolling for an attack, the sub's ammunition is 0 AND the sub's player-assigned mission is Submarine Searching \par
+                    [Sub's mission becomes Transit to Base]
+                    \item After rolling for an attack, the sub's anti-submarine ammunition is 0 and the sub's player-assigned mission is NOT Submarine Searching \par
+                    [Ship resumes player-assigned mission]
+                    \item Submarine is destroyed, no other detected submarines are within weapons' range, player-assigned mission is Anti-submarine searching, and anti-submarine ammunition is $>$ 0\par
+                    [Sub's mission becomes Antisubmarine searching]
+                    \item Upon unsuccessfully rolling for destruction of the submarine, the submarine is no longer in the sub's attack range\par
+                    [Ship resumes player-assigned mission]
+                \end{enumerate}
+        \end{itemize}
+    
+\subsection{Other Behaviour}
+        \noindent \textit{Maintenance}
+            
+\subsection{Player Decisions}
+        Normal allocation to locations
+
+\section{Coalition Submarines}
+
+\subsection{Detecting Behaviour}
+
+    \subsubsection{Target: Ships}
+        \begin{table}[h!]
+            \centering
+            \begin{tabular}{|l|c|c|c|c|c|}
+            \hline
+            & \textbf{Large} & \textbf{Medium} & \textbf{Small} & \textbf{VSmall} & \textbf{Stealthy} \\
+            \hline
+            \textbf{Advanced} & 90 & 90 & 45 & 9 & 0 \\
+            \hline
+            \textbf{Basic} & 45 & 9 & 9 & 0 & 0 \\
+            \hline
+            \end{tabular}
+            \caption{Classification by Size and Stealth Level}
+            \label{table:size_stealth_classification}
+        \end{table}
+
+    \subsubsection{Target: Aircraft}
+        Submarines are not capable of detecting aircraft. \\
+        
+    \subsubsection{Target: Submarines}
+        This is implemented deterministically by comparing the ship's submarine detection capability (Basic or Advanced) and current mission status (Anti-submarine Searching vs. not) with the submarine visibility of the submarine. \\
+ 
+        \begin{table}[h!]
+            \centering
+            \begin{tabular}{lccccc}
+                \hline
+                & \textbf{Large} & \textbf{Medium} & \textbf{Small} & \textbf{VSmall} & \textbf{Stealthy} \\
+                \hline
+                \textbf{Advanced + ASW Mission} & 37.00  & 14.80   & 7.40   & 3.70   & 1.85   \\
+                \textbf{Advanced}               & 27.78  & 11.112  & 5.556  & 2.778  & 1.389  \\
+                \textbf{Basic}                  & 18.52  & 7.408   & 3.704  & 1.852  & 0.926  \\
+                \hline
+            \end{tabular}
+            \caption{Detection Radii for Coalition Submarines vs. Chinese Submarines}
+            \label{CoalitionSubmarinesvs.CoalitionSubmarines}
+        \end{table}
+            
+\subsection{Action Behaviour}
+
+    \subsubsection{Patrolling [Coalition Sub]:}
+        \begin{itemize}
+            \item{Can be used by:} Any Sub
+            \item{When this mission begins:} A sub arrives at the zone where it is assigned by the player to patrol
+            \item{While executing this mission:} A sub moves inside a zone according to pheromones and engages any hunters who meet the rules of engagement. If it detects a hunter, put the hunter into the appropriate manager. If the escort has a weapon of the appropriate type (anti-ship, anti-air, or anti-sub), begin tracking that hunter.
+            \item{When this mission ends:} Either 1) A hunter is detected [escort begins tracking that ship] 2)endurance $<$ 20\% of max [escort returns to base]
+        \end{itemize}
+
+    \subsubsection{Tracking [Coalition Subs]:}
+        \begin{itemize}
+            \item{Can be used by:} Any sub
+            \item{When this mission begins:} A coalition sub detects a ship
+            \item{While executing this mission:} While the target is in a Rules of Engagement zone where observing is allowed, move on an intercept point towards the target.
+            \item{This mission ends when:} 
+            \begin{enumerate}[label=\arabic*)]
+                \item The target is sunk by a different agent \par
+                [escort resumes player-assigned mission]
+                \item The target goes to a zone where RoE forbids observing \par
+                [escort resumes player-assigned mission]
+                \item Any submarine who has $>$ 0 ammunition, gets within 11km of any detected ship, and the target is in a zone where attacking is allowed \par
+                [escort begins Attacking Ship - Non-Deckgun
+                \item Any submarine who has $>$ 0 ammunition, gets within 11km of any detected sub, and the target is in a zone where attacking is allowed \par
+                [escort begins Attacking Submarine]
+                \item Current endurance $<$ 20\% of max \par
+                [escort returns to base]
+            \end{enumerate}
+        \end{itemize}
+
+    \subsubsection{Attacking Ship - Non-Deckgun [Coalition Subs]:}
+       \begin{itemize}
+            \item{Can be used by:} A submarine whose Current Ammunition is \textgreater 0, has Anti-ship Skill == ``Basic'' OR ``Advanced''), and is within range of a detected, RoE valid target.
+            \item{When this mission begins:} Their anti-ship ammunition goes down by one.\\ 
+            \item{While executing this mission:}
+            
+            The chance of target being HIT is given below:\\
+            \begin{table}[h!]
+                \centering
+                \begin{tabular}{lccc}
+                    \toprule
+                    Defender & None & Basic & Advanced \\
+                    \midrule
+                    Attacker Basic    & 50\%  & 25\% & 10\% \\
+                    Attacker Advanced & 70\%  & 50\% & 20\% \\
+                    \bottomrule
+                \end{tabular}
+                \caption{Chance of One Coalition Submarine Anti-Ship Attack HITTING a Targeted Ship}
+                \label{tab:CoalitionSubmarinesHitProbabilityvs.Ships}
+            \end{table}
+
+            If a hit is scored, then roll on the table below for whether the target is sunk based on the damage (this can be shared with damage from other sources).
+
+            If the target was hit but not sunk, it gets damage = damage + 1. If the target is sunk, then the attacking submarine resumes its player-assigned mission. If the target is not sunk, and if the hunter's number of anti-ship weapons is 0, then it gains mission `Transit to base' and the targeted Chinese ship is put back into the appropriate manager. If ammunition remains and the target is not sunk, then:
+            \begin{enumerate}
+                \item While the submarine has anti-ship ammunition greater than 0, the target still meets RoE, and the target is not sunk, an attacking submarine alters course and speed to stay within range of its target.
+                \item After 45 minute Reload time, the submarine attacks again (goes to the top of this loop).
+            \end{enumerate}
+        \item{This mission ends when:} 
+        \begin{enumerate}[label=\arabic*)]
+            \item The target is sunk \& current ammunition $>0$ \par
+            [escort resumes player assigned-mission, report target sinking]
+            \item The attacker’s current ammunition is $0$ \par
+            [escort transits to base, report damage to target]
+            \item The target enters an invalid RoE zone \par
+            [escort transits to holding area then resumes holding]
+        \end{enumerate}
+    \end{itemize}
+    
+    \subsubsection{Anti-submarine searching [Coalition Submarine]}
+        \begin{itemize}
+            \item Can be used by: Any sub with basic or advanced submarine detection
+            \item When this mission begins: A sub whose player-assigned mission is Anti-submarine Warfare arrives in its assigned area. There should be some procedure for deciding where in an assigned area each particular plane searches; possibly using the pheromone system, or simply randomly.
+            \item While executing this mission: The sub searches according to pheromones. During that time, any submarines within its radius are detected. The sub's endurance decreases at its cruising rate.
+            \item When this mission ends:
+                \begin{enumerate}[label=\arabic*)]
+                    \item The sub's current endurance becomes less than $<$ 20\% of max  \par
+                    [Sub mission becomes Transit to Base]
+                    \item The sub detects an enemy submarine and ammunition $>0$\par
+                    [Sub mission becomes Attacking Submarine]
+                    \item The sub is attacked by an enemy ship or aircraft \par
+                    [Sub mission becomes Transit to Base]
+                \end{enumerate}
+        \end{itemize}
+
+    \subsubsection{Attacking submarines [Coalition Submarines]}
+        \begin{itemize}
+            \item{Can be used by:} Any coalition ship with basic or advanced anti-submarine skill whose ammunition $>0$ and who is within 11km of a detected enemy submarine that is within an appropriate RoE zone
+            \item{When this mission begins:} A detected submarine is within the attack range of a sub (no provision for ships to track towards a detected submarine). The sub's mission does not have to be Anti-submarine Searching.
+            \item{While executing this mission:} Roll on the table below about the relative anti-submarine capability of the sub and the defending submarine's signature.
+                \begin{table}[h!]
+                    \centering
+                    \begin{tabular}{lccccc}
+                        \toprule
+                        \textbf{Defender} & \textbf{Large} & \textbf{Medium} & \textbf{Small} & \textbf{Vsmall} & \textbf{Stealthy} \\
+                        \midrule
+                        \textbf{Attacker Basic}    & 55 & 40 & 25 & 10 & 5 \\
+                        \textbf{Attacker Advanced} & 95 & 55 & 35 & 15 & 5 \\
+                        \bottomrule
+                    \end{tabular}
+                    \caption{Attack success rates for Coalition Subs vs. Chinese Subs}
+                    \label{tab:CoalitionSubmarinesVs.ChineseSubmarines}
+                \end{table}
+                
+                If the submarine is still within detection range of the ship and the ship's anti-submarine ammunition is $>$ 0, then wait another 45 minutes [Reload Time] and roll again.
+            \item{When this mission ends:}
+                \begin{enumerate}[label=\arabic*)]
+                    \item After rolling for an attack, the sub's ammunition is 0 AND the sub's player-assigned mission is Submarine Searching \par
+                    [Sub's mission becomes Transit to Base]
+                    \item After rolling for an attack, the sub's anti-submarine ammunition is 0 and the sub's player-assigned mission is NOT Submarine Searching \par
+                    [Ship resumes player-assigned mission]
+                    \item Submarine is destroyed, no other detected submarines are within weapons' range, player-assigned mission is Anti-submarine searching, and anti-submarine ammunition is $>$ 0\par
+                    [Sub's mission becomes Antisubmarine searching]
+                    \item Upon unsuccessfully rolling for destruction of the submarine, the submarine is no longer in the sub's attack range\par
+                    [Ship resumes player-assigned mission]
+                \end{enumerate}
+            \end{itemize}
+
+\subsection{Other Behaviour}
+    \noindent \textit{Maintenance}
+
+\subsection{Player Decisions}
+
+    Normal location and mission allocation decisions 
+
+\section{Merchants}
+
+Each week, the players input what types of merchants appear and how they head towards Taiwan.
+
+\subsection{Merchant Characteristics}
+
+    \noindent Merchants are of type Tankers, Bulk Carriers, Containers, LNG, General Cargo, Ro-Ros, or Reefers. There are different sizes of each type of merchant. Each turn, players will have to specify how many merchants of each size and type appear on the eastern edge of the map.
+    
+\begin{table}[h!]
+    \centering
+    \renewcommand{\arraystretch}{1.5}  % Increase the height of rows for better vertical centering
+    \resizebox{\textwidth}{!}{
+    \begin{tabular}{|l|l|c|c|c|c|c|c|}
+    \hline
+    \textbf{Type} & \textbf{Class} & \textbf{Code} & \makecell{\textbf{DWT} \textbf{(1,000s)}} & \makecell{\textbf{Cargo} \textbf{Size}} & \makecell{\textbf{Cargo} \textbf{Value}} & \makecell{\textbf{Speed}} & \textbf{Visibility} \\
+                   &                &               & & \textbf{(1,000s)} & \textbf{(1,000s)} & \textbf{(km/h)} & \\
+    \hline
+    Tanker & VLCC & T1 & 320 & 304 & 160 & 29.6 & Large \\\cdashline{2-8}
+           & Suezmax & T2 & 157 & 147 & 80 & 29.6 & Medium \\\cdashline{2-8}
+           & Aframax & T3 & 115 & 105 & 60 & 29.6 & Medium \\\cdashline{2-8}
+           & Panamax & T4 & 75 & 67.5 & 40 & 29.6 & Medium \\\cdashline{2-8}
+           & MR & T5 & 51 & 45 & 28 & 27.8 & Medium \\\cdashline{2-8}
+           & Handy & T6 & 37 & 33 & 25 & 27.8 & Medium \\\cdashline{2-8}
+           & Small & T7 & 6 & 5 & 6 & 27.8 & Small \\
+    \hline
+    \makecell{Bulk \\ Carriers} & Capesize & B1 & 180 & 180 & 23.4 & 26.9 & Large \\\cdashline{2-8}
+                                 & Panamax & B2 & 75 & 82 & 10.7 & 25.9 & Medium \\\cdashline{2-8}
+                                 & Handymax & B3 & 62 & 62 & 8.1 & 25.0 & Medium \\\cdashline{2-8}
+                                 & Handysize & B4 & 38 & 38 & 4.9 & 24.1 & Medium \\
+    \hline
+    \makecell{Container \\ Ships} & $\ge$ 12k+ TEU & C1 & 150 & 196 & 560 & 44.4 & Large \\\cdashline{2-8}
+                                   & 8-12k TEU & C2 & 120 & 140 & 480 & 44.4 & Large \\\cdashline{2-8}
+                                   & 3-8k TEU & C3 & 80 & 90 & 400 & 42.6 & Medium \\\cdashline{2-8}
+                                   & 2-3k TEU & C4 & 30 & 35 & 100 & 38.9 & Medium \\\cdashline{2-8}
+                                   & 900-2k TEU & C5 & 20 & 20 & 80 & 38.9 & Medium \\\cdashline{2-8}
+                                   & $\le$ 900 TEU & C6 & 8 & 7 & 40 & 38.9 & Small \\
+    \hline
+    LNG & LNG & LNG & 87 & 174 & 48.1 & 38.9 & Large \\
+    \hline
+    \makecell{General \\ Cargo} & General Cargo & GC1 & 50 & 45 & 12 & 27.8 & Medium \\\cdashline{2-8}
+                                 & General Cargo & GC2 & 12.5 & 11.3 & 3 & 27.8 & Small \\\cdashline{2-8}
+                                 & General Cargo & GC3 & 2 & 1.8 & 0.5 & 27.8 & Small \\
+    \hline
+    Ro-Ro & & RoRo & 8.5 & 10 & 6 & 40.7 & Small \\
+    \hline
+    Reefer & & Reef & 7.5 & 6.75 & 25 & 40.7 & Medium \\
+    \hline
+    LPG & VLGC & LPG1 & 55 & 84 & 35 & 37.0 & Medium \\\cdashline{2-8}
+        & Medium & LPG2 & 25 & 32.5 & 20 & 35.0 & Medium \\\cdashline{2-8}
+        & Coaster & LPG3 & 4 & 4 & 5 & 32.0 & Small \\
+    \hline
+    Chemical & Oceangoing & Chem1 & 50 & 45 & 22 & 36.0 & Medium \\\cdashline{2-8}
+             & Medium & Chem2 & 22.2 & 20 & 10 & 34.0 & Medium \\\cdashline{2-8}
+             & Coastal & Chem3 & 4.3 & 4 & 2 & 30.0 & Small \\
+    \hline
+    \end{tabular}}
+    \caption{Merchant Characteristics}
+\end{table}
+
+\clearpage
+
+    When they spawn, they are randomly assigned to a destination as follows:
+    
+    \begin{enumerate}
+        \item 40\% chance for Kaoshiung
+        \item 30\% chance for Taichung
+        \item 25\% chance for Keelung
+        \item 5\% chance for Hualien
+    \end{enumerate}
+
+    They have a variable for how easy it is for a hunter to board them. Users assign what percentage of each merchant has the behaviors for each week. Users are shown the following guidelines:
+
+    \begin{itemize}
+        \item Compliant: When a Chinese ship approaches within 15km, the merchant stops and waits to be boarded.
+        \item Evacenive: A merchant continues to Taiwan if approached by a Chinese ship, but does not resist boarding.
+        \item Resistant: A merchant continues to Taiwan and any attempt by Chinese ships to board is given a negative modifier. 
+    \end{itemize}
+
+\subsection{Behavior}
+    
+    \begin{table}[h!]
+        \centering
+        \begin{tabularx}{\textwidth}{|l|X|X|X|X|X|}
+        \hline
+        \textbf{Scenario} & \textbf{1 -- Passive Taiwan / No U.S.} & \textbf{2 -- Aggressive Taiwan / No U.S.} & \textbf{3 -- Aggressive Taiwan / Light U.S.} & \textbf{4 -- Aggressive Taiwan / Full U.S.} & \textbf{5 -- Aggressive Taiwan / Full U.S.} \\
+        \hline
+        \textbf{Market} & Compliant & Compliant & Compliant & Compliant & Compliant \\
+        \hline
+        \textbf{Taiwan} & Evade & Resist & Resist & Resist & Resist \\
+        \hline
+        \textbf{U.S.} & Compliant & Compliant & Evade & Resist & Resist \\
+        \hline
+        \textbf{Japan} & Compliant & Compliant & Compliant & Evade & Resist \\
+        \hline
+        \end{tabularx}
+        \caption{Reaction of Merchants to Boarding by Nationality Under Various Scenarios}
+        \label{table:merchant_behavior_scenarios}
+    \end{table}
+
+\noindent Merchant LoS for evading is set to be 15kms. \\
+Compliant - stops at position.\\
+Evade - Try and continue to (Taiwan) territorial waters.\\
+Resist - Affects modifier for boarding success chance.\\
+\subsection{Behavior}
+    
+
+    
+    That is determined by their nationality and the scenario.\\
+
+\noindent After spending three days in the harbour, the merchant will try to leave the map the way it entered. Merchants can travel either alone or in Convoys, which is decided by the \textit{Merchant Manager}. 
+
+
+    \noindent \textbf{Detecting Behaviour} \\
+        Merchants do not detect. \\
+
+    \noindent \textbf{Action Behaviour} \\
+        \begin{itemize}
+            \item Transit to Taiwan
+            \begin{itemize}
+                \item{Can be used by:} 
+                \item{When this mission begins:}
+                \item{While executing this mission:}
+                \item{When this mission ends:} 
+            \end{itemize}
+            \item Transit from Taiwan
+            \begin{itemize}
+                \item{Can be used by:} 
+                \item{When this mission begins:}
+                \item{While executing this mission:}
+                \item{When this mission ends:} 
+            \end{itemize}
+            \item Move after boarding to China
+            \begin{itemize}
+                \item{Can be used by:} 
+                \item{When this mission begins:}
+                \item{While executing this mission:}
+                \item{When this mission ends:} 
+            \end{itemize}
+        \end{itemize}
+        
+
+    \noindent \textbf{Other Behaviour} \\
+        \noindent \textit{Maintenance} \\
+        
+    \noindent \textbf{Player Decisions} \\
+
+Don't worry about convoying for now.
+
+\subsubsection{OTH}
+OTH detects in 700-3500 range band at an angle of 35 degrees.
+
+    \noindent \textbf{Detecting Behaviour} \\
+
+        \noindent Target: \textit{Merchant} \\
+        Detection of Merchants depends on the size of the agents and the sea state. This follows a deterministic table. The closest available UAV will follow up on the detection. 
+
+        \noindent Target: \textit{Escorts} \\
+  
+
+    \noindent \textbf{Action Behaviour} \\
+
+
+    \noindent \textbf{Other Behaviour} \\
+        \noindent \textit{Maintenance}
+        
+    \noindent \textbf{Player Decisions} \\
+
+
+
+\section{Proposed New Mission Structure}
+
+\begin{center}
+\begin{adjustbox}{max width=\textwidth,center}
+\begin{tabular}{lcccccccc}
+\toprule
+\rowcolor{gray!20}
+\textbf{Mission} & \textbf{Player Directed} & \textbf{China Aircraft} & \textbf{Coalition Aircraft} & \textbf{China Ships} & \textbf{Coalition Ships} & \textbf{China Submarines} & \textbf{Coalition Submarines} & \textbf{Merchants} \\
+\midrule
+\rowcolor{gray!10}
+Observing   &$\checkmark$   & $\checkmark$  &   &   $\checkmark$      &              & $\checkmark$        &      &       \\
+\rowcolor{gray!5}
+Tracking   &            & $\checkmark$            & $\checkmark$  & $\checkmark$         & $\checkmark$             & $\checkmark$         &       &     \\
+\rowcolor{gray!10}
+Holding    & $\checkmark$ & $\checkmark$       & $\checkmark$  & $\checkmark$         & $\checkmark$             & $\checkmark$         & $\checkmark$     &       \\
+\rowcolor{gray!5}
+Attack Ship - Non-Deckgun &            &  $\checkmark$ & $\checkmark$  & $\checkmark$         & $\checkmark$             & $\checkmark$         & $\checkmark$     &     \\
+\rowcolor{gray!10}
+Attacking Ship - Deckgun &            &            &  & $\checkmark$         & $\checkmark$             &         &       &     \\
+\rowcolor{gray!5}
+Boarding   &            &            &  &    $\checkmark$     & $\checkmark$             &         &      &     \\
+\rowcolor{gray!10}
+Anti-submarine searching & $\checkmark$            & $\checkmark$            & $\checkmark$  &  $\checkmark$        & $\checkmark$        & $\checkmark$  & $\checkmark$    &     \\
+\rowcolor{gray!5}
+Attacking submarines    &            & $\checkmark$ & $\checkmark$  & $\checkmark$ & $\checkmark$             & $\checkmark$         & $\checkmark$     &     \\
+\rowcolor{gray!10}
+Attacking aircraft      &            & $\checkmark$    &$\checkmark$  & $\checkmark$         & $\checkmark$             & $\checkmark$ & $\checkmark$ &     \\
+\rowcolor{gray!5}
+Patrolling & $\checkmark$            &             & $\checkmark$ &      & $\checkmark$             &         &  $\checkmark$     &     \\
+\rowcolor{gray!10}
+Escorting  & $\checkmark$            &             & $\checkmark$ &      & $\checkmark$             &         &  $\checkmark$     &     \\
+\rowcolor{gray!5}
+Moving to Intercept     &            &            &  &         &            & $\checkmark$         & $\checkmark$     &     \\
+\rowcolor{gray!10}
+Attacking with Torpedoes &            &            &  &         &            & $\checkmark$         & $\checkmark$     &     \\
+\rowcolor{gray!5}
+Undersea TEL            & $\checkmark$            &            &  &         &            & $\checkmark$         &       &     \\
+\rowcolor{gray!10}
+Transit to Base         &            & $\checkmark$            & $\checkmark$  & $\checkmark$         & $\checkmark$             & $\checkmark$         & $\checkmark$     &     \\
+\rowcolor{gray!5}
+Transit to China        &            &            &  &         &            &         &       & $\checkmark$      \\
+\rowcolor{gray!10}
+Transit to Assigned Area         &            & $\checkmark$            & $\checkmark$  & $\checkmark$         & $\checkmark$             & $\checkmark$         &  $\checkmark$   &  $\checkmark$   \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{center}
+
+\subsection{Base Missions - For China Ships DAG}
+
+\begin{itemize}
+    \item Unit Spawn
+        \begin{enumerate}[label=\arabic*)]
+            \item Transit to Assigned Area
+        \end{enumerate}
+    \item Observing
+        \begin{enumerate}[label=\arabic*)]
+            \item Tracking
+            \item Transit to base
+        \end{enumerate}
+    \item Tracking
+        \begin{enumerate}[label=\arabic*)]
+            \item Transit to Assigned Area
+            \item Transit to base
+            \item Attacking submarines
+            \item Attacking aircraft
+            \item Attacking Ship - Non-Deckgun
+            \item Boarding
+        \end{enumerate}
+    \item Holding
+        \begin{enumerate}[label=\arabic*)]
+            \item Transit to Base
+            \item Tracking
+        \end{enumerate}
+    \item Attack Ship - Non-Deckgun
+        \begin{enumerate}[label=\arabic*)]
+            \item Transit to Assigned Area
+            \item Transit to base
+        \end{enumerate}
+    \item Attacking Ship - Deckgun
+        \begin{enumerate}[label=\arabic*)]
+            \item Transit to base
+        \end{enumerate} 
+    \item Boarding
+        \begin{enumerate}[label=\arabic*)]
+            \item Transit to China
+            \item Attacking - Deckgun
+        \end{enumerate}    
+    \item Anti-submarine searching
+        \begin{enumerate}[label=\arabic*)]
+            \item Attacking submarines
+            \item Transit to base
+        \end{enumerate}
+    \item Attacking submarines
+        \begin{enumerate}[label=\arabic*)]
+            \item Transit to Assigned Area
+            \item Transit to base
+        \end{enumerate}
+    \item Transit to Assigned Area
+        \begin{enumerate}[label=\arabic*)]
+            \item Observing
+            \item Holding
+            \item Anti-submarine searching
+        \end{enumerate}
+    \item Transit to Base
+        \begin{enumerate}[label=\arabic*)]
+            \item Despawn
+        \end{enumerate}
+    \item Transit to China
+        \begin{enumerate}[label=\arabic*)]
+            \item Despawn
+            \item Attacking Ship - Deckgun
+        \end{enumerate}
+    \item Despawn
+\end{itemize}
+
+\subsection{Base Missions - Detailed}
+
+\begin{itemize}
+    \item Observing
+
+    \item Tracking
+            \begin{enumerate}[label=\arabic*)]
+            \item The target ship is sunk by a different agent \par
+            [New Mission: Player-assigned mission]
+            \item The target ship goes to a zone where RoE forbids observing \par
+            [New Mission: Player-assigned mission]
+            \item Any submarine who has $>$ 0 torpedoes in its anti-ship weapon list, gets within 7km of any detected target, and the target is in a zone where attacking is allowed \par
+            [New Mission: Attacking with Torpedoes]
+            \item Current endurance $<$ 20\% of max \par
+            [New Mission: Transit to base]
+        \end{enumerate}
+    \item Holding
+    \item Attack Ship - Non-Deckgun
+    \item Attacking Ship - Deckgun
+    \item Boarding
+    \item Anti-submarine searching
+    \item Attacking submarines
+    \item Attacking aircraft
+    \item Patrolling
+    \item Escorting
+    \item Moving to Intercept
+    \item Attacking with Torpedoes
+    \item Undersea TEL
+    \item Transit to Assigned Area
+    \item Transit to Base
+    \item Transit to China
+\end{itemize}
+
+\subsection{Player Directed Missions}
+
+\end{document}
+
+
+
+
+
+\subsection{Weather Condition}
+Weather conditions are simulated as they affect certain actions. To simulate the weather, there is a large set of nodes spread over the map, each representing approx ~25km². These nodes each get assigned a weather condition using Perlin Noise applied to a Discrete Time Markov Chain transition matrix. Each time step the Perlin noise provides a value for each node, which translates into a transition probability. This probability is read in the transition matrix, and results in a new weather state. The Perlin noise is highly correlated within a region such that weather conditions tend to be similar in nearby areas. 

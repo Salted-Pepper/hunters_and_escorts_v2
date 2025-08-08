@@ -1,0 +1,116 @@
+\contentsline {section}{\numberline {1}Change Log: 13 Jan 2025}{1}{section.1}%
+\contentsline {section}{\numberline {2}Simulation Model}{1}{section.2}%
+\contentsline {subsection}{\numberline {2.1}World Map}{1}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Agents}{1}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Structures}{2}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Managers}{2}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}Attack and Defense}{3}{subsection.2.5}%
+\contentsline {subsection}{\numberline {2.6}Ammunition}{3}{subsection.2.6}%
+\contentsline {subsection}{\numberline {2.7}Player Input}{3}{subsection.2.7}%
+\contentsline {section}{\numberline {3}World Map}{8}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Time}{9}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Landmasses}{9}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Zones}{9}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Receptor Grid}{11}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Weather Condition}{11}{subsection.3.5}%
+\contentsline {section}{\numberline {4}Agents}{11}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Agent}{12}{subsection.4.1}%
+\contentsline {section}{\numberline {5}Chinese Aircraft}{15}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Detecting Behaviour}{15}{subsection.5.1}%
+\contentsline {subsubsection}{\numberline {5.1.1}Target: Coalition Ships or Merchants}{15}{subsubsection.5.1.1}%
+\contentsline {subsubsection}{\numberline {5.1.2}Target: Coalition Aircraft}{15}{subsubsection.5.1.2}%
+\contentsline {subsubsection}{\numberline {5.1.3}Target: Submarines}{16}{subsubsection.5.1.3}%
+\contentsline {subsection}{\numberline {5.2}Action Behaviour}{16}{subsection.5.2}%
+\contentsline {subsubsection}{\numberline {5.2.1}Observing [Chinese Aircraft]:}{16}{subsubsection.5.2.1}%
+\contentsline {subsubsection}{\numberline {5.2.2}Tracking [Chinese Aircraft]:}{16}{subsubsection.5.2.2}%
+\contentsline {subsubsection}{\numberline {5.2.3}Holding [Chinese Aircraft]:}{17}{subsubsection.5.2.3}%
+\contentsline {subsubsection}{\numberline {5.2.4}Attacking Ship - Non-Deckgun [Chinese Aircraft]:}{17}{subsubsection.5.2.4}%
+\contentsline {subsubsection}{\numberline {5.2.5}Attacking Aircraft - Air-to-Air Combat [Chinese Aircraft]:}{18}{subsubsection.5.2.5}%
+\contentsline {subsubsection}{\numberline {5.2.6}Anti-submarine Searching [Chinese Aircraft]}{19}{subsubsection.5.2.6}%
+\contentsline {subsubsection}{\numberline {5.2.7}Attacking Submarine [Chinese Aircraft]}{20}{subsubsection.5.2.7}%
+\contentsline {subsection}{\numberline {5.3}Other Behaviour}{20}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Player Decisions}{20}{subsection.5.4}%
+\contentsline {section}{\numberline {6}Coalition Aircraft}{21}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Detecting Behaviour}{21}{subsection.6.1}%
+\contentsline {subsubsection}{\numberline {6.1.1}Target: Chinese Ships}{21}{subsubsection.6.1.1}%
+\contentsline {subsubsection}{\numberline {6.1.2}Target: Chinese Aircraft}{22}{subsubsection.6.1.2}%
+\contentsline {subsubsection}{\numberline {6.1.3}Target: Chinese Submarines}{22}{subsubsection.6.1.3}%
+\contentsline {subsection}{\numberline {6.2}Action Behaviour}{23}{subsection.6.2}%
+\contentsline {subsubsection}{\numberline {6.2.1}Patrolling [Coalition Aircraft]:}{23}{subsubsection.6.2.1}%
+\contentsline {subsubsection}{\numberline {6.2.2}Tracking [Coalition Aircraft]:}{23}{subsubsection.6.2.2}%
+\contentsline {subsubsection}{\numberline {6.2.3}Holding [Coalition Aircraft]:}{23}{subsubsection.6.2.3}%
+\contentsline {subsubsection}{\numberline {6.2.4}Attacking Ship - Non-Deckgun [Coalition Aircraft]:}{24}{subsubsection.6.2.4}%
+\contentsline {subsubsection}{\numberline {6.2.5}Attacking Aircraft - Air-to-Air Combat [Coalition Aircraft]:}{24}{subsubsection.6.2.5}%
+\contentsline {subsubsection}{\numberline {6.2.6}Antisubmarine Searching [Coalition Aircraft]}{25}{subsubsection.6.2.6}%
+\contentsline {subsubsection}{\numberline {6.2.7}Attacking Submarine [Coalition Aircraft]}{26}{subsubsection.6.2.7}%
+\contentsline {subsection}{\numberline {6.3}Other Behaviour}{26}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}Player Decisions}{26}{subsection.6.4}%
+\contentsline {section}{\numberline {7}Chinese Ships}{27}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Detecting Behaviour}{27}{subsection.7.1}%
+\contentsline {subsubsection}{\numberline {7.1.1}Target: Ships and Merchants}{27}{subsubsection.7.1.1}%
+\contentsline {subsubsection}{\numberline {7.1.2}Target: Aircraft}{27}{subsubsection.7.1.2}%
+\contentsline {subsubsection}{\numberline {7.1.3}Target: Submarines}{27}{subsubsection.7.1.3}%
+\contentsline {subsection}{\numberline {7.2}Action Behaviour}{29}{subsection.7.2}%
+\contentsline {subsubsection}{\numberline {7.2.1}Observing [Chinese Ships]:}{29}{subsubsection.7.2.1}%
+\contentsline {subsubsection}{\numberline {7.2.2}Tracking [Chinese Ships]:}{30}{subsubsection.7.2.2}%
+\contentsline {subsubsection}{\numberline {7.2.3}Holding [Chinese Ships]:}{31}{subsubsection.7.2.3}%
+\contentsline {subsubsection}{\numberline {7.2.4}Attacking Ship - Non-Deckgun [Chinese Ships]}{31}{subsubsection.7.2.4}%
+\contentsline {subsubsection}{\numberline {7.2.5}Boarding Ship [Chinese Ships]:}{32}{subsubsection.7.2.5}%
+\contentsline {subsubsection}{\numberline {7.2.6}Attacking Ship With Guns [Chinese Ships]:}{33}{subsubsection.7.2.6}%
+\contentsline {subsubsection}{\numberline {7.2.7}Anti-submarine searching [Chinese Ships]}{34}{subsubsection.7.2.7}%
+\contentsline {subsubsection}{\numberline {7.2.8}Attacking submarines [Chinese Ships]}{34}{subsubsection.7.2.8}%
+\contentsline {subsubsection}{\numberline {7.2.9}Attacking aircraft}{35}{subsubsection.7.2.9}%
+\contentsline {subsection}{\numberline {7.3}Other Behaviour}{35}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}Player Decisions}{35}{subsection.7.4}%
+\contentsline {section}{\numberline {8}Coalition Ships}{36}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Detecting Behaviour}{36}{subsection.8.1}%
+\contentsline {subsubsection}{\numberline {8.1.1}Target: Chinese Ships}{36}{subsubsection.8.1.1}%
+\contentsline {subsubsection}{\numberline {8.1.2}Target: Aircraft}{37}{subsubsection.8.1.2}%
+\contentsline {subsubsection}{\numberline {8.1.3}Target: Submarines}{37}{subsubsection.8.1.3}%
+\contentsline {subsection}{\numberline {8.2}Action Behaviour}{37}{subsection.8.2}%
+\contentsline {subsubsection}{\numberline {8.2.1}Patrolling [Coalition Ships]:}{37}{subsubsection.8.2.1}%
+\contentsline {subsubsection}{\numberline {8.2.2}Tracking [Coalition Ships]:}{38}{subsubsection.8.2.2}%
+\contentsline {subsubsection}{\numberline {8.2.3}Holding [Coalition Ships]:}{38}{subsubsection.8.2.3}%
+\contentsline {subsubsection}{\numberline {8.2.4}Attacking Ship - Non-Deckgun: [Coalition Ships]}{39}{subsubsection.8.2.4}%
+\contentsline {subsubsection}{\numberline {8.2.5}Boarding Ship [Coalition Ships]:}{39}{subsubsection.8.2.5}%
+\contentsline {subsubsection}{\numberline {8.2.6}Anti-submarine searching [Coalition Ships]}{40}{subsubsection.8.2.6}%
+\contentsline {subsubsection}{\numberline {8.2.7}Attacking submarines [Coalition Ships]}{40}{subsubsection.8.2.7}%
+\contentsline {subsubsection}{\numberline {8.2.8}Attacking Ship With Guns: NOT IMPLEMENTED}{41}{subsubsection.8.2.8}%
+\contentsline {subsubsection}{\numberline {8.2.9}Attacking aircraft: NOT IMPLEMENTED}{41}{subsubsection.8.2.9}%
+\contentsline {subsection}{\numberline {8.3}Other Behaviour}{41}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}Player Decisions}{41}{subsection.8.4}%
+\contentsline {section}{\numberline {9}Chinese Submarines}{42}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Detecting Behaviour}{42}{subsection.9.1}%
+\contentsline {subsubsection}{\numberline {9.1.1}Target: Ships and Merchants}{42}{subsubsection.9.1.1}%
+\contentsline {subsubsection}{\numberline {9.1.2}Target: Aircraft}{43}{subsubsection.9.1.2}%
+\contentsline {subsubsection}{\numberline {9.1.3}Target: Submarines}{43}{subsubsection.9.1.3}%
+\contentsline {subsection}{\numberline {9.2}Action Behaviour}{43}{subsection.9.2}%
+\contentsline {subsubsection}{\numberline {9.2.1}Observing [Chinese Subs]:}{43}{subsubsection.9.2.1}%
+\contentsline {subsubsection}{\numberline {9.2.2}Tracking [Chinese Subs]:}{43}{subsubsection.9.2.2}%
+\contentsline {subsubsection}{\numberline {9.2.3}Attacking Ship - Non-Deckgun [Chinese Subs]:}{44}{subsubsection.9.2.3}%
+\contentsline {subsubsection}{\numberline {9.2.4}Anti-submarine searching [Chinese Subs]}{45}{subsubsection.9.2.4}%
+\contentsline {subsubsection}{\numberline {9.2.5}Attacking submarines [Chinese Submarines]}{45}{subsubsection.9.2.5}%
+\contentsline {subsection}{\numberline {9.3}Other Behaviour}{46}{subsection.9.3}%
+\contentsline {subsection}{\numberline {9.4}Player Decisions}{46}{subsection.9.4}%
+\contentsline {section}{\numberline {10}Coalition Submarines}{46}{section.10}%
+\contentsline {subsection}{\numberline {10.1}Detecting Behaviour}{46}{subsection.10.1}%
+\contentsline {subsubsection}{\numberline {10.1.1}Target: Ships}{46}{subsubsection.10.1.1}%
+\contentsline {subsubsection}{\numberline {10.1.2}Target: Aircraft}{46}{subsubsection.10.1.2}%
+\contentsline {subsubsection}{\numberline {10.1.3}Target: Submarines}{47}{subsubsection.10.1.3}%
+\contentsline {subsection}{\numberline {10.2}Action Behaviour}{47}{subsection.10.2}%
+\contentsline {subsubsection}{\numberline {10.2.1}Patrolling [Coalition Sub]:}{47}{subsubsection.10.2.1}%
+\contentsline {subsubsection}{\numberline {10.2.2}Tracking [Coalition Subs]:}{47}{subsubsection.10.2.2}%
+\contentsline {subsubsection}{\numberline {10.2.3}Attacking Ship - Non-Deckgun [Coalition Subs]:}{48}{subsubsection.10.2.3}%
+\contentsline {subsubsection}{\numberline {10.2.4}Anti-submarine searching [Coalition Submarine]}{49}{subsubsection.10.2.4}%
+\contentsline {subsubsection}{\numberline {10.2.5}Attacking submarines [Coalition Submarines]}{49}{subsubsection.10.2.5}%
+\contentsline {subsection}{\numberline {10.3}Other Behaviour}{50}{subsection.10.3}%
+\contentsline {subsection}{\numberline {10.4}Player Decisions}{50}{subsection.10.4}%
+\contentsline {section}{\numberline {11}Merchants}{50}{section.11}%
+\contentsline {subsection}{\numberline {11.1}Merchant Characteristics}{50}{subsection.11.1}%
+\contentsline {subsection}{\numberline {11.2}Behavior}{52}{subsection.11.2}%
+\contentsline {subsection}{\numberline {11.3}Behavior}{52}{subsection.11.3}%
+\contentsline {subsubsection}{\numberline {11.3.1}OTH}{53}{subsubsection.11.3.1}%
+\contentsline {section}{\numberline {12}Proposed New Mission Structure}{54}{section.12}%
+\contentsline {subsection}{\numberline {12.1}Base Missions - For China Ships DAG}{54}{subsection.12.1}%
+\contentsline {subsection}{\numberline {12.2}Base Missions - Detailed}{55}{subsection.12.2}%
+\contentsline {subsection}{\numberline {12.3}Player Directed Missions}{56}{subsection.12.3}%

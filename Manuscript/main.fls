@@ -1,6 +1,0 @@
-PWD c:/Users/mdogg/Desktop/Projects/hunters_and_escorts_v2
-INPUT c:/texlive/2025/texmf.cnf
-INPUT c:/texlive/2025/texmf-dist/web2c/texmf.cnf
-INPUT c:/texlive/2025/texmf-var/web2c/pdftex/pdflatex.fmt
-INPUT c:/Users/mdogg/Desktop/Projects/hunters_and_escorts_v2/main.tex
-OUTPUT main.log
